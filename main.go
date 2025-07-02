@@ -7,12 +7,32 @@ import (
 	"context"
 	"io"
 	"log"
+	"os"
+	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/containers/image/v5/docker"
 	blobinfocachememory "github.com/containers/image/v5/pkg/blobinfocache/memory"
 	"github.com/containers/image/v5/types"
 )
+
+// sanitizeManifestRef creates a valid directory name from manifestRef
+func sanitizeManifestRef(manifestRef string) string {
+	// Replace invalid filesystem characters with underscores
+	// Invalid characters: / \ : * ? " < > |
+	re := regexp.MustCompile(`[\/\\:*?"<>|]`)
+	sanitized := re.ReplaceAllString(manifestRef, "_")
+
+	// Replace multiple consecutive underscores with a single one
+	re = regexp.MustCompile(`_+`)
+	sanitized = re.ReplaceAllString(sanitized, "_")
+
+	// Remove leading/trailing underscores
+	sanitized = strings.Trim(sanitized, "_")
+
+	return sanitized
+}
 
 // this example is for a single image
 func main() {
@@ -26,10 +46,10 @@ func main() {
 
 	src, layers := FetchManifestSrcAndLayers(manifestRef, sys)
 	defer src.Close()
-	ScanLayersForModelCarD(layers, src)
+	ScanLayersForModelCarD(layers, src, manifestRef)
 }
 
-func ScanLayersForModelCarD(layers []types.BlobInfo, src types.ImageSource) {
+func ScanLayersForModelCarD(layers []types.BlobInfo, src types.ImageSource, manifestRef string) {
 	for i, layer := range layers {
 		log.Printf("Layer %d:\n", i+1)
 		log.Printf("  Digest: %s\n", layer.Digest)
@@ -113,16 +133,26 @@ func ScanLayersForModelCarD(layers []types.BlobInfo, src types.ImageSource) {
 
 					if mdFileCount == 1 {
 						log.Printf("  Found single .md file: %s (size: %d bytes)\n", singleMdFileName, len(singleMdContent))
-						lines := bytes.Split(singleMdContent, []byte("\n"))
-						log.Printf("  First 10 lines of %s:\n", singleMdFileName)
-						log.Printf("  ----------------------------------------\n")
-						for j, line := range lines {
-							if j >= 10 {
-								break
-							}
-							log.Printf("  %d: %s\n", j+1, string(line))
+
+						// Create output directory
+						sanitizedDir := sanitizeManifestRef(manifestRef)
+						outputDir := filepath.Join("output", sanitizedDir)
+
+						// Create the full directory path for the file (including subdirectories)
+						outputFilePath := filepath.Join(outputDir, singleMdFileName)
+						outputFileDir := filepath.Dir(outputFilePath)
+						err := os.MkdirAll(outputFileDir, 0755)
+						if err != nil {
+							log.Fatalf("Failed to create output directory: %v", err)
 						}
-						log.Printf("  ----------------------------------------\n")
+
+						// Write modelcard content to file
+						err = os.WriteFile(outputFilePath, singleMdContent, 0644)
+						if err != nil {
+							log.Fatalf("Failed to write modelcard content to file: %v", err)
+						}
+
+						log.Printf("  Successfully wrote modelcard content to: %s\n", outputFilePath)
 					} else {
 						log.Printf("  No .md files found in the blob\n")
 					}
