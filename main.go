@@ -14,6 +14,7 @@ import (
 	"github.com/containers/image/v5/types"
 )
 
+// this example is for a single image
 func main() {
 	manifestRef := "registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:latest"
 	manifestRef = "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:latest"
