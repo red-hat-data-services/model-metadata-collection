@@ -11,42 +11,45 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/containers/image/v5/docker"
 	blobinfocachememory "github.com/containers/image/v5/pkg/blobinfocache/memory"
 	"github.com/containers/image/v5/types"
 )
 
-// sanitizeManifestRef creates a valid directory name from manifestRef
-func sanitizeManifestRef(manifestRef string) string {
-	// Replace invalid filesystem characters with underscores
-	// Invalid characters: / \ : * ? " < > |
-	re := regexp.MustCompile(`[\/\\:*?"<>|]`)
-	sanitized := re.ReplaceAllString(manifestRef, "_")
-
-	// Replace multiple consecutive underscores with a single one
-	re = regexp.MustCompile(`_+`)
-	sanitized = re.ReplaceAllString(sanitized, "_")
-
-	// Remove leading/trailing underscores
-	sanitized = strings.Trim(sanitized, "_")
-
-	return sanitized
-}
-
-// this example is for a single image
+// this example processes multiple images in parallel
 func main() {
-	manifestRef := "registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:latest"
-	manifestRef = "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:latest"
-	manifestRef = "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2-1:latest"
-	manifestRef = "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-lab-v2-1:latest"
-	manifestRef = "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5"
+	manifestRefs := []string{
+		"registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:latest",
+		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:latest",
+		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2-1:latest",
+		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-lab-v2-1:latest",
+		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5",
+	}
 
 	sys := &types.SystemContext{}
 
-	src, layers := FetchManifestSrcAndLayers(manifestRef, sys)
-	defer src.Close()
-	ScanLayersForModelCarD(layers, src, manifestRef)
+	// Create a WaitGroup to wait for all goroutines to complete
+	var wg sync.WaitGroup
+
+	// Process each manifest reference in parallel
+	for _, manifestRef := range manifestRefs {
+		wg.Add(1)
+		go func(ref string) {
+			defer wg.Done()
+			log.Printf("Starting processing for: %s", ref)
+			src, layers := FetchManifestSrcAndLayers(ref, sys)
+			defer src.Close()
+			ScanLayersForModelCarD(layers, src, ref)
+			log.Printf("Completed processing for: %s", ref)
+		}(manifestRef)
+	}
+
+	// Wait for all goroutines to complete
+	wg.Wait()
+
+	log.Printf("All manifest processing completed")
 }
 
 func ScanLayersForModelCarD(layers []types.BlobInfo, src types.ImageSource, manifestRef string) {
@@ -214,4 +217,21 @@ func FetchManifestSrcAndLayers(manifestRef string, sys *types.SystemContext) (ty
 		log.Printf("  Layer %d: %s\n", i+1, layer.Digest)
 	}
 	return src, layers
+}
+
+// sanitizeManifestRef creates a valid directory name from manifestRef
+func sanitizeManifestRef(manifestRef string) string {
+	// Replace invalid filesystem characters with underscores
+	// Invalid characters: / \ : * ? " < > |
+	re := regexp.MustCompile(`[\/\\:*?"<>|]`)
+	sanitized := re.ReplaceAllString(manifestRef, "_")
+
+	// Replace multiple consecutive underscores with a single one
+	re = regexp.MustCompile(`_+`)
+	sanitized = re.ReplaceAllString(sanitized, "_")
+
+	// Remove leading/trailing underscores
+	sanitized = strings.Trim(sanitized, "_")
+
+	return sanitized
 }
