@@ -20,12 +20,33 @@ import (
 
 // this example processes multiple images in parallel
 func main() {
+	// Note: not all of these modelcar contains a modelcard annotated layer.
 	manifestRefs := []string{
-		"registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:latest",
-		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:latest",
-		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2-1:latest",
-		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-lab-v2-1:latest",
+		"registry.redhat.io/rhelai1/modelcar-granite-7b-starter:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-7b-redhat-lab:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-8b-starter-v1:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-8b-lab-v1:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-8b-lab-v2-preview:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v1:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-lab-v1:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-8b-code-instruct:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-granite-8b-code-base:1.4.0",
+		"registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:1.4",
+		"registry.redhat.io/rhelai1/modelcar-prometheus-8x7b-v2-0:1.4",
 		"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5",
+		"registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5",
+		"registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-quantized-w8a8:1.5",
+		"registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-fp8-dynamic:1.5",
+		"registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w4a16:1.5",
+		"registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-fp8-dynamic:1.5",
+		"registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct:1.5",
+		"registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:1.4",
+		"registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w4a16:1.5",
+		"registry.redhat.io/rhelai1/modelcar-mistral-7b-instruct-v0-3-quantized-w4a16:1.5",
+		"registry.redhat.io/rhelai1/modelcar-deepseek-r1-distill-llama-8b-fp8-dynamic:1.5",
+		"registry.redhat.io/rhelai1/modelcar-mixtral-8x22b-v0-1-quantized-w4a16:1.5",
+		"registry.redhat.io/rhelai1/modelcar-pixtral-large-instruct-2411-hf-quantized-w8a8:1.5",
+		"registry.redhat.io/rhelai1/modelcar-whisper-large-v2-w4a16-g128:1.5",
 	}
 
 	sys := &types.SystemContext{}
@@ -33,11 +54,19 @@ func main() {
 	// Create a WaitGroup to wait for all goroutines to complete
 	var wg sync.WaitGroup
 
-	// Process each manifest reference in parallel
+	// Create a semaphore to limit concurrent goroutines to 5
+	semaphore := make(chan struct{}, 5)
+
+	// Process each manifest reference in parallel with concurrency limit
 	for _, manifestRef := range manifestRefs {
+		// Acquire semaphore (blocks if 5 goroutines are already running)
+		semaphore <- struct{}{}
+
 		wg.Add(1)
 		go func(ref string) {
 			defer wg.Done()
+			defer func() { <-semaphore }() // Release semaphore when done
+
 			log.Printf("Starting processing for: %s", ref)
 			src, layers := FetchManifestSrcAndLayers(ref, sys)
 			defer src.Close()
