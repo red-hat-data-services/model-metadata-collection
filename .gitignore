@@ -1,3 +1,21 @@
 # destination of modelcard files
 output
 
+# build artifacts
+model-metadata-collection
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+data/models-catalog.yaml
+data/hugging-face*
+
+coverage.out
+
+build
+
+cmd/model-extractor/model-extractor
+
+.claude/

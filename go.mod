@@ -1,10 +1,13 @@
-module demo20250702-readmanifests
+module github.com/chambridge/model-metadata-collection
 
 go 1.23.3
 
 toolchain go1.23.10
 
-require github.com/containers/image/v5 v5.35.0
+require (
+	github.com/containers/image/v5 v5.35.0
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/BurntSushi/toml v1.5.0 // indirect
@@ -33,5 +36,4 @@ require (
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/vbatts/tar-split v0.12.1 // indirect
 	golang.org/x/sys v0.32.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

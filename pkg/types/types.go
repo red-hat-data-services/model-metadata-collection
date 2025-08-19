@@ -1,0 +1,218 @@
+package types
+
+import "time"
+
+// ModelsConfig represents the configuration of models to process
+type ModelsConfig struct {
+	Models []string `yaml:"models"`
+}
+
+// HuggingFace Collection structures
+type HFCollection struct {
+	Slug        string    `json:"slug"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Items       []HFModel `json:"items"`
+}
+
+type HFModel struct {
+	ID     string `json:"id"`
+	Author string `json:"author"`
+	Type   string `json:"type"`
+	Gated  bool   `json:"gated"`
+}
+
+// HuggingFace model details
+type HFModelDetails struct {
+	ID           string    `json:"id"`
+	Author       string    `json:"author"`
+	Sha          string    `json:"sha"`
+	Downloads    int       `json:"downloads"`
+	Likes        int       `json:"likes"`
+	Private      bool      `json:"private"`
+	Gated        bool      `json:"gated"`
+	Tags         []string  `json:"tags"`
+	Description  string    `json:"description"`
+	License      string    `json:"license"`
+	CreatedAt    time.Time `json:"createdAt"`
+	LastModified string    `json:"lastModified"`
+}
+
+// Version-specific index structures
+type ModelIndex struct {
+	Name       string `yaml:"name"`
+	URL        string `yaml:"url"`
+	ReadmePath string `yaml:"readme_path"`
+}
+
+type VersionIndex struct {
+	Version string       `yaml:"version"`
+	Models  []ModelIndex `yaml:"models"`
+}
+
+// OCIArtifact represents a structured OCI artifact with metadata
+type OCIArtifact struct {
+	URI                      string                 `yaml:"uri"`
+	CreateTimeSinceEpoch     *int64                 `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch *int64                 `yaml:"lastUpdateTimeSinceEpoch"`
+	CustomProperties         map[string]interface{} `yaml:"customProperties,omitempty"`
+}
+
+// ExtractedMetadata represents the actual extracted values from the modelcard
+type ExtractedMetadata struct {
+	Name                     *string       `yaml:"name"`
+	Provider                 *string       `yaml:"provider"`
+	Description              *string       `yaml:"description"`
+	Readme                   *string       `yaml:"readme"`
+	Language                 []string      `yaml:"language"`
+	License                  *string       `yaml:"license"`
+	LicenseLink              *string       `yaml:"licenseLink"`
+	Maturity                 *string       `yaml:"maturity"`
+	LibraryName              *string       `yaml:"libraryName"`
+	Tasks                    []string      `yaml:"tasks"`
+	CreateTimeSinceEpoch     *int64        `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch *int64        `yaml:"lastUpdateTimeSinceEpoch"`
+	Artifacts                []OCIArtifact `yaml:"artifacts"`
+}
+
+// LegacyExtractedMetadata represents the old format with string artifacts
+type LegacyExtractedMetadata struct {
+	Name                     *string  `yaml:"name"`
+	Provider                 *string  `yaml:"provider"`
+	Description              *string  `yaml:"description"`
+	Readme                   *string  `yaml:"readme"`
+	Language                 []string `yaml:"language"`
+	License                  *string  `yaml:"license"`
+	LicenseLink              *string  `yaml:"licenseLink"`
+	Maturity                 *string  `yaml:"maturity"`
+	LibraryName              *string  `yaml:"libraryName"`
+	Tasks                    []string `yaml:"tasks"`
+	CreateTimeSinceEpoch     *int64   `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch *int64   `yaml:"lastUpdateTimeSinceEpoch"`
+	Artifacts                []string `yaml:"artifacts"`
+}
+
+// MixedTypeExtractedMetadata handles both string and int64 timestamps
+type MixedTypeExtractedMetadata struct {
+	Name                     *string       `yaml:"name"`
+	Provider                 *string       `yaml:"provider"`
+	Description              *string       `yaml:"description"`
+	Readme                   *string       `yaml:"readme"`
+	Language                 []string      `yaml:"language"`
+	License                  *string       `yaml:"license"`
+	LicenseLink              *string       `yaml:"licenseLink"`
+	Maturity                 *string       `yaml:"maturity"`
+	LibraryName              *string       `yaml:"libraryName"`
+	Tasks                    []string      `yaml:"tasks"`
+	CreateTimeSinceEpoch     interface{}   `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch interface{}   `yaml:"lastUpdateTimeSinceEpoch"`
+	Artifacts                []OCIArtifact `yaml:"artifacts"`
+}
+
+// MetadataSource represents where a piece of metadata came from
+type MetadataSource struct {
+	Value  interface{} `json:"value"`
+	Source string      `json:"source"`
+}
+
+// EnrichedMetadata contains metadata with source tracking
+type EnrichedMetadata struct {
+	Name         MetadataSource `json:"name"`
+	Provider     MetadataSource `json:"provider"`
+	Description  MetadataSource `json:"description"`
+	License      MetadataSource `json:"license"`
+	LastModified MetadataSource `json:"lastModified"`
+	Tags         MetadataSource `json:"tags"`
+	Downloads    MetadataSource `json:"downloads"`
+	Likes        MetadataSource `json:"likes"`
+}
+
+// EnrichedModelMetadata represents enriched metadata for a registry model
+type EnrichedModelMetadata struct {
+	RegistryModel    string `yaml:"registry_model"`
+	HuggingFaceModel string `yaml:"huggingface_model,omitempty"`
+	HuggingFaceURL   string `yaml:"huggingface_url,omitempty"`
+	ReadmePath       string `yaml:"readme_path,omitempty"`
+	MatchConfidence  string `yaml:"match_confidence,omitempty"`
+	EnrichmentStatus string `yaml:"enrichment_status"`
+	// Metadata with source tracking
+	Name                 MetadataSource `yaml:"name"`
+	Provider             MetadataSource `yaml:"provider"`
+	Description          MetadataSource `yaml:"description"`
+	License              MetadataSource `yaml:"license"`
+	LibraryName          MetadataSource `yaml:"library_name"`
+	LastModified         MetadataSource `yaml:"last_modified"`
+	CreateTimeSinceEpoch MetadataSource `yaml:"create_time_since_epoch"`
+	Tags                 MetadataSource `yaml:"tags"`
+	Tasks                MetadataSource `yaml:"tasks"`
+	Downloads            MetadataSource `yaml:"downloads"`
+	Likes                MetadataSource `yaml:"likes"`
+	ModelSize            MetadataSource `yaml:"model_size"`
+}
+
+// EnrichmentInfo tracks data sources for metadata fields
+type EnrichmentInfo struct {
+	DataSources struct {
+		Name                     string `json:"name"`
+		Provider                 string `json:"provider"`
+		Description              string `json:"description"`
+		Readme                   string `json:"readme"`
+		Language                 string `json:"language"`
+		License                  string `json:"license"`
+		LicenseLink              string `json:"licenseLink"`
+		Maturity                 string `json:"maturity"`
+		LibraryName              string `json:"libraryName"`
+		Tasks                    string `json:"tasks"`
+		CreateTimeSinceEpoch     string `json:"createTimeSinceEpoch"`
+		LastUpdateTimeSinceEpoch string `json:"lastUpdateTimeSinceEpoch"`
+		Artifacts                string `json:"artifacts"`
+	} `json:"dataSources"`
+}
+
+// ModelsCatalog represents the aggregated catalog of all models
+type ModelsCatalog struct {
+	Source string              `yaml:"source"`
+	Models []ExtractedMetadata `yaml:"models"`
+}
+
+// Config represents the application configuration
+type Config struct {
+	ModelsIndexPath   string
+	OutputDir         string
+	CatalogOutputPath string
+	MaxConcurrent     int
+}
+
+// ModelMetadata tracks metadata presence in modelcard
+type ModelMetadata struct {
+	Name                     bool `yaml:"name"`
+	Provider                 bool `yaml:"provider"`
+	Description              bool `yaml:"description"`
+	Readme                   bool `yaml:"readme"`
+	Language                 bool `yaml:"language"`
+	License                  bool `yaml:"license"`
+	LicenseLink              bool `yaml:"licenseLink"`
+	Maturity                 bool `yaml:"maturity"`
+	LibraryName              bool `yaml:"libraryName"`
+	Tasks                    bool `yaml:"tasks"`
+	CreateTimeSinceEpoch     bool `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch bool `yaml:"lastUpdateTimeSinceEpoch"`
+	Artifacts                bool `yaml:"artifacts"`
+}
+
+// ModelCard represents a model card structure
+type ModelCard struct {
+	Present  bool          `yaml:"present"`
+	Metadata ModelMetadata `yaml:"metadata"`
+}
+
+// ModelManifest represents a model manifest entry
+type ModelManifest struct {
+	Ref       string    `yaml:"ref"`
+	ModelCard ModelCard `yaml:"modelcard"`
+}
+
+// ManifestsData represents the collection of all manifests
+type ManifestsData struct {
+	Models []ModelManifest `yaml:"models"`
+}
