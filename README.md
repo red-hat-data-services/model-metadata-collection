@@ -34,9 +34,10 @@ The project is organized into modular packages for maintainability and testabili
 
 ## Prerequisites
 
-- Go 1.23.3 or later
+- Go 1.24 or later
 - Access to container registries (registry.redhat.io)
 - Internet access for HuggingFace API calls
+- Docker (for containerized builds and deployment)
 
 ## Installation
 
@@ -98,6 +99,69 @@ Run with default settings (automatically processes HuggingFace collections and f
 | `--skip-enrichment` | Skip metadata enrichment | `false` |
 | `--skip-catalog` | Skip catalog generation | `false` |
 | `--help` | Show help message | `false` |
+
+## Docker Build and Deployment
+
+### Prerequisites for Docker Build
+
+Before building the Docker image, you must authenticate with Red Hat's container registry:
+
+```bash
+# Login to Red Hat container registry (required for accessing ModelCar images)
+docker login registry.redhat.io
+# Enter your Red Hat account credentials when prompted
+```
+
+**Important**: This authentication step is required because the Docker build process needs to access Red Hat container images during the generation stage.
+
+### Building the Container
+
+The Docker build uses a multi-stage approach for optimal image size and security:
+
+1. **Builder Stage**: Uses `registry.access.redhat.com/ubi9/go-toolset:1.24` to compile the Go application
+2. **Generator Stage**: Uses `registry.access.redhat.com/ubi9-minimal` to run model extraction and generate `data/models-catalog.yaml`
+3. **Runtime Stage**: Uses `registry.access.redhat.com/ubi9-micro` for the final minimal image containing only the catalog
+
+```bash
+# Build the Docker image (requires prior registry.redhat.io authentication)
+make docker-build
+
+# The build automatically uses your host Docker authentication
+# No additional credential files needed
+```
+
+### Docker Authentication Details
+
+- The build process automatically detects and uses your existing `~/.docker/config.json` authentication
+- Registry credentials are securely mounted during build using Docker BuildKit secrets
+- No credentials are stored in the final container image
+- If no authentication is found, the build gracefully continues without registry access (with reduced functionality)
+
+### Container Usage Examples
+
+```bash
+# Run container and access the generated catalog
+docker run -d --name model-metadata-catalog model-metadata-collection:latest
+
+# Copy catalog from container to host
+docker cp model-metadata-catalog:/app/data/models-catalog.yaml ./models-catalog.yaml
+
+# Mount catalog directory for external access
+docker run -d -v $(pwd)/catalog-data:/app/data --name catalog model-metadata-collection:latest
+
+# Remove container when done
+docker rm -f model-metadata-catalog
+```
+
+### Custom Docker Build Options
+
+```bash
+# Build with custom image name and tag
+DOCKER_IMAGE_NAME=my-model-catalog DOCKER_IMAGE_TAG=v1.0 make docker-build
+
+# View image details after build
+docker images model-metadata-collection
+```
 
 ## Input Format
 
@@ -242,6 +306,7 @@ This runs formatting, vetting, testing, and building in sequence.
 | `release` | Create optimized release build |
 | `run` | Run with default settings |
 | `process` | Run with custom input/output paths |
+| `docker-build` | Build Docker container image |
 
 ## API Integration
 
@@ -362,3 +427,4 @@ For issues and questions:
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and changes.
+

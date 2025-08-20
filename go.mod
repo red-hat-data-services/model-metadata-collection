@@ -1,8 +1,8 @@
 module github.com/chambridge/model-metadata-collection
 
-go 1.23.3
+go 1.24
 
-toolchain go1.23.10
+toolchain go1.24.5
 
 require (
 	github.com/containers/image/v5 v5.35.0

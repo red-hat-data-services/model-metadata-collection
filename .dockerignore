@@ -1,0 +1,47 @@
+# Build artifacts
+build/
+output/
+coverage.out
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Test files
+*_test.go
+
+# Claude Code files
+.claude/
+
+# Coverage reports
+*.out
+*.prof
+
+# Temporary files
+tmp/
+temp/

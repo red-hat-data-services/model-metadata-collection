@@ -9,17 +9,19 @@ This is a Go application that extracts model metadata (specifically model cards)
 ## Key Commands
 
 ### Build and Run
-- `go run main.go` - Run the application to process HuggingFace collections and extract metadata from ModelCar container images
-- `./scripts/update-collections.sh` - Update HuggingFace collection index files
-- `go build` - Build the executable
-- `go mod tidy` - Clean up dependencies
-- `go fmt ./...` - Format Go code
-- `go vet ./...` - Check for Go code issues
-- `go test ./...` - Run tests (though no tests currently exist)
+- `make build` - Build the model-extractor binary
+- `make run` - Run the application to process HuggingFace collections and extract metadata from ModelCar container images
+- `make clean` - Clean build artifacts and output
+- `make fmt` - Format Go code
+- `make vet` - Check for Go code issues
+- `make test` - Run tests with coverage reporting
+- `make docker-build` - Build Docker container image
 
 ### Development
-- `go mod download` - Download dependencies
-- `gofmt -w .` - Format all Go files in place
+- `make deps` - Download and tidy dependencies
+- `make dev` - Quick development iteration (fmt, vet, test, build)
+- `make ci` - Full CI pipeline
+- `make lint` - Run linters (requires golangci-lint)
 
 ## Architecture
 
@@ -96,6 +98,50 @@ models:
     readme_path: /RedHatAI/Llama-4-Scout-17B-16E-Instruct/README.md
 ```
 
+## Docker Build and Deployment
+
+### Prerequisites
+Before building the Docker image, you must authenticate with Red Hat's container registry:
+
+```bash
+# Login to Red Hat container registry (required for accessing ModelCar images)
+docker login registry.redhat.io
+# Enter your Red Hat account credentials when prompted
+```
+
+### Building the Container
+The Docker build uses a multi-stage approach:
+
+1. **Builder Stage**: Uses `registry.access.redhat.com/ubi9/go-toolset:1.24` to compile the Go application
+2. **Generator Stage**: Uses `registry.access.redhat.com/ubi9-minimal` to run model extraction and generate `data/models-catalog.yaml`
+3. **Runtime Stage**: Uses `registry.access.redhat.com/ubi9-micro` for the final minimal image containing only the catalog
+
+```bash
+# Build the Docker image (requires prior registry.redhat.io authentication)
+make docker-build
+
+# The build automatically uses your host Docker authentication
+# No additional credential files needed
+```
+
+### Authentication Details
+- The build process automatically detects and uses your existing `~/.docker/config.json` authentication
+- Registry credentials are securely mounted during build using Docker BuildKit secrets
+- No credentials are stored in the final container image
+- If no authentication is found, the build gracefully continues without registry access
+
+### Usage Examples
+```bash
+# Run container and access the generated catalog
+docker run -d --name model-metadata-catalog model-metadata-collection:latest
+
+# Copy catalog from container to host
+docker cp model-metadata-catalog:/app/data/models-catalog.yaml ./models-catalog.yaml
+
+# Mount catalog directory for external access
+docker run -d -v $(pwd)/catalog-data:/app/data --name catalog model-metadata-collection:latest
+```
+
 ## Current Capabilities
 - ✅ HuggingFace collections integration with automatic discovery
 - ✅ Semver version detection and handling
@@ -105,3 +151,5 @@ models:
 - ✅ Parallel processing with concurrency limiting
 - ✅ Graceful error handling and fallbacks
 - ✅ Version-specific index file generation
+- ✅ Multi-stage Docker builds with registry authentication
+- ✅ Containerized catalog generation

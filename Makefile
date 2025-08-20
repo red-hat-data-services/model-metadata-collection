@@ -19,7 +19,12 @@ MAIN_PATH=./cmd/model-extractor
 MODELS_INDEX_PATH=data/models-index.yaml
 CATALOG_OUTPUT_PATH=data/models-catalog.yaml
 
-.PHONY: all build clean test test-coverage lint fmt vet deps check help run process
+# Docker parameters
+DOCKER_IMAGE_NAME?=model-metadata-collection
+DOCKER_IMAGE_TAG?=latest
+DOCKER_FULL_IMAGE_NAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
+
+.PHONY: all build clean test test-coverage lint fmt vet deps check help run process docker-build
 
 # Default target
 all: check build
@@ -168,6 +173,39 @@ setup:
 	$(GOGET) github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
 	$(GOGET) golang.org/x/tools/cmd/godoc@latest
 
+# Docker targets
+
+# Build Docker image
+docker-build:
+	@echo "Building Docker image: $(DOCKER_FULL_IMAGE_NAME)"
+	@echo "Using host Docker authentication for registry access..."
+	@# Use buildkit to mount Docker config for registry authentication
+	@if [ -f ~/.docker/config.json ]; then \
+		echo "Found Docker config, using host authentication"; \
+		DOCKER_BUILDKIT=1 docker build \
+			--secret id=dockerconfig,src=$$HOME/.docker/config.json \
+			--build-arg BUILDKIT_INLINE_CACHE=1 \
+			-t $(DOCKER_FULL_IMAGE_NAME) .; \
+	else \
+		echo "No Docker config found, building without registry authentication"; \
+		docker build -t $(DOCKER_FULL_IMAGE_NAME) .; \
+	fi
+	@echo "Build completed successfully!"
+	@echo "Image: $(DOCKER_FULL_IMAGE_NAME)"
+	@echo ""
+	@echo "Image details:"
+	@docker images $(DOCKER_IMAGE_NAME) --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}"
+	@echo ""
+	@echo "Usage examples:"
+	@echo "  # Run container:"
+	@echo "  docker run -d --name model-metadata-catalog $(DOCKER_FULL_IMAGE_NAME)"
+	@echo ""
+	@echo "  # Copy catalog from container:"
+	@echo "  docker cp model-metadata-catalog:/app/data/models-catalog.yaml ./models-catalog.yaml"
+	@echo ""
+	@echo "  # Mount catalog directory:"
+	@echo "  docker run -d -v \$$(pwd)/catalog-data:/app/data --name catalog $(DOCKER_FULL_IMAGE_NAME)"
+	
 # Show help
 help:
 	@echo "Available targets:"
@@ -192,4 +230,5 @@ help:
 	@echo "  docs        - Generate documentation"
 	@echo "  security    - Run security scan"
 	@echo "  setup       - Setup development environment"
-	@echo "  help        - Show this help"
+	@echo "  docker-build - Build Docker image"
+	@echo "  help         - Show this help"
