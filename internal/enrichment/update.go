@@ -60,7 +60,27 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 
 	// Update metadata with enriched values and track sources in enrichment file
 	if enrichedData.Name.Source != "null" {
-		if existingMetadata.Name == nil {
+		// Allow HuggingFace data to override modelcard extractions when we have high confidence
+		shouldOverrideName := existingMetadata.Name == nil
+
+		if existingMetadata.Name != nil {
+			// Override based on HuggingFace match confidence
+			switch enrichedData.MatchConfidence {
+			case "high":
+				shouldOverrideName = true
+				log.Printf("  Overriding model name '%s' with high-confidence HuggingFace data", *existingMetadata.Name)
+			case "medium":
+				// For medium confidence, only override if the existing name looks like a document title
+				name := strings.ToLower(*existingMetadata.Name)
+				if strings.Contains(name, "model card") || strings.Contains(name, "readme") ||
+					strings.Contains(name, "documentation") || strings.HasSuffix(name, " card") {
+					shouldOverrideName = true
+					log.Printf("  Overriding poor quality model name '%s' with medium-confidence HuggingFace data", *existingMetadata.Name)
+				}
+			}
+		}
+
+		if shouldOverrideName {
 			nameStr := enrichedData.Name.Value.(string)
 			existingMetadata.Name = &nameStr
 		}

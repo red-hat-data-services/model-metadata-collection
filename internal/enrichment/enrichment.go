@@ -192,9 +192,15 @@ func EnrichMetadataFromHuggingFace() error {
 			if err != nil {
 				log.Printf("  Warning: Failed to fetch HF details: %v", err)
 			} else {
-				// Enrich with HuggingFace data (only if not already available from modelcard)
-				if enriched.Name.Source == "null" && hfDetails.ID != "" {
-					enriched.Name = metadata.CreateMetadataSource(hfDetails.ID, "huggingface.api")
+				// Always store HuggingFace name when available - the confidence-based override logic will decide whether to use it
+				if hfDetails.ID != "" {
+					// For high-confidence matches, always set the HuggingFace name so it can be used by confidence-based override logic
+					if enriched.MatchConfidence == "high" {
+						enriched.Name = metadata.CreateMetadataSource(hfDetails.ID, "huggingface.api")
+					} else if enriched.Name.Source == "null" {
+						// For medium/low confidence, only set if no existing name
+						enriched.Name = metadata.CreateMetadataSource(hfDetails.ID, "huggingface.api")
+					}
 				}
 				if enriched.License.Source == "null" && hfDetails.License != "" {
 					enriched.License = metadata.CreateMetadataSource(hfDetails.License, "huggingface.api")
@@ -395,6 +401,20 @@ func UpdateOCIArtifacts(registryModel string) error {
 
 	// Generate OCI artifacts from the registry model reference
 	ociArtifacts := registry.ExtractOCIArtifactsFromRegistry(registryModel)
+
+	// Preserve existing timestamp data when updating artifacts
+	for i := range ociArtifacts {
+		if i < len(existingMetadata.Artifacts) {
+			// Preserve timestamps from existing artifacts if they exist
+			if existingMetadata.Artifacts[i].CreateTimeSinceEpoch != nil {
+				ociArtifacts[i].CreateTimeSinceEpoch = existingMetadata.Artifacts[i].CreateTimeSinceEpoch
+			}
+			if existingMetadata.Artifacts[i].LastUpdateTimeSinceEpoch != nil {
+				ociArtifacts[i].LastUpdateTimeSinceEpoch = existingMetadata.Artifacts[i].LastUpdateTimeSinceEpoch
+			}
+		}
+	}
+
 	existingMetadata.Artifacts = ociArtifacts
 
 	// Write updated metadata back to file

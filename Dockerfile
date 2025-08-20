@@ -1,62 +1,13 @@
-# Multi-stage Dockerfile for model metadata collection
-#
-# Stage 1: Builder - Build the Go application
-FROM registry.access.redhat.com/ubi9/go-toolset:1.24 AS builder
-
-# Set working directory
-WORKDIR /opt/app-root/src
-
-# Copy go mod files first for better caching
-COPY go.mod go.sum ./
-
-# Download dependencies
-USER root
-RUN go mod download
-
-# Copy source code
-COPY . .
-
-# Build the application
-RUN make build
-
-# Stage 2: Generator - Generate the models catalog
-FROM registry.access.redhat.com/ubi9-minimal:latest AS generator
-
-# Install required packages for network access and data generation
-RUN microdnf update -y && \
-    microdnf install -y ca-certificates && \
-    microdnf clean all
-
-# Create working directory
-WORKDIR /app
-
-# Copy the built binary from builder stage
-COPY --from=builder /opt/app-root/src/build/model-extractor /usr/local/bin/model-extractor
-
-# Copy data files needed for generation
-COPY --from=builder /opt/app-root/src/data/ ./data/
-
-# Create output directory
-RUN mkdir -p output
-
-# Run the model extractor to generate the catalog
-# This will create data/models-catalog.yaml
-# Mount Docker config secret to access private registries
-RUN --mount=type=secret,id=dockerconfig,target=/root/.docker/config.json \
-    model-extractor
-
-# Verify the catalog was generated
-RUN ls -la data/models-catalog.yaml
-
-# Stage 3: Final runtime image - Minimal image with just the catalog
-FROM registry.access.redhat.com/ubi9-micro:latest AS runtime
+# Simplified Dockerfile for model metadata collection
+# Since models-catalog.yaml is now checked in by CI/CD, we only need to copy the files
+FROM registry.access.redhat.com/ubi9-micro:latest
 
 # Create directory for mounting by other applications
 RUN mkdir -p /app/data
 
-# Copy the generated catalog and index files from the generator stage
-COPY --from=generator /app/data/models-catalog.yaml /app/data/
-COPY --from=generator /app/data/models-index.yaml /app/data/
+# Copy the pre-generated catalog and index files from the codebase
+COPY data/models-catalog.yaml /app/data/
+COPY data/models-index.yaml /app/data/
 
 # Set proper permissions
 RUN chmod 644 /app/data/models-catalog.yaml /app/data/models-index.yaml

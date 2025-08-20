@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/containers/image/v5/docker"
 	blobinfocachememory "github.com/containers/image/v5/pkg/blobinfocache/memory"
@@ -216,9 +218,9 @@ func processModelsInParallel(manifestRefs []string, maxConcurrent int) []ModelRe
 			defer func() { <-semaphore }() // Release semaphore when done
 
 			log.Printf("Starting processing for: %s", ref)
-			src, layers := fetchManifestSrcAndLayers(ref, sys)
+			src, layers, configBlob := fetchManifestSrcAndLayers(ref, sys)
 			defer func() { _ = src.Close() }()
-			modelCardFound, metadata := scanLayersForModelCard(layers, src, ref)
+			modelCardFound, metadata := scanLayersForModelCard(layers, src, ref, configBlob)
 			log.Printf("Completed processing for: %s", ref)
 
 			// Send result to channel
@@ -244,7 +246,7 @@ func processModelsInParallel(manifestRefs []string, maxConcurrent int) []ModelRe
 }
 
 // scanLayersForModelCard scans container layers for model card content
-func scanLayersForModelCard(layers []containertypes.BlobInfo, src containertypes.ImageSource, manifestRef string) (bool, types.ModelMetadata) {
+func scanLayersForModelCard(layers []containertypes.BlobInfo, src containertypes.ImageSource, manifestRef string, configBlob []byte) (bool, types.ModelMetadata) {
 	for i, layer := range layers {
 		log.Printf("Layer %d:", i+1)
 		log.Printf("  Digest: %s", layer.Digest)
@@ -355,8 +357,19 @@ func scanLayersForModelCard(layers []containertypes.BlobInfo, src containertypes
 						// Extract actual metadata values
 						extractedMetadata := metadata.ExtractMetadataValues(singleMdContent)
 
-						// Populate artifacts with OCI registry metadata
+						// Populate artifacts with OCI registry metadata and real timestamps
 						extractedMetadata.Artifacts = registry.ExtractOCIArtifactsFromRegistry(manifestRef)
+
+						// Extract real timestamps from config blob and update artifacts
+						createTime, updateTime := extractTimestampsFromConfig(configBlob)
+						for i := range extractedMetadata.Artifacts {
+							if extractedMetadata.Artifacts[i].CreateTimeSinceEpoch == nil {
+								extractedMetadata.Artifacts[i].CreateTimeSinceEpoch = createTime
+							}
+							if extractedMetadata.Artifacts[i].LastUpdateTimeSinceEpoch == nil {
+								extractedMetadata.Artifacts[i].LastUpdateTimeSinceEpoch = updateTime
+							}
+						}
 
 						// Generate metadata.yaml file in the same directory
 						metadataFilePath := filepath.Join(outputFileDir, "metadata.yaml")
@@ -383,8 +396,8 @@ func scanLayersForModelCard(layers []containertypes.BlobInfo, src containertypes
 	return false, types.ModelMetadata{}
 }
 
-// fetchManifestSrcAndLayers fetches manifest and layers from container registry
-func fetchManifestSrcAndLayers(manifestRef string, sys *containertypes.SystemContext) (containertypes.ImageSource, []containertypes.BlobInfo) {
+// fetchManifestSrcAndLayers fetches manifest, layers, and config blob from container registry
+func fetchManifestSrcAndLayers(manifestRef string, sys *containertypes.SystemContext) (containertypes.ImageSource, []containertypes.BlobInfo, []byte) {
 	log.Printf("Parsing reference...")
 	ref, err := docker.ParseReference("//" + manifestRef)
 	if err != nil {
@@ -434,7 +447,62 @@ func fetchManifestSrcAndLayers(manifestRef string, sys *containertypes.SystemCon
 	for i, layer := range layers {
 		log.Printf("  Layer %d: %s", i+1, layer.Digest)
 	}
-	return src, layers
+	return src, layers, configBlob
+}
+
+// OCI Image Config structure for timestamp extraction
+type OCIImageConfig struct {
+	Created string `json:"created"`
+	History []struct {
+		Created string `json:"created"`
+	} `json:"history"`
+}
+
+// extractTimestampsFromConfig extracts creation and update timestamps from OCI config blob
+func extractTimestampsFromConfig(configBlob []byte) (*int64, *int64) {
+	if len(configBlob) == 0 {
+		return nil, nil
+	}
+
+	var config OCIImageConfig
+	if err := json.Unmarshal(configBlob, &config); err != nil {
+		log.Printf("Warning: Failed to parse config blob for timestamps: %v", err)
+		return nil, nil
+	}
+
+	// Parse creation timestamp
+	var createTime *int64
+	if config.Created != "" {
+		if parsedTime, err := time.Parse(time.RFC3339, config.Created); err == nil {
+			epochMs := parsedTime.Unix() * 1000
+			createTime = &epochMs
+		} else {
+			log.Printf("Warning: Failed to parse creation time '%s': %v", config.Created, err)
+		}
+	}
+
+	// Use the most recent history entry for update time, fallback to creation time
+	updateTime := createTime
+	if len(config.History) > 0 {
+		lastHistoryEntry := config.History[len(config.History)-1]
+		if lastHistoryEntry.Created != "" {
+			if parsedTime, err := time.Parse(time.RFC3339, lastHistoryEntry.Created); err == nil {
+				epochMs := parsedTime.Unix() * 1000
+				updateTime = &epochMs
+			}
+		}
+	}
+
+	log.Printf("Extracted timestamps - Create: %v, Update: %v", formatTimestamp(createTime), formatTimestamp(updateTime))
+	return createTime, updateTime
+}
+
+// formatTimestamp formats a timestamp pointer for logging
+func formatTimestamp(ts *int64) string {
+	if ts == nil {
+		return "nil"
+	}
+	return time.Unix(*ts/1000, 0).Format(time.RFC3339)
 }
 
 // generateManifestsYAML creates a manifests.yaml file tracking all processed models
