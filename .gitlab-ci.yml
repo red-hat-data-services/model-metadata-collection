@@ -28,7 +28,7 @@ model-metadata-extraction:
     - OLD_COUNT=$(grep -c '^ *- name:' "${MODELS_CATALOG_PATH}.original" 2>/dev/null | tr -d '\n' || echo "0") && NEW_COUNT=$(grep -c '^ *- name:' "$MODELS_CATALOG_PATH" 2>/dev/null | tr -d '\n' || echo "0")
     - 'if [ "$NEW_COUNT" -gt "$OLD_COUNT" ]; then CHANGE_DESC="Added models ($OLD_COUNT to $NEW_COUNT)"; elif [ "$NEW_COUNT" -lt "$OLD_COUNT" ]; then CHANGE_DESC="Removed models ($OLD_COUNT to $NEW_COUNT)"; else CHANGE_DESC="Updated model metadata"; fi'
     - git checkout -b "$BRANCH_NAME" && git add "$MODELS_CATALOG_PATH" && git commit -m "Update models catalog $CHANGE_DESC ($OLD_COUNT -> $NEW_COUNT)"
-    - test -n "$GITLAB_TOKEN" && git remote set-url origin "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" && git push -o ci.skip origin "$BRANCH_NAME" || exit 1
+    - test -n "$GITLAB_TOKEN" && git config --global http.sslVerify false && git remote set-url origin "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" && git push -o ci.skip origin "$BRANCH_NAME" || exit 1
     - MR_TITLE="Update models catalog $CHANGE_DESC" && MR_DESC="Automated catalog update $OLD_COUNT to $NEW_COUNT models"
     - 'curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" -d "{\"source_branch\":\"$BRANCH_NAME\",\"target_branch\":\"$CI_DEFAULT_BRANCH\",\"title\":\"$MR_TITLE\",\"description\":\"$MR_DESC\",\"remove_source_branch\":true,\"squash\":true}" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests" && echo "MR created for branch $BRANCH_NAME"'
   
