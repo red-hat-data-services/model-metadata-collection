@@ -18,9 +18,9 @@ func TestFetchCollections(t *testing.T) {
 	if err != nil {
 		// Expected to fail due to network unavailability in tests
 		// Accept various types of network/API errors
-		if !strings.Contains(err.Error(), "failed to fetch collections") && 
-		   !strings.Contains(err.Error(), "failed to parse collections") &&
-		   !strings.Contains(err.Error(), "json:") {
+		if !strings.Contains(err.Error(), "failed to fetch collections") &&
+			!strings.Contains(err.Error(), "failed to parse collections") &&
+			!strings.Contains(err.Error(), "json:") {
 			t.Errorf("Expected a collections-related error, got: %v", err)
 		}
 	}
@@ -43,9 +43,9 @@ func TestDiscoverValidatedModelCollections(t *testing.T) {
 	if err != nil {
 		// Expected to fail due to network unavailability in tests
 		// Accept various types of network/API errors
-		if !strings.Contains(err.Error(), "failed to fetch user collections") && 
-		   !strings.Contains(err.Error(), "failed to parse collections") &&
-		   !strings.Contains(err.Error(), "json:") {
+		if !strings.Contains(err.Error(), "failed to fetch user collections") &&
+			!strings.Contains(err.Error(), "failed to parse collections") &&
+			!strings.Contains(err.Error(), "json:") {
 			t.Errorf("Expected a collections-related error, got: %v", err)
 		}
 	}
@@ -57,8 +57,8 @@ func TestFetchModelDetails(t *testing.T) {
 	if err != nil {
 		// Expected to fail due to network unavailability in tests
 		// Accept various types of network/API errors
-		if !strings.Contains(err.Error(), "failed to fetch model details") && 
-		   !strings.Contains(err.Error(), "API returned status") {
+		if !strings.Contains(err.Error(), "failed to fetch model details") &&
+			!strings.Contains(err.Error(), "API returned status") {
 			t.Errorf("Expected a model details related error, got: %v", err)
 		}
 	}
@@ -70,9 +70,9 @@ func TestFetchReadme(t *testing.T) {
 	if err != nil {
 		// Expected to fail due to network unavailability in tests
 		// Accept various types of network/API errors
-		if !strings.Contains(err.Error(), "failed to fetch README") && 
-		   !strings.Contains(err.Error(), "README not found") &&
-		   !strings.Contains(err.Error(), "status") {
+		if !strings.Contains(err.Error(), "failed to fetch README") &&
+			!strings.Contains(err.Error(), "README not found") &&
+			!strings.Contains(err.Error(), "status") {
 			t.Errorf("Expected a README related error, got: %v", err)
 		}
 	}

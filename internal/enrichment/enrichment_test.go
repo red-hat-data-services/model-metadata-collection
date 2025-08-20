@@ -215,11 +215,11 @@ func TestUpdateModelMetadataFile_NoExistingFile(t *testing.T) {
 	enrichedData := &types.EnrichedModelMetadata{
 		RegistryModel:    registryModel,
 		EnrichmentStatus: "success",
-		Name:            types.MetadataSource{Value: "Test Model", Source: "huggingface"},
-		Provider:        types.MetadataSource{Value: "Test Provider", Source: "huggingface"},
-		License:         types.MetadataSource{Value: "apache-2.0", Source: "huggingface"},
-		Description:     types.MetadataSource{Value: "Test Description", Source: "huggingface"},
-		LibraryName:     types.MetadataSource{Value: "transformers", Source: "huggingface"},
+		Name:             types.MetadataSource{Value: "Test Model", Source: "huggingface"},
+		Provider:         types.MetadataSource{Value: "Test Provider", Source: "huggingface"},
+		License:          types.MetadataSource{Value: "apache-2.0", Source: "huggingface"},
+		Description:      types.MetadataSource{Value: "Test Description", Source: "huggingface"},
+		LibraryName:      types.MetadataSource{Value: "transformers", Source: "huggingface"},
 	}
 
 	// Create output directory structure
@@ -293,11 +293,11 @@ func TestUpdateModelMetadataFile_WithExistingFile(t *testing.T) {
 	enrichedData := &types.EnrichedModelMetadata{
 		RegistryModel:    registryModel,
 		EnrichmentStatus: "success",
-		Name:            types.MetadataSource{Value: "Enriched Model", Source: "huggingface"},
-		Provider:        types.MetadataSource{Value: "Enriched Provider", Source: "huggingface"},
-		License:         types.MetadataSource{Value: "mit", Source: "huggingface"},
-		Description:     types.MetadataSource{Value: "Enriched Description", Source: "huggingface"},
-		LibraryName:     types.MetadataSource{Value: "transformers", Source: "huggingface"},
+		Name:             types.MetadataSource{Value: "Enriched Model", Source: "huggingface"},
+		Provider:         types.MetadataSource{Value: "Enriched Provider", Source: "huggingface"},
+		License:          types.MetadataSource{Value: "mit", Source: "huggingface"},
+		Description:      types.MetadataSource{Value: "Enriched Description", Source: "huggingface"},
+		LibraryName:      types.MetadataSource{Value: "transformers", Source: "huggingface"},
 	}
 
 	// Call UpdateModelMetadataFile

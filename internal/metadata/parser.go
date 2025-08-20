@@ -21,8 +21,8 @@ type ModelCardYAMLFrontmatter struct {
 	Tags        []string `yaml:"tags"`
 }
 
-// extractYAMLFrontmatterFromModelCard extracts YAML frontmatter from modelcard.md content
-func extractYAMLFrontmatterFromModelCard(content string) (*ModelCardYAMLFrontmatter, error) {
+// ExtractYAMLFrontmatterFromModelCard extracts YAML frontmatter from modelcard.md content
+func ExtractYAMLFrontmatterFromModelCard(content string) (*ModelCardYAMLFrontmatter, error) {
 	if content == "" {
 		return nil, fmt.Errorf("empty modelcard content")
 	}
@@ -125,7 +125,7 @@ func ExtractMetadataValues(content []byte) types.ExtractedMetadata {
 	metadata := types.ExtractedMetadata{}
 
 	// First, try to extract YAML frontmatter
-	frontmatter, err := extractYAMLFrontmatterFromModelCard(contentStr)
+	frontmatter, err := ExtractYAMLFrontmatterFromModelCard(contentStr)
 	if err == nil {
 		// Populate metadata from YAML frontmatter first (highest priority)
 

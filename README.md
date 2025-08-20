@@ -8,6 +8,7 @@ A Go application for extracting, enriching, and cataloging metadata from Red Hat
 - **OCI Container Analysis**: Extracts model cards from container image layers with annotation-based detection
 - **Metadata Enrichment**: Enriches model metadata with HuggingFace data including date-to-epoch conversion and quality validation, **with modelcard.md data taking priority over external sources**
 - **Registry Integration**: Fetches OCI artifact metadata from container registries
+- **Metadata Reporting**: Comprehensive analysis of metadata completeness, data source tracking, and quality metrics
 - **Flexible CLI**: Configurable input/output paths and processing options with skip flags for individual components
 - **Concurrent Processing**: Parallel processing of multiple models with configurable concurrency limits
 - **Comprehensive Testing**: Unit tests for all major components
@@ -18,14 +19,17 @@ A Go application for extracting, enriching, and cataloging metadata from Red Hat
 The project is organized into modular packages for maintainability and testability:
 
 ```
-├── cmd/model-extractor/          # Main CLI application
+├── cmd/
+│   ├── model-extractor/          # Main CLI application for metadata extraction
+│   └── metadata-report/          # CLI for generating metadata reports
 ├── internal/                     # Internal packages
 │   ├── catalog/                  # Catalog generation services
 │   ├── config/                   # Configuration management
 │   ├── enrichment/               # Metadata enrichment services
 │   ├── huggingface/             # HuggingFace API integration
 │   ├── metadata/                # Metadata parsing and migration
-│   └── registry/                # Container registry services
+│   ├── registry/                # Container registry services
+│   └── report/                  # Metadata reporting and analysis
 ├── pkg/                         # Public packages
 │   ├── types/                   # Shared type definitions
 │   └── utils/                   # Utility functions
@@ -49,12 +53,18 @@ cd model-metadata-collection
 make build
 ```
 
-This will create a binary at `build/model-extractor`.
+This will create binaries at:
+- `build/model-extractor` - Main metadata extraction tool
+- `build/metadata-report` - Metadata reporting and analysis tool
 
 ### Using Go Install
 
 ```bash
+# Install the metadata extraction tool
 go install github.com/chambridge/model-metadata-collection/cmd/model-extractor@latest
+
+# Install the metadata reporting tool
+go install github.com/chambridge/model-metadata-collection/cmd/metadata-report@latest
 ```
 
 ## Usage
@@ -75,6 +85,21 @@ Run with default settings (automatically processes HuggingFace collections and f
   --output-dir /tmp/output \
   --catalog-output /tmp/catalog.yaml \
   --max-concurrent 10
+```
+
+### Metadata Reporting
+
+Generate comprehensive metadata completeness reports:
+
+```bash
+# Generate reports from existing output
+./build/metadata-report --output-dir output --report-dir reports
+
+# Use custom catalog file
+./build/metadata-report \
+  --catalog data/models-catalog.yaml \
+  --output-dir output \
+  --report-dir reports
 ```
 
 ### Skip Specific Processing Steps
@@ -98,6 +123,15 @@ Run with default settings (automatically processes HuggingFace collections and f
 | `--skip-huggingface` | Skip HuggingFace collection processing | `false` |
 | `--skip-enrichment` | Skip metadata enrichment | `false` |
 | `--skip-catalog` | Skip catalog generation | `false` |
+| `--help` | Show help message | `false` |
+
+### Metadata Report CLI Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--catalog` | Path to models catalog YAML file | `data/models-catalog.yaml` |
+| `--output-dir` | Directory containing model metadata | `output` |
+| `--report-dir` | Directory for generated reports | `output` |
 | `--help` | Show help message | `false` |
 
 ## Docker Build and Deployment
@@ -243,6 +277,64 @@ models:
     # ... complete metadata for all models
 ```
 
+### Metadata Reports
+
+The metadata reporting functionality generates comprehensive analysis of field completeness and data source tracking:
+
+#### Report Structure
+
+```
+reports/
+├── metadata-report.md         # Human-readable markdown report
+└── metadata-report.yaml       # Machine-readable YAML report
+```
+
+#### Report Contents
+
+- **Field Completeness**: Shows percentage completion for each metadata field across all models
+- **Data Source Analysis**: Breaks down where metadata comes from (modelcard.md, HuggingFace, registry, etc.)
+- **Individual Model Reports**: Detailed analysis for each model including missing fields and YAML health scores
+- **Source Method Tracking**: Distinguishes between YAML frontmatter, regex extraction, API calls, and generated data
+
+#### Example Report Output
+
+```markdown
+# Model Metadata Completeness Report
+
+**Generated:** 2025-08-20 12:48:42 UTC
+
+## Summary
+
+**Total Models:** 39
+
+### Field Completeness
+
+| Field | Populated | Null | Percentage |
+|-------|-----------|------|------------|
+| tasks | 39 | 0 | 100.0% |
+| artifacts | 39 | 0 | 100.0% |
+| name | 39 | 0 | 100.0% |
+| license | 39 | 0 | 100.0% |
+| description | 39 | 0 | 100.0% |
+| readme | 39 | 0 | 100.0% |
+| provider | 38 | 1 | 97.4% |
+| licenseLink | 37 | 2 | 94.9% |
+| libraryName | 36 | 3 | 92.3% |
+| language | 35 | 4 | 89.7% |
+| createTimeSinceEpoch | 26 | 13 | 66.7% |
+| maturity | 0 | 39 | 0.0% |
+
+### Data Sources
+
+| Source | Count | Percentage |
+|--------|-------|------------|
+| modelcard.regex | 199 | 49.0% |
+| huggingface.tags | 92 | 22.7% |
+| registry | 39 | 9.6% |
+| huggingface.yaml | 33 | 8.1% |
+| generated | 30 | 7.4% |
+```
+
 ## Development
 
 ### Setting Up Development Environment
@@ -306,6 +398,7 @@ This runs formatting, vetting, testing, and building in sequence.
 | `release` | Create optimized release build |
 | `run` | Run with default settings |
 | `process` | Run with custom input/output paths |
+| `report` | Generate metadata completeness reports |
 | `docker-build` | Build Docker container image |
 
 ## API Integration

@@ -3,6 +3,9 @@ package utils
 import (
 	"regexp"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // parseLanguageNames converts language names to locale codes
@@ -229,7 +232,8 @@ func GenerateReadableDescription(modelName string) string {
 		// Special handling for known model names and companies
 		switch strings.ToLower(word) {
 		case "granite", "llama", "mistral", "qwen", "phi", "gemma":
-			result = append(result, strings.Title(word))
+			titleCaser := cases.Title(language.English)
+			result = append(result, titleCaser.String(word))
 		case "instruct":
 			result = append(result, "Instruct")
 		case "base":
@@ -248,10 +252,12 @@ func GenerateReadableDescription(modelName string) string {
 			result = append(result, "Red Hat AI")
 		default:
 			// Check if it's a version number
-			if matched, _ := regexp.MatchString(`^\d+(\.\d+)*[a-z]*$`, word); matched {
+			versionRegex := regexp.MustCompile(`^\d+(\.\d+)*[a-z]*$`)
+			if versionRegex.MatchString(word) {
 				result = append(result, word)
 			} else {
-				result = append(result, strings.Title(word))
+				titleCaser := cases.Title(language.English)
+				result = append(result, titleCaser.String(word))
 			}
 		}
 	}

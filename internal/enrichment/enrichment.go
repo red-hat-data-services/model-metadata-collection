@@ -70,31 +70,92 @@ func EnrichMetadataFromHuggingFace() error {
 		enriched.ModelSize = metadata.CreateMetadataSource(nil, "null")
 
 		// Populate from existing modelcard metadata if available (only for non-empty values)
+		// We need to determine if the data came from YAML frontmatter or text parsing
 		if existingMetadata != nil {
-			if existingMetadata.Name != nil && *existingMetadata.Name != "" {
-				enriched.Name = metadata.CreateMetadataSource(*existingMetadata.Name, "modelcard.md")
+			// Try to load the modelcard.md file to analyze the source
+			sanitizedName := utils.SanitizeManifestRef(regModel)
+			modelcardPath := fmt.Sprintf("output/%s/models/modelcard.md", sanitizedName)
+
+			var modelcardContent string
+			var hasYAMLFrontmatter bool
+			if content, err := os.ReadFile(modelcardPath); err == nil {
+				modelcardContent = string(content)
+				// Check if modelcard has YAML frontmatter
+				if frontmatter, err := metadata.ExtractYAMLFrontmatterFromModelCard(modelcardContent); err == nil {
+					hasYAMLFrontmatter = true
+					// Determine sources based on YAML frontmatter presence
+					// Note: Only check fields that exist in ModelCardYAMLFrontmatter struct
+
+					// Name and Provider are not in YAML frontmatter, so they're always from regex/text
+					if existingMetadata.Name != nil && *existingMetadata.Name != "" {
+						enriched.Name = metadata.CreateMetadataSource(*existingMetadata.Name, "modelcard.regex")
+					}
+					if existingMetadata.Provider != nil && *existingMetadata.Provider != "" {
+						enriched.Provider = metadata.CreateMetadataSource(*existingMetadata.Provider, "modelcard.regex")
+					}
+					if existingMetadata.Description != nil && *existingMetadata.Description != "" {
+						enriched.Description = metadata.CreateMetadataSource(*existingMetadata.Description, "modelcard.regex")
+					}
+
+					// License can come from YAML frontmatter
+					if existingMetadata.License != nil && *existingMetadata.License != "" {
+						source := "modelcard.regex"
+						if frontmatter.License != "" && frontmatter.License == *existingMetadata.License {
+							source = "modelcard.yaml"
+						} else if frontmatter.LicenseName != "" && frontmatter.LicenseName == *existingMetadata.License {
+							source = "modelcard.yaml"
+						}
+						enriched.License = metadata.CreateMetadataSource(*existingMetadata.License, source)
+					}
+
+					// LibraryName can come from YAML frontmatter
+					if existingMetadata.LibraryName != nil && *existingMetadata.LibraryName != "" {
+						source := "modelcard.regex"
+						if frontmatter.LibraryName != "" && frontmatter.LibraryName == *existingMetadata.LibraryName {
+							source = "modelcard.yaml"
+						}
+						enriched.LibraryName = metadata.CreateMetadataSource(*existingMetadata.LibraryName, source)
+					}
+
+					// Tasks can come from YAML frontmatter (pipeline_tag)
+					if len(existingMetadata.Tasks) > 0 {
+						source := "modelcard.regex"
+						if frontmatter.PipelineTag != "" && len(existingMetadata.Tasks) == 1 && existingMetadata.Tasks[0] == frontmatter.PipelineTag {
+							source = "modelcard.yaml"
+						}
+						enriched.Tasks = metadata.CreateMetadataSource(existingMetadata.Tasks, source)
+					}
+				}
 			}
-			if existingMetadata.Provider != nil && *existingMetadata.Provider != "" {
-				enriched.Provider = metadata.CreateMetadataSource(*existingMetadata.Provider, "modelcard.md")
+
+			// If no YAML frontmatter analysis was possible, assume all modelcard data comes from regex/text parsing
+			if !hasYAMLFrontmatter {
+				if existingMetadata.Name != nil && *existingMetadata.Name != "" {
+					enriched.Name = metadata.CreateMetadataSource(*existingMetadata.Name, "modelcard.regex")
+				}
+				if existingMetadata.Provider != nil && *existingMetadata.Provider != "" {
+					enriched.Provider = metadata.CreateMetadataSource(*existingMetadata.Provider, "modelcard.regex")
+				}
+				if existingMetadata.Description != nil && *existingMetadata.Description != "" {
+					enriched.Description = metadata.CreateMetadataSource(*existingMetadata.Description, "modelcard.regex")
+				}
+				if existingMetadata.License != nil && *existingMetadata.License != "" {
+					enriched.License = metadata.CreateMetadataSource(*existingMetadata.License, "modelcard.regex")
+				}
+				if existingMetadata.LibraryName != nil && *existingMetadata.LibraryName != "" {
+					enriched.LibraryName = metadata.CreateMetadataSource(*existingMetadata.LibraryName, "modelcard.regex")
+				}
+				if len(existingMetadata.Tasks) > 0 {
+					enriched.Tasks = metadata.CreateMetadataSource(existingMetadata.Tasks, "modelcard.regex")
+				}
 			}
-			if existingMetadata.Description != nil && *existingMetadata.Description != "" {
-				enriched.Description = metadata.CreateMetadataSource(*existingMetadata.Description, "modelcard.md")
-			}
-			if existingMetadata.License != nil && *existingMetadata.License != "" {
-				enriched.License = metadata.CreateMetadataSource(*existingMetadata.License, "modelcard.md")
-			}
-			if existingMetadata.LibraryName != nil && *existingMetadata.LibraryName != "" {
-				enriched.LibraryName = metadata.CreateMetadataSource(*existingMetadata.LibraryName, "modelcard.md")
-			}
+
+			// Handle timestamps (these are typically from text parsing, not YAML)
 			if existingMetadata.LastUpdateTimeSinceEpoch != nil {
-				enriched.LastModified = metadata.CreateMetadataSource(*existingMetadata.LastUpdateTimeSinceEpoch, "modelcard.md")
+				enriched.LastModified = metadata.CreateMetadataSource(*existingMetadata.LastUpdateTimeSinceEpoch, "modelcard.regex")
 			}
 			if existingMetadata.CreateTimeSinceEpoch != nil {
-				enriched.CreateTimeSinceEpoch = metadata.CreateMetadataSource(*existingMetadata.CreateTimeSinceEpoch, "modelcard.md")
-			}
-			// Handle Tasks arrays - only use if they have meaningful content
-			if len(existingMetadata.Tasks) > 0 {
-				enriched.Tasks = metadata.CreateMetadataSource(existingMetadata.Tasks, "modelcard.md")
+				enriched.CreateTimeSinceEpoch = metadata.CreateMetadataSource(*existingMetadata.CreateTimeSinceEpoch, "modelcard.regex")
 			}
 		}
 
@@ -133,16 +194,16 @@ func EnrichMetadataFromHuggingFace() error {
 			} else {
 				// Enrich with HuggingFace data (only if not already available from modelcard)
 				if enriched.Name.Source == "null" && hfDetails.ID != "" {
-					enriched.Name = metadata.CreateMetadataSource(hfDetails.ID, "huggingface")
+					enriched.Name = metadata.CreateMetadataSource(hfDetails.ID, "huggingface.api")
 				}
 				if enriched.License.Source == "null" && hfDetails.License != "" {
-					enriched.License = metadata.CreateMetadataSource(hfDetails.License, "huggingface")
+					enriched.License = metadata.CreateMetadataSource(hfDetails.License, "huggingface.api")
 				}
 				if enriched.LastModified.Source == "null" && hfDetails.LastModified != "" {
-					enriched.LastModified = metadata.CreateMetadataSource(hfDetails.LastModified, "huggingface")
+					enriched.LastModified = metadata.CreateMetadataSource(hfDetails.LastModified, "huggingface.api")
 				}
 				if enriched.Tags.Source == "null" && len(hfDetails.Tags) > 0 {
-					enriched.Tags = metadata.CreateMetadataSource(hfDetails.Tags, "huggingface")
+					enriched.Tags = metadata.CreateMetadataSource(hfDetails.Tags, "huggingface.tags")
 
 					// Parse tags for structured data and potentially extract license
 					languages, tagLicense, tasks := huggingface.ParseTagsForStructuredData(hfDetails.Tags)
@@ -150,27 +211,27 @@ func EnrichMetadataFromHuggingFace() error {
 
 					// Use license from tags if not already set
 					if enriched.License.Source == "null" && tagLicense != "" {
-						enriched.License = metadata.CreateMetadataSource(tagLicense, "huggingface")
+						enriched.License = metadata.CreateMetadataSource(tagLicense, "huggingface.tags")
 					}
 
 					// Store tasks if found
 					if enriched.Tasks.Source == "null" && len(tasks) > 0 {
-						enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface")
+						enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.tags")
 					}
 				}
 				if enriched.Downloads.Source == "null" && hfDetails.Downloads > 0 {
-					enriched.Downloads = metadata.CreateMetadataSource(hfDetails.Downloads, "huggingface")
+					enriched.Downloads = metadata.CreateMetadataSource(hfDetails.Downloads, "huggingface.api")
 				}
 				if enriched.Likes.Source == "null" && hfDetails.Likes > 0 {
-					enriched.Likes = metadata.CreateMetadataSource(hfDetails.Likes, "huggingface")
+					enriched.Likes = metadata.CreateMetadataSource(hfDetails.Likes, "huggingface.api")
 				}
 			}
 
 			// Try to fetch HuggingFace README for provider, date, and YAML frontmatter information
 			needsProvider := enriched.Provider.Source == "null"
-			// Extract release date if we don't have a valid date yet (even from modelcard.md with null value)
+			// Extract release date if we don't have a valid date yet (even from modelcard.regex with null value)
 			needsReleaseDate := enriched.LastModified.Source == "null" ||
-				(enriched.LastModified.Source == "modelcard.md" && enriched.LastModified.Value == nil)
+				(enriched.LastModified.Source == "modelcard.regex" && enriched.LastModified.Value == nil)
 			needsLibraryName := true // Always try to get library name from YAML
 			needsLanguageFromYAML := len(enriched.Tags.Value.([]string)) == 0 || enriched.Tags.Source == "null"
 
@@ -190,7 +251,7 @@ func EnrichMetadataFromHuggingFace() error {
 
 						// Use library name from YAML
 						if frontmatter.LibraryName != "" {
-							enriched.LibraryName = metadata.CreateMetadataSource(frontmatter.LibraryName, "huggingface")
+							enriched.LibraryName = metadata.CreateMetadataSource(frontmatter.LibraryName, "huggingface.yaml")
 							log.Printf("  Found library_name in YAML frontmatter: %s", frontmatter.LibraryName)
 						}
 
@@ -202,20 +263,20 @@ func EnrichMetadataFromHuggingFace() error {
 
 						// Use license from YAML frontmatter
 						if frontmatter.License != "" && enriched.License.Source == "null" {
-							enriched.License = metadata.CreateMetadataSource(frontmatter.License, "huggingface")
+							enriched.License = metadata.CreateMetadataSource(frontmatter.License, "huggingface.yaml")
 							log.Printf("  Extracted license from YAML frontmatter: %s", frontmatter.License)
 						}
 
 						// Use license_name if available and more specific
 						if frontmatter.LicenseName != "" {
-							enriched.License = metadata.CreateMetadataSource(frontmatter.LicenseName, "huggingface")
+							enriched.License = metadata.CreateMetadataSource(frontmatter.LicenseName, "huggingface.yaml")
 							log.Printf("  Extracted license_name from YAML frontmatter: %s", frontmatter.LicenseName)
 						}
 
 						// Use pipeline_tag for tasks
 						if frontmatter.PipelineTag != "" && enriched.Tasks.Source == "null" {
 							tasks := []string{frontmatter.PipelineTag}
-							enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface")
+							enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.yaml")
 							log.Printf("  Extracted pipeline_tag from YAML frontmatter: %s", frontmatter.PipelineTag)
 						}
 					} else {
@@ -226,7 +287,7 @@ func EnrichMetadataFromHuggingFace() error {
 					if needsProvider && enriched.Provider.Source == "null" {
 						provider := huggingface.ExtractProviderFromReadme(hfReadme)
 						if provider != "" {
-							enriched.Provider = metadata.CreateMetadataSource(provider, "huggingface")
+							enriched.Provider = metadata.CreateMetadataSource(provider, "huggingface.regex")
 							log.Printf("  Extracted provider from HF README text: %s", provider)
 						}
 					}
@@ -237,12 +298,12 @@ func EnrichMetadataFromHuggingFace() error {
 						if epoch := utils.ParseDateToEpoch(releaseDate); epoch != nil {
 							// Use this for createTimeSinceEpoch if we don't have it from modelcard
 							if enriched.CreateTimeSinceEpoch.Source == "null" {
-								enriched.CreateTimeSinceEpoch = metadata.CreateMetadataSource(*epoch, "huggingface")
+								enriched.CreateTimeSinceEpoch = metadata.CreateMetadataSource(*epoch, "huggingface.regex")
 								log.Printf("  Extracted createTimeSinceEpoch from HF README release date: %s (epoch: %d)", releaseDate, *epoch)
 							}
 							// Also update lastModified if we don't have a more recent one
 							if needsReleaseDate {
-								enriched.LastModified = metadata.CreateMetadataSource(*epoch, "huggingface")
+								enriched.LastModified = metadata.CreateMetadataSource(*epoch, "huggingface.regex")
 								log.Printf("  Extracted lastModified from HF README release date: %s (epoch: %d)", releaseDate, *epoch)
 							}
 						}

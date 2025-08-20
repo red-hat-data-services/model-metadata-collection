@@ -24,7 +24,7 @@ DOCKER_IMAGE_NAME?=model-metadata-collection
 DOCKER_IMAGE_TAG?=latest
 DOCKER_FULL_IMAGE_NAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
 
-.PHONY: all build clean test test-coverage lint fmt vet deps check help run process docker-build
+.PHONY: all build build-report clean test test-coverage lint fmt vet deps check help run process report run-with-report docker-build
 
 # Default target
 all: check build
@@ -34,6 +34,12 @@ build:
 	@echo "Building $(BINARY_NAME)..."
 	@mkdir -p $(BUILD_DIR)
 	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) $(MAIN_PATH)
+
+# Build the metadata report tool
+build-report:
+	@echo "Building metadata-report..."
+	@mkdir -p $(BUILD_DIR)
+	$(GOBUILD) -o $(BUILD_DIR)/metadata-report ./cmd/metadata-report
 
 # Build for linux
 build-linux:
@@ -122,6 +128,14 @@ process: build
 		--output-dir output \
 		--catalog-output $(CATALOG_OUTPUT_PATH)
 
+# Generate metadata completeness report
+report: build-report
+	@echo "Generating metadata report..."
+	./$(BUILD_DIR)/metadata-report
+
+# Run full pipeline: extract + report
+run-with-report: run report
+
 # Quick development iteration
 dev: fmt vet test build
 
@@ -209,26 +223,29 @@ docker-build:
 # Show help
 help:
 	@echo "Available targets:"
-	@echo "  build       - Build the binary"
-	@echo "  clean       - Clean build artifacts and output"
-	@echo "  test        - Run tests"
+	@echo "  build        - Build the binary"
+	@echo "  build-report - Build the metadata report tool"
+	@echo "  clean        - Clean build artifacts and output"
+	@echo "  test         - Run tests"
 	@echo "  test-coverage - Run tests with coverage"
-	@echo "  benchmark   - Run benchmarks"
-	@echo "  lint        - Run linters"
-	@echo "  fmt         - Format code"
-	@echo "  vet         - Run go vet"
-	@echo "  fmt-check   - Check code formatting"
-	@echo "  deps        - Download dependencies"
-	@echo "  check       - Run all checks (fmt-check, vet, lint)"
-	@echo "  install     - Install binary to GOPATH/bin"
-	@echo "  run         - Run with default settings"
-	@echo "  process     - Run with custom input/output paths"
-	@echo "  dev         - Quick development iteration"
-	@echo "  ci          - Full CI pipeline"
-	@echo "  release     - Create optimized release build"
-	@echo "  update-deps - Update dependencies"
-	@echo "  docs        - Generate documentation"
-	@echo "  security    - Run security scan"
-	@echo "  setup       - Setup development environment"
+	@echo "  benchmark    - Run benchmarks"
+	@echo "  lint         - Run linters"
+	@echo "  fmt          - Format code"
+	@echo "  vet          - Run go vet"
+	@echo "  fmt-check    - Check code formatting"
+	@echo "  deps         - Download dependencies"
+	@echo "  check        - Run all checks (fmt-check, vet, lint)"
+	@echo "  install      - Install binary to GOPATH/bin"
+	@echo "  run          - Run with default settings"
+	@echo "  process      - Run with custom input/output paths"
+	@echo "  report       - Generate metadata completeness report"
+	@echo "  run-with-report - Run extraction then generate report"
+	@echo "  dev          - Quick development iteration"
+	@echo "  ci           - Full CI pipeline"
+	@echo "  release      - Create optimized release build"
+	@echo "  update-deps  - Update dependencies"
+	@echo "  docs         - Generate documentation"
+	@echo "  security     - Run security scan"
+	@echo "  setup        - Setup development environment"
 	@echo "  docker-build - Build Docker image"
 	@echo "  help         - Show this help"
