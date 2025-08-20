@@ -5,9 +5,6 @@ variables:
   # Go configuration
   GO_VERSION: "1.24"
   
-  # Docker buildkit for better caching and secrets support
-  DOCKER_BUILDKIT: "1"
-  
   # Project configuration
   MODELS_CATALOG_PATH: "data/models-catalog.yaml"
 
@@ -23,7 +20,7 @@ model-metadata-extraction:
   
   before_script:
     # Install required system dependencies
-    - apt-get update -qq && apt-get install -y -qq git make
+    - apt-get update -qq && apt-get install -y -qq git make podman
     
     # Set up Go environment
     - go version
@@ -36,7 +33,7 @@ model-metadata-extraction:
     - |
       if [ -n "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" ] && [ -n "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" ]; then
         echo "Authenticating with Red Hat registry..."
-        echo "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" | docker login registry.redhat.io --username "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" --password-stdin
+        echo "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" | podman login registry.redhat.io --username "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" --password-stdin
         echo "Registry authentication successful"
       else
         echo "Warning: Red Hat registry credentials not provided. Some features may be limited."
@@ -92,7 +89,7 @@ model-metadata-extraction:
   
   # Resource configuration for large-scale processing
   tags:
-    - docker
+    - shared-podman
   
   # Timeout after 2 hours (model extraction can take time)
   timeout: 2h
