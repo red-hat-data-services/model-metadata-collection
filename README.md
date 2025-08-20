@@ -514,10 +514,5 @@ This project is licensed under the terms specified in the LICENSE file.
 For issues and questions:
 
 1. Check the troubleshooting section above
-2. Search existing [GitHub issues](https://gitlab.cee.redhat.com/data-hub/model-metadata-collection/issues)
+2. Search existing [GitLab issues](https://gitlab.cee.redhat.com/data-hub/model-metadata-collection/-/issues)
 3. Create a new issue with detailed information
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and changes.
-
