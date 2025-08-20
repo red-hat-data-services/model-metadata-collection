@@ -9,7 +9,6 @@ model-metadata-collection
 *.so
 *.dylib
 
-data/models-catalog.yaml
 data/hugging-face*
 
 coverage.out

@@ -1,0 +1,97 @@
+stages:
+  - metadata-extraction
+
+variables:
+  # Go configuration
+  GO_VERSION: "1.24"
+  
+  # Docker buildkit for better caching and secrets support
+  DOCKER_BUILDKIT: "1"
+  
+  # Project configuration
+  MODELS_CATALOG_PATH: "data/models-catalog.yaml"
+
+# Main job to extract model metadata
+model-metadata-extraction:
+  stage: metadata-extraction
+  image: golang:${GO_VERSION}
+  
+  # Run only on main branch and scheduled pipelines
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+  
+  before_script:
+    # Install required system dependencies
+    - apt-get update -qq && apt-get install -y -qq git make
+    
+    # Set up Go environment
+    - go version
+    - go env GOPROXY
+    
+    # Install project dependencies
+    - make deps
+    
+    # Authenticate with Red Hat registry using service account
+    - |
+      if [ -n "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" ] && [ -n "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" ]; then
+        echo "Authenticating with Red Hat registry..."
+        echo "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" | docker login registry.redhat.io --username "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" --password-stdin
+        echo "Registry authentication successful"
+      else
+        echo "Warning: Red Hat registry credentials not provided. Some features may be limited."
+        exit 1
+      fi
+  
+  script:
+    # Run the metadata extraction process
+    - echo "Starting model metadata extraction..."
+    - make run
+    - echo "Metadata extraction completed"
+    
+    # Check if catalog file was generated
+    - |
+      if [ -f "$MODELS_CATALOG_PATH" ]; then
+        echo "Models catalog generated successfully at $MODELS_CATALOG_PATH"
+        echo "Catalog file size: $(du -h $MODELS_CATALOG_PATH | cut -f1)"
+        echo "Number of models processed: $(grep -c '^ *- name:' $MODELS_CATALOG_PATH || echo 'Unable to count')"
+      else
+        echo "Error: Models catalog was not generated at $MODELS_CATALOG_PATH"
+        exit 1
+      fi
+  
+  # Cache Go modules for faster builds
+  cache:
+    key: go-modules-$CI_COMMIT_REF_SLUG
+    paths:
+      - .cache/go-build/
+      - .cache/go-mod/
+  
+  # Save the generated catalog as an artifact
+  artifacts:
+    name: "model-metadata-catalog-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - data/models-catalog.yaml
+      - data/models-index.yaml
+      - data/hugging-face-*.yaml
+      - output/
+    expire_in: 1 week
+    reports:
+      # Generate a brief report for the pipeline
+      dotenv: metadata-report.env
+  
+  # Create environment report for pipeline summary
+  after_script:
+    - |
+      if [ -f "$MODELS_CATALOG_PATH" ]; then
+        MODEL_COUNT=$(grep -c '^ *- name:' $MODELS_CATALOG_PATH || echo '0')
+        echo "EXTRACTED_MODELS=$MODEL_COUNT" > metadata-report.env
+        echo "CATALOG_SIZE=$(du -h $MODELS_CATALOG_PATH | cut -f1)" >> metadata-report.env
+        echo "EXTRACTION_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> metadata-report.env
+      fi
+  
+  # Resource configuration for large-scale processing
+  tags:
+    - docker
+  
+  # Timeout after 2 hours (model extraction can take time)
+  timeout: 2h
