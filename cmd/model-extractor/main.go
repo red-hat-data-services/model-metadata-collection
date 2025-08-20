@@ -19,14 +19,14 @@ import (
 	containertypes "github.com/containers/image/v5/types"
 	"gopkg.in/yaml.v3"
 
-	"github.com/chambridge/model-metadata-collection/internal/catalog"
-	"github.com/chambridge/model-metadata-collection/internal/config"
-	"github.com/chambridge/model-metadata-collection/internal/enrichment"
-	"github.com/chambridge/model-metadata-collection/internal/huggingface"
-	"github.com/chambridge/model-metadata-collection/internal/metadata"
-	"github.com/chambridge/model-metadata-collection/internal/registry"
-	"github.com/chambridge/model-metadata-collection/pkg/types"
-	"github.com/chambridge/model-metadata-collection/pkg/utils"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/catalog"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/config"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/enrichment"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/huggingface"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/metadata"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/registry"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
 )
 
 // Command line flags

@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/chambridge/model-metadata-collection/pkg/types"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
 )
 
 // MetadataReport represents a comprehensive report of metadata completeness and sources

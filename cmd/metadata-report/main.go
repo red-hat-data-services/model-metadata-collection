@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chambridge/model-metadata-collection/internal/report"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/report"
 )
 
 func main() {

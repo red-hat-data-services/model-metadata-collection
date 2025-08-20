@@ -7,7 +7,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/chambridge/model-metadata-collection/pkg/types"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
 )
 
 // LoadModelsFromYAML reads the models list from the YAML configuration file

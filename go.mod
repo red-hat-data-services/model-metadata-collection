@@ -1,4 +1,4 @@
-module github.com/chambridge/model-metadata-collection
+module gitlab.cee.redhat.com/data-hub/model-metadata-collection
 
 go 1.24
 

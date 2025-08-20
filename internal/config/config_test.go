@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chambridge/model-metadata-collection/pkg/types"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 

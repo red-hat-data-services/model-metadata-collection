@@ -8,10 +8,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/chambridge/model-metadata-collection/internal/huggingface"
-	"github.com/chambridge/model-metadata-collection/internal/metadata"
-	"github.com/chambridge/model-metadata-collection/pkg/types"
-	"github.com/chambridge/model-metadata-collection/pkg/utils"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/huggingface"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/metadata"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
 )
 
 // UpdateModelMetadataFile updates an existing metadata.yaml file with enriched data and creates separate enrichment.yaml

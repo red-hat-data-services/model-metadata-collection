@@ -151,7 +151,7 @@ release: clean
 # Initialize go module (only run once)
 init-module:
 	@echo "Initializing Go module..."
-	$(GOMOD) init github.com/chambridge/model-metadata-collection
+	$(GOMOD) init gitlab.cee.redhat.com/data-hub/model-metadata-collection
 
 # Update dependencies
 update-deps:

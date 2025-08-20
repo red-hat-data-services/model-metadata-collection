@@ -48,7 +48,7 @@ The project is organized into modular packages for maintainability and testabili
 ### From Source
 
 ```bash
-git clone https://github.com/chambridge/model-metadata-collection.git
+git clone https://gitlab.cee.redhat.com/data-hub/model-metadata-collection.git
 cd model-metadata-collection
 make build
 ```
@@ -61,10 +61,10 @@ This will create binaries at:
 
 ```bash
 # Install the metadata extraction tool
-go install github.com/chambridge/model-metadata-collection/cmd/model-extractor@latest
+go install gitlab.cee.redhat.com/data-hub/model-metadata-collection/cmd/model-extractor@latest
 
 # Install the metadata reporting tool
-go install github.com/chambridge/model-metadata-collection/cmd/metadata-report@latest
+go install gitlab.cee.redhat.com/data-hub/model-metadata-collection/cmd/metadata-report@latest
 ```
 
 ## Usage
@@ -514,7 +514,7 @@ This project is licensed under the terms specified in the LICENSE file.
 For issues and questions:
 
 1. Check the troubleshooting section above
-2. Search existing [GitHub issues](https://github.com/chambridge/model-metadata-collection/issues)
+2. Search existing [GitHub issues](https://gitlab.cee.redhat.com/data-hub/model-metadata-collection/issues)
 3. Create a new issue with detailed information
 
 ## Changelog

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chambridge/model-metadata-collection/pkg/types"
-	"github.com/chambridge/model-metadata-collection/pkg/utils"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
 )
 
 // RegistryManifest represents container registry manifest metadata
