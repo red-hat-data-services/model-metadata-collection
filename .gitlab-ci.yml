@@ -30,7 +30,7 @@ model-metadata-extraction:
     - git checkout -b "$BRANCH_NAME" && git add "$MODELS_CATALOG_PATH" && git commit -m "Update models catalog $CHANGE_DESC ($OLD_COUNT -> $NEW_COUNT)"
     - test -n "$GITLAB_TOKEN" && git config --global http.sslVerify false && git remote set-url origin "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" && git push -o ci.skip origin "$BRANCH_NAME" || exit 1
     - MR_TITLE="Update models catalog $CHANGE_DESC" && MR_DESC="Automated catalog update $OLD_COUNT to $NEW_COUNT models"
-    - 'curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" -d "{\"source_branch\":\"$BRANCH_NAME\",\"target_branch\":\"$CI_DEFAULT_BRANCH\",\"title\":\"$MR_TITLE\",\"description\":\"$MR_DESC\",\"remove_source_branch\":true,\"squash\":true}" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests" && echo "MR created for branch $BRANCH_NAME"'
+    - 'MR_RESPONSE=$(curl -k -X POST -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" -d "{\"source_branch\":\"$BRANCH_NAME\",\"target_branch\":\"$CI_DEFAULT_BRANCH\",\"title\":\"$MR_TITLE\",\"description\":\"$MR_DESC\",\"remove_source_branch\":true,\"squash\":true}" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests" 2>&1) && echo "MR API Response: $MR_RESPONSE" || echo "MR creation failed: $MR_RESPONSE"'
   
   cache:
     key: go-modules-$CI_COMMIT_REF_SLUG
