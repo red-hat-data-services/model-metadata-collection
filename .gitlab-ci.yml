@@ -2,69 +2,41 @@ stages:
   - metadata-extraction
 
 variables:
-  # Go configuration
   GO_VERSION: "1.24"
-  
-  # Project configuration
   MODELS_CATALOG_PATH: "data/models-catalog.yaml"
 
-# Main job to extract model metadata
 model-metadata-extraction:
   stage: metadata-extraction
   image: golang:${GO_VERSION}
   
-  # Run only on main branch and scheduled pipelines
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   
   before_script:
-    # Install required system dependencies
-    - apt-get update -qq && apt-get install -y -qq git make podman
-    
-    # Set up Go environment
-    - go version
-    - go env GOPROXY
-    
-    # Install project dependencies
-    - make deps
-    
-    # Authenticate with Red Hat registry using service account
-    - |
-      if [ -n "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" ] && [ -n "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" ]; then
-        echo "Authenticating with Red Hat registry..."
-        echo "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" | podman login registry.redhat.io --username "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" --password-stdin
-        echo "Registry authentication successful"
-      else
-        echo "Warning: Red Hat registry credentials not provided. Some features may be limited."
-        exit 1
-      fi
+    - apt-get update -qq && apt-get install -y -qq git make podman curl jq
+    - git config --global user.name "Model Metadata Bot"
+    - git config --global user.email "model-metadata-bot@redhat.com"
+    - go version && make deps
+    - cp "$MODELS_CATALOG_PATH" "${MODELS_CATALOG_PATH}.original" 2>/dev/null || touch "${MODELS_CATALOG_PATH}.original"
+    - echo "$REDHAT_REGISTRY_SERVICE_ACCOUNT_TOKEN" | podman login registry.redhat.io --username "$REDHAT_REGISTRY_SERVICE_ACCOUNT_NAME" --password-stdin
   
   script:
-    # Run the metadata extraction process
-    - echo "Starting model metadata extraction..."
-    - make run
-    - echo "Metadata extraction completed"
-    
-    # Check if catalog file was generated
-    - |
-      if [ -f "$MODELS_CATALOG_PATH" ]; then
-        echo "Models catalog generated successfully at $MODELS_CATALOG_PATH"
-        echo "Catalog file size: $(du -h $MODELS_CATALOG_PATH | cut -f1)"
-        echo "Number of models processed: $(grep -c '^ *- name:' $MODELS_CATALOG_PATH || echo 'Unable to count')"
-      else
-        echo "Error: Models catalog was not generated at $MODELS_CATALOG_PATH"
-        exit 1
-      fi
+    - make run && test -f "$MODELS_CATALOG_PATH" || exit 1
+    - diff -q "$MODELS_CATALOG_PATH" "${MODELS_CATALOG_PATH}.original" >/dev/null 2>&1 && echo "No changes detected" && exit 0
+    - TIMESTAMP=$(date +%s) && BRANCH_NAME="models-catalog-${TIMESTAMP}" && OLD_COUNT=$(grep -c '^ *- name:' "${MODELS_CATALOG_PATH}.original" || echo 0) && NEW_COUNT=$(grep -c '^ *- name:' "$MODELS_CATALOG_PATH" || echo 0) && DIFF_COUNT=$((NEW_COUNT - OLD_COUNT))
+    - 'if [ $DIFF_COUNT -gt 0 ]; then CHANGE_DESC="Added $DIFF_COUNT models"; elif [ $DIFF_COUNT -lt 0 ]; then CHANGE_DESC="Removed $((DIFF_COUNT * -1)) models"; else CHANGE_DESC="Updated model metadata"; fi'
+    - git checkout -b "$BRANCH_NAME" && git add "$MODELS_CATALOG_PATH" && git commit -m "Update models catalog $CHANGE_DESC ($OLD_COUNT -> $NEW_COUNT)"
+    - test -n "$GITLAB_TOKEN" && git remote set-url origin "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" && git push -o ci.skip origin "$BRANCH_NAME" || exit 1
+    - MR_TITLE="Update models catalog $CHANGE_DESC" && MR_DESC="Automated catalog update $OLD_COUNT to $NEW_COUNT models"
+    - 'curl -s -X POST -H "PRIVATE-TOKEN: $GITLAB_TOKEN" -H "Content-Type: application/json" -d "{\"source_branch\":\"$BRANCH_NAME\",\"target_branch\":\"$CI_DEFAULT_BRANCH\",\"title\":\"$MR_TITLE\",\"description\":\"$MR_DESC\",\"remove_source_branch\":true,\"squash\":true}" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests" && echo "MR created for branch $BRANCH_NAME"'
   
-  # Cache Go modules for faster builds
   cache:
     key: go-modules-$CI_COMMIT_REF_SLUG
     paths:
       - .cache/go-build/
       - .cache/go-mod/
   
-  # Save the generated catalog as an artifact
   artifacts:
     name: "model-metadata-catalog-$CI_COMMIT_SHORT_SHA"
     paths:
@@ -73,23 +45,13 @@ model-metadata-extraction:
       - data/hugging-face-*.yaml
       - output/
     expire_in: 1 week
-    reports:
-      # Generate a brief report for the pipeline
-      dotenv: metadata-report.env
   
-  # Create environment report for pipeline summary
   after_script:
-    - |
-      if [ -f "$MODELS_CATALOG_PATH" ]; then
-        MODEL_COUNT=$(grep -c '^ *- name:' $MODELS_CATALOG_PATH || echo '0')
-        echo "EXTRACTED_MODELS=$MODEL_COUNT" > metadata-report.env
-        echo "CATALOG_SIZE=$(du -h $MODELS_CATALOG_PATH | cut -f1)" >> metadata-report.env
-        echo "EXTRACTION_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> metadata-report.env
-      fi
+    - MODEL_COUNT=$(grep -c '^ *- name:' "$MODELS_CATALOG_PATH" 2>/dev/null || echo 0)
+    - echo "EXTRACTED_MODELS=$MODEL_COUNT" > metadata-report.env
+    - echo "EXTRACTION_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> metadata-report.env
   
-  # Resource configuration for large-scale processing
   tags:
     - shared-podman
   
-  # Timeout after 2 hours (model extraction can take time)
   timeout: 2h
