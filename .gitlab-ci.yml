@@ -24,7 +24,8 @@ model-metadata-extraction:
   script:
     - make run && test -f "$MODELS_CATALOG_PATH" || exit 1
     - diff -q "$MODELS_CATALOG_PATH" "${MODELS_CATALOG_PATH}.original" >/dev/null 2>&1 && echo "No changes detected" && exit 0
-    - TIMESTAMP=$(date +%s) && BRANCH_NAME="models-catalog-${TIMESTAMP}" && OLD_COUNT=$(grep -c '^ *- name:' "${MODELS_CATALOG_PATH}.original" || echo 0) && NEW_COUNT=$(grep -c '^ *- name:' "$MODELS_CATALOG_PATH" || echo 0) && DIFF_COUNT=$((NEW_COUNT - OLD_COUNT))
+    - TIMESTAMP=$(date +%s) && BRANCH_NAME="models-catalog-${TIMESTAMP}"
+    - OLD_COUNT=$(grep -c '^ *- name:' "${MODELS_CATALOG_PATH}.original" 2>/dev/null || echo "0") && NEW_COUNT=$(grep -c '^ *- name:' "$MODELS_CATALOG_PATH" 2>/dev/null || echo "0") && DIFF_COUNT=$((${NEW_COUNT:-0} - ${OLD_COUNT:-0}))
     - 'if [ $DIFF_COUNT -gt 0 ]; then CHANGE_DESC="Added $DIFF_COUNT models"; elif [ $DIFF_COUNT -lt 0 ]; then CHANGE_DESC="Removed $((DIFF_COUNT * -1)) models"; else CHANGE_DESC="Updated model metadata"; fi'
     - git checkout -b "$BRANCH_NAME" && git add "$MODELS_CATALOG_PATH" && git commit -m "Update models catalog $CHANGE_DESC ($OLD_COUNT -> $NEW_COUNT)"
     - test -n "$GITLAB_TOKEN" && git remote set-url origin "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" && git push -o ci.skip origin "$BRANCH_NAME" || exit 1
