@@ -54,11 +54,12 @@ FROM registry.access.redhat.com/ubi9-micro:latest AS runtime
 # Create directory for mounting by other applications
 RUN mkdir -p /app/data
 
-# Copy the generated catalog from the generator stage
+# Copy the generated catalog and index files from the generator stage
 COPY --from=generator /app/data/models-catalog.yaml /app/data/
+COPY --from=generator /app/data/models-index.yaml /app/data/
 
 # Set proper permissions
-RUN chmod 644 /app/data/models-catalog.yaml
+RUN chmod 644 /app/data/models-catalog.yaml /app/data/models-index.yaml
 
 # Create a non-root user for security
 RUN echo "catalog:x:1001:1001:Catalog User:/app:/sbin/nologin" >> /etc/passwd && \
