@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
 	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
@@ -65,12 +64,11 @@ func FetchRegistryMetadata(imageRef string) (*types.OCIArtifact, error) {
 
 		resp, err := http.Get(manifestURL)
 		if err != nil {
-			// If we can't fetch from API, create artifact with current timestamp
-			currentTime := time.Now().Unix() * 1000
+			// If we can't fetch from API, create artifact with nil timestamps
 			return &types.OCIArtifact{
 				URI:                      ociURI,
-				CreateTimeSinceEpoch:     &currentTime,
-				LastUpdateTimeSinceEpoch: &currentTime,
+				CreateTimeSinceEpoch:     nil,
+				LastUpdateTimeSinceEpoch: nil,
 				CustomProperties: map[string]interface{}{
 					"source": map[string]interface{}{
 						"string_value": "registry.redhat.io",
@@ -128,12 +126,11 @@ func FetchRegistryMetadata(imageRef string) (*types.OCIArtifact, error) {
 		}
 	}
 
-	// Fallback: create artifact with current timestamp
-	currentTime := time.Now().Unix() * 1000
+	// Fallback: create artifact with nil timestamps when registry data unavailable
 	return &types.OCIArtifact{
 		URI:                      ociURI,
-		CreateTimeSinceEpoch:     &currentTime,
-		LastUpdateTimeSinceEpoch: &currentTime,
+		CreateTimeSinceEpoch:     nil,
+		LastUpdateTimeSinceEpoch: nil,
 		CustomProperties: map[string]interface{}{
 			"source": map[string]interface{}{
 				"string_value": registry,
@@ -154,15 +151,14 @@ func ExtractOCIArtifactsFromRegistry(manifestRef string) []types.OCIArtifact {
 		artifacts = append(artifacts, *artifact)
 	} else {
 		log.Printf("Warning: Failed to fetch registry metadata for %s: %v", manifestRef, err)
-		// Create basic artifact anyway
+		// Create basic artifact anyway with nil timestamps
 		registry, repository, imageName, tag, parseErr := parseRegistryImageRef(manifestRef)
 		if parseErr == nil {
 			ociURI := fmt.Sprintf("oci://%s/%s/%s:%s", registry, repository, imageName, tag)
-			currentTime := time.Now().Unix() * 1000
 			artifacts = append(artifacts, types.OCIArtifact{
 				URI:                      ociURI,
-				CreateTimeSinceEpoch:     &currentTime,
-				LastUpdateTimeSinceEpoch: &currentTime,
+				CreateTimeSinceEpoch:     nil,
+				LastUpdateTimeSinceEpoch: nil,
 				CustomProperties: map[string]interface{}{
 					"source": map[string]interface{}{
 						"string_value": "unknown",

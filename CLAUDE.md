@@ -23,6 +23,11 @@ This is a Go application that extracts model metadata (specifically model cards)
 - `make ci` - Full CI pipeline
 - `make lint` - Run linters (requires golangci-lint)
 
+### Testing Notes
+- Unit tests run with `make test` and skip integration tests that make network calls
+- Integration tests in `internal/registry/registry_test.go` are currently skipped during normal test runs
+- These tests can be run separately for integration testing with external registries
+
 ## Architecture
 
 ### Core Components

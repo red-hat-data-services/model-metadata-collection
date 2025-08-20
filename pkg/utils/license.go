@@ -30,6 +30,7 @@ func GetLicenseURL(licenseID string) string {
 		"llama4":                "https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE",
 		"bigscience-openrail-m": "https://huggingface.co/spaces/bigscience/license",
 		"openrail":              "https://www.licenses.ai/ai-licenses",
+		"gemma":                 "https://ai.google.dev/gemma/terms",
 	}
 
 	if url, exists := licenseURLs[licenseID]; exists {
