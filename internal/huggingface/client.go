@@ -13,8 +13,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
 
 // FetchCollections fetches collections from HuggingFace
@@ -218,12 +218,17 @@ func ExtractProviderFromReadme(readmeContent string) string {
 
 // YAMLFrontmatter represents the YAML frontmatter in HuggingFace README files
 type YAMLFrontmatter struct {
-	LibraryName string   `yaml:"library_name"`
 	Language    []string `yaml:"language"`
+	BaseModel   []string `yaml:"base_model"`
 	PipelineTag string   `yaml:"pipeline_tag"`
 	License     string   `yaml:"license"`
 	LicenseName string   `yaml:"license_name"`
+	LicenseLink string   `yaml:"license_link"`
 	Tags        []string `yaml:"tags"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	Tasks       []string `yaml:"tasks"`
+	Provider    string   `yaml:"provider"`
 }
 
 // ExtractYAMLFrontmatter extracts YAML frontmatter from README content

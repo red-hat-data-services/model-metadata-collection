@@ -21,14 +21,14 @@ import (
 	containertypes "github.com/containers/image/v5/types"
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/catalog"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/config"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/enrichment"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/huggingface"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/metadata"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/registry"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
+	"github.com/opendatahub-io/model-metadata-collection/internal/catalog"
+	"github.com/opendatahub-io/model-metadata-collection/internal/config"
+	"github.com/opendatahub-io/model-metadata-collection/internal/enrichment"
+	"github.com/opendatahub-io/model-metadata-collection/internal/huggingface"
+	"github.com/opendatahub-io/model-metadata-collection/internal/metadata"
+	"github.com/opendatahub-io/model-metadata-collection/internal/registry"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
 
 // Command line flags
@@ -89,15 +89,15 @@ func main() {
 	}
 
 	// Load models from configuration file
-	manifestRefs, err := loadModels(*modelsIndexPath)
+	modelEntries, err := loadModelsWithMetadata(*modelsIndexPath)
 	if err != nil {
 		log.Fatalf("Failed to load models: %v", err)
 	}
 
-	log.Printf("Processing %d models...", len(manifestRefs))
+	log.Printf("Processing %d models...", len(modelEntries))
 
 	// Process models in parallel
-	modelResults := processModelsInParallel(manifestRefs, *maxConcurrent)
+	modelResults := processModelsInParallelWithMetadata(modelEntries, *maxConcurrent)
 
 	// Generate manifests.yaml
 	err = generateManifestsYAML(modelResults, *outputDir)
@@ -160,19 +160,34 @@ func printHelp() {
 	fmt.Printf("  %s --skip-huggingface --skip-enrichment --skip-catalog\n", os.Args[0])
 }
 
-// loadModels loads models from various sources with fallback logic
-func loadModels(modelsIndexPath string) ([]string, error) {
+// loadModelsWithMetadata loads models with their metadata from various sources with fallback logic
+func loadModelsWithMetadata(modelsIndexPath string) ([]types.ModelEntry, error) {
 	// First try to load from specified models index file
 	if _, err := os.Stat(modelsIndexPath); err == nil {
 		log.Printf("Loading models from: %s", modelsIndexPath)
-		return config.LoadModelsFromYAML(modelsIndexPath)
+		return config.LoadModelsConfigFromYAML(modelsIndexPath)
 	}
 
 	// Try to load from latest version index file as fallback
 	latestIndexFile, err := getLatestVersionIndexFile()
 	if err == nil {
 		log.Printf("Using latest version index file: %s", latestIndexFile)
-		return config.LoadModelsFromVersionIndex(latestIndexFile)
+		// Convert version index to model entries (all validated=true, featured=false by default)
+		modelURIs, err := config.LoadModelsFromVersionIndex(latestIndexFile)
+		if err != nil {
+			return nil, err
+		}
+
+		var modelEntries []types.ModelEntry
+		for _, uri := range modelURIs {
+			modelEntries = append(modelEntries, types.ModelEntry{
+				Type:      "oci",
+				URI:       uri,
+				Validated: true,
+				Featured:  false,
+			})
+		}
+		return modelEntries, nil
 	}
 
 	return nil, fmt.Errorf("no valid models index file found at %s and no version index files available", modelsIndexPath)
@@ -195,7 +210,22 @@ func getLatestVersionIndexFile() (string, error) {
 }
 
 // processModelsInParallel processes multiple models concurrently
-func processModelsInParallel(manifestRefs []string, maxConcurrent int) []ModelResult {
+// processModelsInParallelWithMetadata processes multiple models concurrently with metadata support
+func processModelsInParallelWithMetadata(modelEntries []types.ModelEntry, maxConcurrent int) []ModelResult {
+	// Extract URIs for processing
+	var manifestRefs []string
+	uriToEntry := make(map[string]types.ModelEntry)
+
+	for _, entry := range modelEntries {
+		manifestRefs = append(manifestRefs, entry.URI)
+		uriToEntry[entry.URI] = entry
+	}
+
+	return processModelsInParallelWithEntryMap(manifestRefs, uriToEntry, maxConcurrent)
+}
+
+// processModelsInParallelWithEntryMap processes multiple models concurrently with entry metadata
+func processModelsInParallelWithEntryMap(manifestRefs []string, uriToEntry map[string]types.ModelEntry, maxConcurrent int) []ModelResult {
 	sys := &containertypes.SystemContext{}
 
 	// Create a WaitGroup to wait for all goroutines to complete
@@ -213,14 +243,14 @@ func processModelsInParallel(manifestRefs []string, maxConcurrent int) []ModelRe
 		semaphore <- struct{}{}
 
 		wg.Add(1)
-		go func(ref string) {
+		go func(ref string, entry types.ModelEntry) {
 			defer wg.Done()
 			defer func() { <-semaphore }() // Release semaphore when done
 
 			log.Printf("Starting processing for: %s", ref)
 			src, layers, configBlob := fetchManifestSrcAndLayers(ref, sys)
 			defer func() { _ = src.Close() }()
-			modelCardFound, metadata := scanLayersForModelCard(layers, src, ref, configBlob)
+			modelCardFound, metadata := scanLayersForModelCardWithTags(layers, src, ref, configBlob, entry)
 			log.Printf("Completed processing for: %s", ref)
 
 			// Send result to channel
@@ -229,7 +259,7 @@ func processModelsInParallel(manifestRefs []string, maxConcurrent int) []ModelRe
 				ModelCardFound: modelCardFound,
 				Metadata:       metadata,
 			}
-		}(manifestRef)
+		}(manifestRef, uriToEntry[manifestRef])
 	}
 
 	// Wait for all goroutines to complete
@@ -243,6 +273,86 @@ func processModelsInParallel(manifestRefs []string, maxConcurrent int) []ModelRe
 	}
 
 	return modelResults
+}
+
+// scanLayersForModelCardWithTags scans container layers for model card content and adds validated/featured tags
+func scanLayersForModelCardWithTags(layers []containertypes.BlobInfo, src containertypes.ImageSource, manifestRef string, configBlob []byte, entry types.ModelEntry) (bool, types.ModelMetadata) {
+	modelCardFound, metadata := scanLayersForModelCard(layers, src, manifestRef, configBlob)
+
+	// Add validated and/or featured tags based on the model entry
+	// This works for both successful extractions and skeleton metadata
+	addValidatedAndFeaturedTags(manifestRef, entry)
+
+	return modelCardFound, metadata
+}
+
+// addValidatedAndFeaturedTags adds validated and featured tags to the extracted metadata
+func addValidatedAndFeaturedTags(manifestRef string, entry types.ModelEntry) {
+	// Create sanitized directory name for the model
+	sanitizedName := utils.SanitizeManifestRef(manifestRef)
+	metadataPath := fmt.Sprintf("output/%s/models/metadata.yaml", sanitizedName)
+
+	// Read existing metadata
+	data, err := os.ReadFile(metadataPath)
+	if err != nil {
+		log.Printf("Warning: Could not read metadata file %s: %v", metadataPath, err)
+		return
+	}
+
+	// Parse existing metadata
+	var metadata types.ExtractedMetadata
+	err = yaml.Unmarshal(data, &metadata)
+	if err != nil {
+		log.Printf("Warning: Could not parse metadata file %s: %v", metadataPath, err)
+		return
+	}
+
+	// Initialize tags slice if nil
+	if metadata.Tags == nil {
+		metadata.Tags = []string{}
+	}
+
+	// Track if we made changes
+	changed := false
+
+	// Add "validated" tag if model is validated and not already present
+	if entry.Validated && !contains(metadata.Tags, "validated") {
+		metadata.Tags = append(metadata.Tags, "validated")
+		changed = true
+		log.Printf("Added 'validated' tag to %s", manifestRef)
+	}
+
+	// Add "featured" tag if model is featured and not already present
+	if entry.Featured && !contains(metadata.Tags, "featured") {
+		metadata.Tags = append(metadata.Tags, "featured")
+		changed = true
+		log.Printf("Added 'featured' tag to %s", manifestRef)
+	}
+
+	// Write back the metadata if changes were made
+	if changed {
+		updatedData, err := yaml.Marshal(&metadata)
+		if err != nil {
+			log.Printf("Warning: Could not marshal updated metadata for %s: %v", manifestRef, err)
+			return
+		}
+
+		err = os.WriteFile(metadataPath, updatedData, 0644)
+		if err != nil {
+			log.Printf("Warning: Could not write updated metadata file %s: %v", metadataPath, err)
+			return
+		}
+	}
+}
+
+// contains checks if a slice contains a string
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }
 
 // scanLayersForModelCard scans container layers for model card content
@@ -393,7 +503,60 @@ func scanLayersForModelCard(layers []containertypes.BlobInfo, src containertypes
 			}
 		}
 	}
+
+	// If no modelcard was found, create a skeleton metadata.yaml for enrichment processing
+	log.Printf("  No modelcard layer found, creating skeleton metadata for enrichment")
+	createSkeletonMetadata(manifestRef, configBlob)
+
 	return false, types.ModelMetadata{}
+}
+
+// createSkeletonMetadata creates a basic metadata.yaml file when modelcard extraction fails
+func createSkeletonMetadata(manifestRef string, configBlob []byte) {
+	// Create output directory
+	sanitizedDir := utils.SanitizeManifestRef(manifestRef)
+	outputDir := filepath.Join(*outputDir, sanitizedDir, "models")
+
+	err := os.MkdirAll(outputDir, 0755)
+	if err != nil {
+		log.Printf("  Warning: Failed to create skeleton output directory: %v", err)
+		return
+	}
+
+	// Create basic metadata with minimal information
+	metadata := types.ExtractedMetadata{
+		Tags:      []string{}, // Empty tags slice for enrichment to populate
+		Language:  []string{},
+		Tasks:     []string{},
+		Artifacts: registry.ExtractOCIArtifactsFromRegistry(manifestRef),
+	}
+
+	// Extract timestamps from config blob if available
+	createTime, updateTime := extractTimestampsFromConfig(configBlob)
+	for i := range metadata.Artifacts {
+		if metadata.Artifacts[i].CreateTimeSinceEpoch == nil {
+			metadata.Artifacts[i].CreateTimeSinceEpoch = createTime
+		}
+		if metadata.Artifacts[i].LastUpdateTimeSinceEpoch == nil {
+			metadata.Artifacts[i].LastUpdateTimeSinceEpoch = updateTime
+		}
+	}
+
+	// Write skeleton metadata.yaml
+	metadataFilePath := filepath.Join(outputDir, "metadata.yaml")
+	metadataYaml, err := yaml.Marshal(&metadata)
+	if err != nil {
+		log.Printf("  Warning: Failed to marshal skeleton metadata to YAML: %v", err)
+		return
+	}
+
+	err = os.WriteFile(metadataFilePath, metadataYaml, 0644)
+	if err != nil {
+		log.Printf("  Warning: Failed to write skeleton metadata.yaml: %v", err)
+		return
+	}
+
+	log.Printf("  Successfully created skeleton metadata.yaml: %s", metadataFilePath)
 }
 
 // fetchManifestSrcAndLayers fetches manifest, layers, and config blob from container registry

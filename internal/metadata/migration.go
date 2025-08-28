@@ -8,8 +8,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
 
 // LoadExistingMetadata attempts to load existing metadata from processed models
@@ -65,8 +65,7 @@ func migrateFromLegacyFormat(legacy *types.LegacyExtractedMetadata) *types.Extra
 		Language:                 legacy.Language,
 		License:                  legacy.License,
 		LicenseLink:              legacy.LicenseLink,
-		Maturity:                 legacy.Maturity,
-		LibraryName:              legacy.LibraryName,
+		Tags:                     legacy.Tags,
 		Tasks:                    legacy.Tasks,
 		CreateTimeSinceEpoch:     legacy.CreateTimeSinceEpoch,
 		LastUpdateTimeSinceEpoch: legacy.LastUpdateTimeSinceEpoch,
@@ -118,8 +117,7 @@ func convertMixedToStandard(mixed *types.MixedTypeExtractedMetadata) *types.Extr
 		Language:                 mixed.Language,
 		License:                  mixed.License,
 		LicenseLink:              mixed.LicenseLink,
-		Maturity:                 mixed.Maturity,
-		LibraryName:              mixed.LibraryName,
+		Tags:                     mixed.Tags,
 		Tasks:                    mixed.Tasks,
 		CreateTimeSinceEpoch:     convertTimestamp(mixed.CreateTimeSinceEpoch),
 		LastUpdateTimeSinceEpoch: convertTimestamp(mixed.LastUpdateTimeSinceEpoch),

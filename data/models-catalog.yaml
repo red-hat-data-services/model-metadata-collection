@@ -15,8 +15,13 @@ models:
         - th
       license: llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      maturity: null
-      libraryName: null
+      tags:
+        - validated
+        - safetensors
+        - llama
+        - facebook
+        - meta
+        - llama-3
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -31,17 +36,22 @@ models:
             type:
                 string_value: modelcar
     - name: RedHatAI/Llama-3.1-Nemotron-70B-Instruct-HF
-      provider: null
-      description: Overview - A large language model
+      provider: NVIDIA
+      description: A large language model customized by NVIDIA to improve helpfulness, converted to support the HuggingFace Transformers codebase.
       readme: "# Model Overview\n\n## Description:\n\nLlama-3.1-Nemotron-70B-Instruct is a large language model customized by NVIDIA to improve the helpfulness of LLM generated responses to user queries.\n\n\nThis model reaches [Arena Hard](https://github.com/lmarena/arena-hard-auto) of 85.0, [AlpacaEval 2 LC](https://tatsu-lab.github.io/alpaca_eval/) of 57.6 and [GPT-4-Turbo MT-Bench](https://github.com/lm-sys/FastChat/pull/3158) of 8.98, which are known to be predictive of [LMSys Chatbot Arena Elo](https://huggingface.co/spaces/lmsys/chatbot-arena-leaderboard)\n\nAs of 1 Oct 2024, this model is #1 on all three automatic alignment benchmarks (verified tab for AlpacaEval 2 LC), edging out strong frontier models such as GPT-4o and Claude 3.5 Sonnet.\n\nAs of Oct 24th, 2024 the model has Elo Score of 1267(+-7), rank 9 and style controlled rank of 26 on [ChatBot Arena leaderboard](https://lmarena.ai/?leaderboard).\n\nThis model was trained using RLHF (specifically, REINFORCE), [Llama-3.1-Nemotron-70B-Reward](https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Reward) and [HelpSteer2-Preference prompts](https://huggingface.co/datasets/nvidia/HelpSteer2) on a Llama-3.1-70B-Instruct model as the initial policy.\n\nLlama-3.1-Nemotron-70B-Instruct-HF has been converted from [Llama-3.1-Nemotron-70B-Instruct](https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct) to support it in the HuggingFace Transformers codebase. Please note that evaluation results might be slightly different from the [Llama-3.1-Nemotron-70B-Instruct](https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct) as evaluated in NeMo-Aligner, which the evaluation results below are based on.\n\nTry hosted inference for free at [build.nvidia.com](https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct) - it comes with an OpenAI-compatible API interface.\n\n\nSee details on our paper at [https://arxiv.org/abs/2410.01257](https://arxiv.org/abs/2410.01257) - as a preview, this model can correctly the question ```How many r in strawberry?``` without specialized prompting or additional reasoning tokens:\n\n```\nA sweet question!\nLet’s count the “R”s in “strawberry”:\n1. S\n2. T\n3. R\n4. A\n5. W\n6. B\n7. E\n8. R\n9. R\n10. Y\nThere are **3 “R”s** in the word “strawberry”.\n```\n\nNote: This model is a demonstration of our techniques for improving helpfulness in general-domain instruction following. It has not been tuned for performance in specialized domains such as math.\n\n\n## License\nYour use of this model is governed by the [NVIDIA Open Model License](https://developer.download.nvidia.com/licenses/nvidia-open-model-license-agreement-june-2024.pdf).\nAdditional Information: [Llama 3.1 Community License Agreement](https://www.llama.com/llama3_1/license/). Built with Llama.\n\n## Evaluation Metrics\n\nAs of 1 Oct 2024, Llama-3.1-Nemotron-70B-Instruct performs best on Arena Hard, AlpacaEval 2 LC (verified tab) and MT Bench (GPT-4-Turbo)\n\n | Model  | Arena Hard | AlpacaEval | MT-Bench | Mean Response Length |\n|:-----------------------------|:----------------|:-----|:----------|:-------|\n|Details | (95% CI) | 2 LC (SE) | (GPT-4-Turbo) | (# of Characters for MT-Bench)| \n| _**Llama-3.1-Nemotron-70B-Instruct**_ | **85.0** (-1.5, 1.5) | **57.6** (1.65) | **8.98** | 2199.8 | \n| Llama-3.1-70B-Instruct | 55.7 (-2.9, 2.7) | 38.1 (0.90)  | 8.22 | 1728.6 |\n| Llama-3.1-405B-Instruct | 69.3 (-2.4, 2.2) | 39.3 (1.43) | 8.49 | 1664.7 |\n| Claude-3-5-Sonnet-20240620 | 79.2 (-1.9, 1.7) | 52.4 (1.47) | 8.81 | 1619.9 |\n| GPT-4o-2024-05-13 | 79.3 (-2.1, 2.0) | 57.5 (1.47) | 8.74 | 1752.2 |\n         \n## Usage:\n\nYou can use the model using HuggingFace Transformers library with 2 or more 80GB GPUs (NVIDIA Ampere or newer) with at least 150GB of free disk space to accomodate the download.\n\nThis code has been tested on Transformers v4.44.0, torch v2.4.0 and 2 A100 80GB GPUs, but any setup that supports ```meta-llama/Llama-3.1-70B-Instruct``` should support this model as well. If you run into problems, you can consider doing ```pip install -U transformers```.\n\n\n```python\nimport torch\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\nmodel_name = \"nvidia/Llama-3.1-Nemotron-70B-Instruct-HF\"\nmodel = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, device_map=\"auto\")\ntokenizer = AutoTokenizer.from_pretrained(model_name)\n\nprompt = \"How many r in strawberry?\"\nmessages = [{\"role\": \"user\", \"content\": prompt}]\n\ntokenized_message = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors=\"pt\", return_dict=True)\nresponse_token_ids = model.generate(tokenized_message['input_ids'].cuda(),attention_mask=tokenized_message['attention_mask'].cuda(),  max_new_tokens=4096, pad_token_id = tokenizer.eos_token_id)\ngenerated_tokens =response_token_ids[:, len(tokenized_message['input_ids'][0]):]\ngenerated_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]\nprint(generated_text)\n\n# See response at top of model card\n```\n\n## References(s):\n\n* [NeMo Aligner](https://arxiv.org/abs/2405.01481)\n* [HelpSteer2-Preference](https://arxiv.org/abs/2410.01257)\n* [HelpSteer2](https://arxiv.org/abs/2406.08673)\n* [Introducing Llama 3.1: Our most capable models to date](https://ai.meta.com/blog/meta-llama-3-1/) \n* [Meta's Llama 3.1 Webpage](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1) \n* [Meta's Llama 3.1 Model Card](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md)\n \n\n## Model Architecture: \n**Architecture Type:** Transformer <br>\n**Network Architecture:** Llama 3.1 <br>\n\n## Input:\n**Input Type(s):** Text <br>\n**Input Format:** String <br>\n**Input Parameters:** One Dimensional (1D) <br>\n**Other Properties Related to Input:** Max of 128k tokens<br>\n\n## Output:\n**Output Type(s):** Text <br>\n**Output Format:** String <br>\n**Output Parameters:** One Dimensional (1D) <br>\n**Other Properties Related to Output:**  Max of 4k tokens <br>\n\n\n## Software Integration:\n**Supported Hardware Microarchitecture Compatibility:** <br>\n* NVIDIA Ampere <br>\n* NVIDIA Hopper <br>\n* NVIDIA Turing <br>\n**Supported Operating System(s):** Linux <br>\n\n## Model Version: \nv1.0\n\n# Training & Evaluation: \n\n## Alignment methodology\n* REINFORCE implemented in NeMo Aligner \n\n## Datasets:\n\n**Data Collection Method by dataset** <br>\n* [Hybrid: Human, Synthetic] <br>\n\n**Labeling Method by dataset** <br>\n* [Human] <br>\n\n**Link:** \n* [HelpSteer2](https://huggingface.co/datasets/nvidia/HelpSteer2)\n\n**Properties (Quantity, Dataset Descriptions, Sensor(s)):** <br>\n* 21, 362 prompt-responses built to make more models more aligned with human preference - specifically more helpful, factually-correct, coherent, and customizable based on complexity and verbosity.\n* 20, 324 prompt-responses used for training and 1, 038 used for validation.\n\n\n# Inference:\n**Engine:** [Triton](https://developer.nvidia.com/triton-inference-server) <br>\n**Test Hardware:** H100, A100 80GB, A100 40GB <br>\n\n\n## Ethical Considerations:\nNVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications.  When downloaded or used in accordance with our terms of service, developers should work with their supporting model team to ensure this model meets requirements for the relevant industry and use case and addresses unforeseen product misuse.  For more detailed information on ethical considerations for this model, please see the Model Card++ Explainability, Bias, Safety & Security, and Privacy Subcards.  Please report security vulnerabilities or NVIDIA AI Concerns [here](https://www.nvidia.com/en-us/support/submit-security-vulnerability/).\n\nPlease report security vulnerabilities or NVIDIA AI Concerns [here](https://www.nvidia.com/en-us/support/submit-security-vulnerability/).\n\n## Citation\n\nIf you find this model useful, please cite the following works\n\n```bibtex\n@misc{wang2024helpsteer2preferencecomplementingratingspreferences,\n      title={HelpSteer2-Preference: Complementing Ratings with Preferences}, \n      author={Zhilin Wang and Alexander Bukharin and Olivier Delalleau and Daniel Egert and Gerald Shen and Jiaqi Zeng and Oleksii Kuchaiev and Yi Dong},\n      year={2024},\n      eprint={2410.01257},\n      archivePrefix={arXiv},\n      primaryClass={cs.LG},\n      url={https://arxiv.org/abs/2410.01257}, \n}\n```"
       language:
         - en
       license: llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - llama
+        - nvidia
+        - llama3.1
+        - conversational
+        - text-generation-inference
       tasks:
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: null
       lastUpdateTimeSinceEpoch: null
       artifacts:
@@ -59,17 +69,15 @@ models:
       readme: "# Llama-3.1-Nemotron-70B-Instruct-HF-FP8-dynamic\n\n## Model Overview\n- **Model Architecture:** Llama-3.1-70B-Instruct\n  - **Input:** Text\n  - **Output:** Text\n- **Model Optimizations:**\n  - **Weight quantization:** FP8\n  - **Activation quantization:** FP8\n- **Release Date:** 3/1/2025\n- **Version:** 1.0\n- **Model Developers:** Neural Magic\n\nQuantized version of [Llama-3.1-Nemotron-70B-Instruct-Hf](https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct-HF).\nIt achieves an average score of 78.9 on the [OpenLLM](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) benchmark (version 1), whereas the unquantized model achieves 78.92.\n\n### Model Optimizations\n\nThis model was obtained by quantizing the weights and activations to FP8 data type, ready for inference with vLLM >= 0.5.2.\nThis optimization reduces the number of bits per parameter from 16 to 8, reducing the disk size and GPU memory requirements by approximately 50%. Only the weights and activations of the linear operators within transformers blocks are quantized. \n\n## Deployment\n\n### Use with vLLM\n\nThis model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/latest/) backend, as shown in the example below.\n\n```python\nfrom transformers import AutoTokenizer\nfrom vllm import LLM, SamplingParams\n\nmax_model_len, tp_size = 4096, 1\nmodel_name = \"neuralmagic-ent/Llama-3.1-Nemotron-70B-Instruct-HF-FP8-dynamic\"\ntokenizer = AutoTokenizer.from_pretrained(model_name)\nllm = LLM(model=model_name, tensor_parallel_size=tp_size, max_model_len=max_model_len, trust_remote_code=True)\nsampling_params = SamplingParams(temperature=0.3, max_tokens=256, stop_token_ids=[tokenizer.eos_token_id])\n\nmessages_list = [\n    [{\"role\": \"user\", \"content\": \"Who are you? Please respond in pirate speak!\"}],\n]\n\nprompt_token_ids = [tokenizer.apply_chat_template(messages, add_generation_prompt=True) for messages in messages_list]\n\noutputs = llm.generate(prompt_token_ids=prompt_token_ids, sampling_params=sampling_params)\n\ngenerated_text = [output.outputs[0].text for output in outputs]\nprint(generated_text)\n```\n\nvLLM also supports OpenAI-compatible serving. See the [documentation](https://docs.vllm.ai/en/latest/) for more details.\n\n## Creation\n\nThis model was created with [llm-compressor](https://github.com/vllm-project/llm-compressor) by running the code snippet below. \n\n\n```python\nimport argparse\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\nfrom llmcompressor.modifiers.quantization import QuantizationModifier\nfrom llmcompressor.transformers import oneshot\nimport os\n\ndef main():\n    parser = argparse.ArgumentParser(description='Quantize a transformer model to FP8')\n    parser.add_argument('--model_id', type=str, required=True,\n                        help='The model ID from HuggingFace (e.g., \"meta-llama/Meta-Llama-3-8B-Instruct\")')\n    parser.add_argument('--save_path', type=str, default='.',\n                        help='Custom path to save the quantized model. If not provided, will use model_name-FP8-dynamic')\n    args = parser.parse_args()\n\n    # Load model\n    model = AutoModelForCausalLM.from_pretrained(\n        args.model_id, device_map=\"auto\", torch_dtype=\"auto\", trust_remote_code=True,\n    )\n    tokenizer = AutoTokenizer.from_pretrained(args.model_id)\n\n    # Configure the quantization algorithm and scheme\n    recipe = QuantizationModifier(\n        targets=\"Linear\", scheme=\"FP8_DYNAMIC\", ignore=[\"lm_head\"]\n    )\n\n    # Apply quantization\n    oneshot(model=model, recipe=recipe)\n\n    save_path = os.path.join(args.save_path, args.model_id.split(\"/\")[1] + \"-FP8-dynamic\")\n    os.makedirs(save_path, exist_ok=True)\n\n    # Save to disk in compressed-tensors format\n    model.save_pretrained(save_path)\n    tokenizer.save_pretrained(save_path)\n    print(f\"Model and tokenizer saved to: {save_path}\")\n\nif __name__ == \"__main__\":\n    main()\n```\n\n## Evaluation\n\nThe model was evaluated on OpenLLM Leaderboard [V1](https://huggingface.co/spaces/open-llm-leaderboard-old/open_llm_leaderboard) and [V2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard#/), using the following commands:\n\nOpenLLM Leaderboard V1:\n```\nlm_eval \\\n  --model vllm \\\n  --model_args pretrained=\"neuralmagic-ent/Llama-3.1-Nemotron-70B-Instruct-HF-FP8-dynamic\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1,gpu_memory_utilization=0.8,enable_chunked_prefill=True,trust_remote_code=True \\\n  --tasks openllm \\\n  --write_out \\\n  --batch_size auto \\\n  --output_path output_dir \\\n  --show_config\n```\n\nOpenLLM Leaderboard V2:\n```\nlm_eval \\\n  --model vllm \\\n  --model_args pretrained=\"neuralmagic-ent/Llama-3.1-Nemotron-70B-Instruct-HF-FP8-dynamic\",dtype=auto,add_bos_token=False,max_model_len=4096,tensor_parallel_size=1,gpu_memory_utilization=0.8,enable_chunked_prefill=True,trust_remote_code=True \\\n  --apply_chat_template \\\n  --fewshot_as_multiturn \\\n  --tasks leaderboard \\\n  --write_out \\\n  --batch_size auto \\\n  --output_path output_dir \\\n  --show_config\n\n```\n\n### Accuracy\n\n#### OpenLLM Leaderboard V1 evaluation scores\n\n| Metric                                   | nvidia/Llama-3.1-Nemotron-70B-Instruct-HF             | neuralmagic-ent/Llama-3.1-Nemotron-70B-Instruct-HF-FP8-dynamic |\n|-----------------------------------------|:---------------------------------:|:-------------------------------------------:|\n| ARC-Challenge (Acc-Norm, 25-shot)       | 71.76                            | 72.10                                       |\n| GSM8K (Strict-Match, 5-shot)            | 82.94                            |  82.79                                        |\n| HellaSwag (Acc-Norm, 10-shot)           | 87.61                            | 87.43                                       |\n| MMLU (Acc, 5-shot)                      | 82.56                            | 82.65                                       |\n| TruthfulQA (MC2, 0-shot)                | 64.85                            | 64.97                                       |\n| Winogrande (Acc, 5-shot)                | 83.82                            | 83.43                                       |\n| **Average Score**                       | **78.92**                        | **78.90**                                   |\n| **Recovery**                            | **100.00**                       | **99.97**                                   |\n\n#### OpenLLM Leaderboard V2 evaluation scores\n\n| Metric                                                   | nvidia/Llama-3.1-Nemotron-70B-Instruct-HF             | neuralmagic-ent/Llama-3.1-Nemotron-70B-Instruct-HF-FP8-dynamic |\n|---------------------------------------------------------|:---------------------------------:|:-------------------------------------------:|\n| IFEval (Inst-and-Prompt Level Strict Acc, 0-shot)       | 74.3                            | 74.72                                       |\n| BBH (Acc-Norm, 3-shot)                                  | 47.39                            | 46.92                                       |\n| Math-Hard (Exact-Match, 4-shot)                         | 23.21                            | 21.83                                       |\n| GPQA (Acc-Norm, 0-shot)                                 | 1.2                             | 1.34                                        |\n| MUSR (Acc-Norm, 0-shot)                                 | 13.2                             | 14.06                                       |\n| MMLU-Pro (Acc, 5-shot)                                  | 43.45                            | 43.42                                       |\n| **Average Score**                                       | **33.79**                        | **33.72**                                   |\n| **Recovery**                                            | **100.00**                       | **99.79**                                   |\n\n"
       language:
         - en
-        - de
-        - fr
-        - it
-        - pt
-        - hi
-        - es
-        - th
       license: llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - llama
+        - fp8
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1740787200
@@ -98,8 +106,13 @@ models:
         - th
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - safetensors
+        - llama
+        - facebook
+        - meta
+        - llama-3
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -119,17 +132,25 @@ models:
       readme: "# Llama-3.3-70B-Instruct-FP8-dynamic\n\n## Model Overview\n- **Model Architecture:** Meta-Llama-3.1\n  - **Input:** Text\n  - **Output:** Text\n- **Model Optimizations:**\n  - **Weight quantization:** FP8\n  - **Activation quantization:** FP8\n- **Intended Use Cases:** Intended for commercial and research use in multiple languages. Instruction tuned text only models are intended for assistant-like chat, whereas pretrained models can be adapted for a variety of natural language generation tasks. The Llama 3.3 model also supports the ability to leverage the outputs of its models to improve other models including synthetic data generation and distillation. The Llama 3.3 Community License allows for these use cases.\n- **Out-of-scope:** Use in any manner that violates applicable laws or regulations (including trade compliance laws). Use in any other way that is prohibited by the Acceptable Use Policy and Llama 3.3 Community License. Use in languages beyond English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai.\n- **Release Date:** 12/11/2024\n- **Version:** 1.0\n- **License(s):** llama3.3\n- **Model Developers:** RedHat (Neural Magic)\n\n### Model Optimizations\n\nThis model was obtained by quantizing activation and weights of [Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct) to FP8 data type.\nThis optimization reduces the number of bits used to represent weights and activations from 16 to 8, reducing GPU memory requirements (by approximately 50%) and increasing matrix-multiply compute throughput (by approximately 2x).\nWeight quantization also reduces disk size requirements by approximately 50%.\n\nOnly weights and activations of the linear operators within transformers blocks are quantized.\nWeights are quantized with a symmetric static per-channel scheme, whereas activations are quantized with a symmetric dynamic per-token scheme.\nThe [llm-compressor](https://github.com/vllm-project/llm-compressor) library is used for quantization.\n\n## Deployment\n\nThis model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/latest/) backend, as shown in the example below.\n\n```python\nfrom vllm import LLM, SamplingParams\nfrom transformers import AutoTokenizer\n\nmodel_id = \"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\"\nnumber_gpus = 1\n\nsampling_params = SamplingParams(temperature=0.7, top_p=0.8, max_tokens=256)\n\ntokenizer = AutoTokenizer.from_pretrained(model_id)\n\nmessages = [\n    {\"role\": \"system\", \"content\": \"You are a pirate chatbot who always responds in pirate speak!\"},\n    {\"role\": \"user\", \"content\": \"Who are you?\"},\n]\n\nprompts = tokenizer.apply_chat_template(messages, tokenize=False)\n\nllm = LLM(model=model_id, tensor_parallel_size=number_gpus)\n\noutputs = llm.generate(prompts, sampling_params)\n\ngenerated_text = outputs[0].outputs[0].text\nprint(generated_text)\n```\n\nvLLM aslo supports OpenAI-compatible serving. See the [documentation](https://docs.vllm.ai/en/latest/) for more details.\n\n## Creation\n\n<details>\n  <summary>Creation details</summary>\n  This model was created with [llm-compressor](https://github.com/vllm-project/llm-compressor) by running the code snippet below. \n\n\n  ```python\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  from llmcompressor.modifiers.quantization import QuantizationModifier\n  from llmcompressor.transformers import oneshot\n  \n  # Load model\n  model_stub = \"meta-llama/Llama-3.3-70B-Instruct\"\n  model_name = model_stub.split(\"/\")[-1]\n  \n  tokenizer = AutoTokenizer.from_pretrained(model_stub)\n  \n  model = AutoModelForCausalLM.from_pretrained(\n      model_stub,\n      device_map=\"auto\",\n      torch_dtype=\"auto\",\n  )\n  \n  # Configure the quantization algorithm and scheme\n  recipe = QuantizationModifier(\n      targets=\"Linear\",\n      scheme=\"FP8_dynamic\",\n      ignore=[\"lm_head\"],\n  )\n  \n  # Apply quantization\n  oneshot(\n      model=model,\n      recipe=recipe,\n  )\n  \n  # Save to disk in compressed-tensors format\n  save_path = model_name + \"-FP8-dynamic\"\n  model.save_pretrained(save_path)\n  tokenizer.save_pretrained(save_path)\n  print(f\"Model and tokenizer saved to: {save_path}\")\n  ```\n</details>\n\n## Evaluation\n\nThis model was evaluated on the well-known OpenLLM v1, OpenLLM v2, HumanEval, and HumanEval+ benchmarks.\nIn all cases, model outputs were generated with the [vLLM](https://docs.vllm.ai/en/stable/) engine.\n\nOpenLLM v1 and v2 evaluations were conducted using [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) and the prompting style of [Meta-Llama-3.1-Instruct-evals](https://huggingface.co/datasets/meta-llama/Meta-Llama-3.1-8B-Instruct-evals) when available.\n\nHumanEval and HumanEval+ evaluations were conducted using Neural Magic's fork of the [EvalPlus](https://github.com/neuralmagic/evalplus) repository.\n\n<details>\n  <summary>Evaluation details</summary>\n\n  **MMLU**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU-CoT**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=4064,max_gen_toks=1024,tensor_parallel_size=1 \\\n    --tasks mmlu_cot_llama \\\n    --apply_chat_template \\\n    --num_fewshot 0 \\\n    --batch_size auto\n  ```\n\n  **ARC-Challenge**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3940,max_gen_toks=100,tensor_parallel_size=1 \\\n    --tasks arc_challenge_llama \\\n    --apply_chat_template \\\n    --num_fewshot 0 \\\n    --batch_size auto\n  ```\n\n  **GSM-8K**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=4096,max_gen_toks=1024,tensor_parallel_size=1 \\\n    --tasks gsm8k_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 8 \\\n    --batch_size auto\n  ```\n\n  **Hellaswag**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1 \\\n    --tasks hellaswag \\\n    --num_fewshot 10 \\\n    --batch_size auto\n  ```\n\n  **Winogrande**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1 \\\n    --tasks winogrande \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **TruthfulQA**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1 \\\n    --tasks truthfulqa \\\n    --num_fewshot 0 \\\n    --batch_size auto\n  ```\n\n  **OpenLLM v2**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=4096,tensor_parallel_size=1,enable_chunked_prefill=True \\\n    --apply_chat_template \\\n    --fewshot_as_multiturn \\\n    --tasks leaderboard \\\n    --batch_size auto\n  ```\n\n  **MMLU Portuguese**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_pt_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU Spanish**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_es_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU Italian**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_it_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU German**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_de_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU French**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_fr_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU Hindi**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_hi_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU Thai**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_th_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **HumanEval and HumanEval+**\n  *Generation*\n  ```\n  python3 codegen/generate.py \\\n    --model RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic \\\n    --bs 16 \\\n    --temperature 0.2 \\\n    --n_samples 50 \\\n    --root \".\" \\\n    --dataset humaneval\n  ```\n\n  *Sanitization*\n  ```\n  python3 evalplus/sanitize.py \\\n    humaneval/RedHatAI--Llama-3.3-70B-Instruct-FP8-dynamic_vllm_temp_0.2\n  ```\n\n  *Evaluation*\n  ```\n  evalplus.evaluate \\\n    --dataset humaneval \\\n    --samples humaneval/RedHatAI--Llama-3.3-70B-Instruct-FP8-dynamic_vllm_temp_0.2-sanitized\n  ```\n</details>\n\n### Accuracy\n\n<table>\n  <tr>\n   <th>Category\n   </th>\n   <th>Benchmark\n   </th>\n   <th>Llama-3.3-70B-Instruct\n   </th>\n   <th>Llama-3.3-70B-Instruct-FP8-dynamic<br>(this model)\n   </th>\n   <th>Recovery\n   </th>\n  </tr>\n  <tr>\n   <td rowspan=\"8\" ><strong>OpenLLM v1</strong>\n   </td>\n   <td>MMLU (5-shot)\n   </td>\n   <td>81.60\n   </td>\n   <td>81.31\n   </td>\n   <td>99.6%\n   </td>\n  </tr>\n  <tr>\n   <td>MMLU (CoT, 0-shot)\n   </td>\n   <td>86.58\n   </td>\n   <td>86.34\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n  <tr>\n   <td>ARC Challenge (0-shot)\n   </td>\n   <td>49.23\n   </td>\n   <td>51.96\n   </td>\n   <td>105.6%\n   </td>\n  </tr>\n  <tr>\n   <td>GSM-8K (CoT, 8-shot, strict-match)\n   </td>\n   <td>94.16\n   </td>\n   <td>94.92\n   </td>\n   <td>100.8%\n   </td>\n  </tr>\n  <tr>\n   <td>Hellaswag (10-shot)\n   </td>\n   <td>86.49\n   </td>\n   <td>86.43\n   </td>\n   <td>99.9%\n   </td>\n  </tr>\n  <tr>\n   <td>Winogrande (5-shot)\n   </td>\n   <td>84.77\n   </td>\n   <td>84.53\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n  <tr>\n   <td>TruthfulQA (0-shot, mc2)\n   </td>\n   <td>62.75\n   </td>\n   <td>63.21\n   </td>\n   <td>100.7%\n   </td>\n  </tr>\n  <tr>\n   <td><strong>Average</strong>\n   </td>\n   <td><strong>77.94</strong>\n   </td>\n   <td><strong>78.39</strong>\n   </td>\n   <td><strong>100.6%</strong>\n   </td>\n  </tr>\n  <tr>\n   <td rowspan=\"7\" ><strong>OpenLLM v2</strong>\n   </td>\n   <td>MMLU-Pro (5-shot)\n   </td>\n   <td>51.89\n   </td>\n   <td>51.50\n   </td>\n   <td>99.3%\n   </td>\n  </tr>\n  <tr>\n   <td>IFEval (0-shot)\n   </td>\n   <td>90.89\n   </td>\n   <td>90.92\n   </td>\n   <td>100.0%\n   </td>\n  </tr>\n  <tr>\n   <td>BBH (3-shot)\n   </td>\n   <td>63.15\n   </td>\n   <td>62.84\n   </td>\n   <td>99.5%\n   </td>\n  </tr>\n  <tr>\n   <td>Math-lvl-5 (4-shot)\n   </td>\n   <td>0.17\n   </td>\n   <td>0.33\n   </td>\n   <td>N/A\n   </td>\n  </tr>\n  <tr>\n   <td>GPQA (0-shot)\n   </td>\n   <td>46.10\n   </td>\n   <td>46.30\n   </td>\n   <td>100.4%\n   </td>\n  </tr>\n  <tr>\n   <td>MuSR (0-shot)\n   </td>\n   <td>44.35\n   </td>\n   <td>43.96\n   </td>\n   <td>99.1%\n   </td>\n  </tr>\n  <tr>\n   <td><strong>Average</strong>\n   </td>\n   <td><strong>49.42</strong>\n   </td>\n   <td><strong>49.31</strong>\n   </td>\n   <td><strong>99.8%</strong>\n   </td>\n  </tr>\n  <tr>\n   <td rowspan=\"2\" ><strong>Coding</strong>\n   </td>\n   <td>HumanEval pass@1\n   </td>\n   <td>83.20\n   </td>\n   <td>83.70\n   </td>\n   <td>100.6%\n   </td>\n  </tr>\n  <tr>\n   <td>HumanEval+ pass@1\n   </td>\n   <td>78.40\n   </td>\n   <td>78.70\n   </td>\n   <td>100.4%\n   </td>\n  </tr>\n  <tr>\n   <td rowspan=\"9\" ><strong>Multilingual</strong>\n   </td>\n   <td>Portuguese MMLU (5-shot)\n   </td>\n   <td>79.76\n   </td>\n   <td>79.75\n   </td>\n   <td>100.0%\n   </td>\n  </tr>\n  <tr>\n   <td>Spanish MMLU (5-shot)\n   </td>\n   <td>79.33\n   </td>\n   <td>79.17\n   </td>\n   <td>99.8%\n   </td>\n  </tr>\n  <tr>\n   <td>Italian MMLU (5-shot)\n   </td>\n   <td>79.15\n   </td>\n   <td>78.84\n   </td>\n   <td>99.6%\n   </td>\n  </tr>\n  <tr>\n   <td>German MMLU (5-shot)\n   </td>\n   <td>77.94\n   </td>\n   <td>77.95\n   </td>\n   <td>100.0%\n   </td>\n  </tr>\n  <tr>\n   <td>French MMLU (5-shot)\n   </td>\n   <td>75.69\n   </td>\n   <td>75.45\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n  <tr>\n   <td>Hindi MMLU (5-shot)\n   </td>\n   <td>73.81\n   </td>\n   <td>73.71\n   </td>\n   <td>99.9%\n   </td>\n  </tr>\n  <tr>\n   <td>Thai MMLU (5-shot)\n   </td>\n   <td>71.98\n   </td>\n   <td>71.77\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n</table>\n\n\n"
       language:
         - en
+        - de
         - fr
         - it
         - pt
         - hi
         - es
         - th
-        - de
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - llama
+        - facebook
+        - meta
+        - llama-3
+        - fp8
+        - quantized
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1733875200
@@ -149,17 +170,29 @@ models:
       readme: "# Llama-3.3-70B-Instruct-quantized.w4a16\n\n## Model Overview\n- **Model Architecture:** Meta-Llama-3.1\n  - **Input:** Text\n  - **Output:** Text\n- **Model Optimizations:**\n  - **Weight quantization:** INT4\n- **Intended Use Cases:** Intended for commercial and research use in multiple languages. Instruction tuned text only models are intended for assistant-like chat, whereas pretrained models can be adapted for a variety of natural language generation tasks. The Llama 3.3 model also supports the ability to leverage the outputs of its models to improve other models including synthetic data generation and distillation. The Llama 3.3 Community License allows for these use cases.\n- **Out-of-scope:** Use in any manner that violates applicable laws or regulations (including trade compliance laws). Use in any other way that is prohibited by the Acceptable Use Policy and Llama 3.3 Community License. Use in languages beyond English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai.\n- **Release Date:** 12/11/2024\n- **Version:** 1.0\n- **License(s):** llama3.3\n- **Model Developers:** RedHat (Neural Magic)\n\n### Model Optimizations\n\nThis model was obtained by quantizing the weights of [Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct) to INT4 data type.\nThis optimization reduces the number of bits per parameter from 16 to 4, reducing the disk size and GPU memory requirements by approximately 75%.\n\nOnly the weights of the linear operators within transformers blocks are quantized.\nWeights are quantized using a symmetric per-group scheme, with group size 128.\nThe [GPTQ](https://arxiv.org/abs/2210.17323) algorithm is applied for quantization, as implemented in the [llm-compressor](https://github.com/vllm-project/llm-compressor) library.\n\n## Deployment\n\nThis model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/latest/) backend, as shown in the example below.\n\n```python\nfrom vllm import LLM, SamplingParams\nfrom transformers import AutoTokenizer\n\nmodel_id = \"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\"\nnumber_gpus = 1\n\nsampling_params = SamplingParams(temperature=0.6, top_p=0.9, max_tokens=256)\n\ntokenizer = AutoTokenizer.from_pretrained(model_id)\n\nmessages = [\n    {\"role\": \"system\", \"content\": \"You are a pirate chatbot who always responds in pirate speak!\"},\n    {\"role\": \"user\", \"content\": \"Who are you?\"},\n]\n\nprompts = tokenizer.apply_chat_template(messages, tokenize=False)\n\nllm = LLM(model=model_id, tensor_parallel_size=number_gpus)\n\noutputs = llm.generate(prompts, sampling_params)\n\ngenerated_text = outputs[0].outputs[0].text\nprint(generated_text)\n```\n\nvLLM aslo supports OpenAI-compatible serving. See the [documentation](https://docs.vllm.ai/en/latest/) for more details.\n\n## Creation\n\n<details>\n  <summary>Creation details</summary>\n  This model was created with [llm-compressor](https://github.com/vllm-project/llm-compressor) by running the code snippet below. \n\n\n  ```python\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  from llmcompressor.modifiers.quantization import GPTQModifier\n  from llmcompressor.transformers import oneshot\n  from datasets import load_dataset\n  \n  # Load model\n  model_stub = \"meta-llama/Llama-3.3-70B-Instruct\"\n  model_name = model_stub.split(\"/\")[-1]\n\n  num_samples = 1024\n  max_seq_len = 8192\n  \n  tokenizer = AutoTokenizer.from_pretrained(model_stub)\n  \n  model = AutoModelForCausalLM.from_pretrained(\n      model_stub,\n      device_map=\"auto\",\n      torch_dtype=\"auto\",\n  )\n  \n  def preprocess_fn(example):\n    return {\"text\": tokenizer.apply_chat_template(example[\"messages\"], add_generation_prompt=False, tokenize=False)}\n  \n  ds = load_dataset(\"neuralmagic/LLM_compression_calibration\", split=\"train\")\n  ds = ds.map(preprocess_fn)\n\n  # Configure the quantization algorithm and scheme\n  recipe = GPTQModifier(\n      targets=\"Linear\",\n      scheme=\"W4A16\",\n      ignore=[\"lm_head\"],\n      sequential_targets=[\"LlamaDecoderLayer\"],\n      dampening_frac=0.01,\n  )\n  \n  # Apply quantization\n  oneshot(\n      model=model,\n      dataset=ds, \n      recipe=recipe,\n      max_seq_length=max_seq_len,\n      num_calibration_samples=num_samples,\n  )\n  \n  # Save to disk in compressed-tensors format\n  save_path = model_name + \"-quantized.w4a16\"\n  model.save_pretrained(save_path)\n  tokenizer.save_pretrained(save_path)\n  print(f\"Model and tokenizer saved to: {save_path}\")\n  ```\n</details>\n\n## Evaluation\n\nThis model was evaluated on the well-known OpenLLM v1, HumanEval, and HumanEval+ benchmarks.\nIn all cases, model outputs were generated with the [vLLM](https://docs.vllm.ai/en/stable/) engine.\n\nOpenLLM v1 evaluations were conducted using [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) and the prompting style of [Meta-Llama-3.1-Instruct-evals](https://huggingface.co/datasets/meta-llama/Meta-Llama-3.1-8B-Instruct-evals) when available.\n\nHumanEval and HumanEval+ evaluations were conducted using Neural Magic's fork of the [EvalPlus](https://github.com/neuralmagic/evalplus) repository.\n\n<details>\n  <summary>Evaluation details</summary>\n\n  **MMLU**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,max_model_len=3850,max_gen_toks=10,tensor_parallel_size=1 \\\n    --tasks mmlu_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **MMLU-CoT**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,max_model_len=4064,max_gen_toks=1024,tensor_parallel_size=1 \\\n    --tasks mmlu_cot_llama \\\n    --apply_chat_template \\\n    --num_fewshot 0 \\\n    --batch_size auto\n  ```\n\n  **ARC-Challenge**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,max_model_len=3940,max_gen_toks=100,tensor_parallel_size=1 \\\n    --tasks arc_challenge_llama \\\n    --apply_chat_template \\\n    --num_fewshot 0 \\\n    --batch_size auto\n  ```\n\n  **GSM-8K**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,max_model_len=4096,max_gen_toks=1024,tensor_parallel_size=1 \\\n    --tasks gsm8k_llama \\\n    --fewshot_as_multiturn \\\n    --apply_chat_template \\\n    --num_fewshot 8 \\\n    --batch_size auto\n  ```\n\n  **Hellaswag**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1 \\\n    --tasks hellaswag \\\n    --num_fewshot 10 \\\n    --batch_size auto\n  ```\n\n  **Winogrande**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1 \\\n    --tasks winogrande \\\n    --num_fewshot 5 \\\n    --batch_size auto\n  ```\n\n  **TruthfulQA**\n  ```\n  lm_eval \\\n    --model vllm \\\n    --model_args pretrained=\"RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1 \\\n    --tasks truthfulqa \\\n    --num_fewshot 0 \\\n    --batch_size auto\n  ```\n\n  **HumanEval and HumanEval+**\n  *Generation*\n  ```\n  python3 codegen/generate.py \\\n    --model RedHatAI/Llama-3.3-70B-Instruct-quantized.w4a16 \\\n    --bs 16 \\\n    --temperature 0.2 \\\n    --n_samples 50 \\\n    --root \".\" \\\n    --dataset humaneval\n  ```\n\n  *Sanitization*\n  ```\n  python3 evalplus/sanitize.py \\\n    humaneval/RedHatAI--Llama-3.3-70B-Instruct-quantized.w4a16_vllm_temp_0.2\n  ```\n\n  *Evaluation*\n  ```\n  evalplus.evaluate \\\n    --dataset humaneval \\\n    --samples humaneval/RedHatAI--Llama-3.3-70B-Instruct-quantized.w4a16_vllm_temp_0.2-sanitized\n  ```\n</details>\n\n### Accuracy\n\n<table>\n  <tr>\n   <th>Category\n   </th>\n   <th>Benchmark\n   </th>\n   <th>Llama-3.3-70B-Instruct\n   </th>\n   <th>Llama-3.3-70B-Instruct-quantized.w4a16<br>(this model)\n   </th>\n   <th>Recovery\n   </th>\n  </tr>\n  <tr>\n   <td rowspan=\"8\" ><strong>OpenLLM v1</strong>\n   </td>\n   <td>MMLU (5-shot)\n   </td>\n   <td>81.60\n   </td>\n   <td>80.62\n   </td>\n   <td>98.8%\n   </td>\n  </tr>\n  <tr>\n   <td>MMLU (CoT, 0-shot)\n   </td>\n   <td>86.58\n   </td>\n   <td>85.81\n   </td>\n   <td>99.1%\n   </td>\n  </tr>\n  <tr>\n   <td>ARC Challenge (0-shot)\n   </td>\n   <td>49.23\n   </td>\n   <td>49.49\n   </td>\n   <td>100.5%\n   </td>\n  </tr>\n  <tr>\n   <td>GSM-8K (CoT, 8-shot, strict-match)\n   </td>\n   <td>94.16\n   </td>\n   <td>94.47\n   </td>\n   <td>100.3%\n   </td>\n  </tr>\n  <tr>\n   <td>Hellaswag (10-shot)\n   </td>\n   <td>86.49\n   </td>\n   <td>85.97\n   </td>\n   <td>99.4%\n   </td>\n  </tr>\n  <tr>\n   <td>Winogrande (5-shot)\n   </td>\n   <td>84.77\n   </td>\n   <td>\n   </td>\n   <td>%\n   </td>\n  </tr>\n  <tr>\n   <td>TruthfulQA (0-shot, mc2)\n   </td>\n   <td>62.75\n   </td>\n   <td>61.66\n   </td>\n   <td>98.3%\n   </td>\n  </tr>\n  <tr>\n   <td><strong>Average</strong>\n   </td>\n   <td><strong>77.94</strong>\n   </td>\n   <td><strong>77.49</strong>\n   </td>\n   <td><strong>98.3%</strong>\n   </td>\n  </tr>\n  <tr>\n   <td rowspan=\"2\" ><strong>Coding</strong>\n   </td>\n   <td>HumanEval pass@1\n   </td>\n   <td>83.20\n   </td>\n   <td>83.40\n   </td>\n   <td>100.2%\n   </td>\n  </tr>\n  <tr>\n   <td>HumanEval+ pass@1\n   </td>\n   <td>78.40\n   </td>\n   <td>78.60\n   </td>\n   <td>100.3%\n   </td>\n  </tr>\n</table>\n\n\n"
       language:
         - en
+        - de
         - fr
         - it
         - pt
         - hi
         - es
         - th
-        - de
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - llama
+        - facebook
+        - meta
+        - llama-3
+        - int4
+        - vllm
+        - chat
+        - neuralmagic
+        - llmcompressor
+        - 4-bit precision
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1733875200
@@ -769,8 +802,21 @@ models:
         - th
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - llama
+        - facebook
+        - meta
+        - llama-3
+        - int8
+        - vllm
+        - chat
+        - neuralmagic
+        - llmcompressor
+        - 8-bit precision
+        - compressed-tensors
+        - 8-bit
       tasks:
         - text-generation
       createTimeSinceEpoch: 1737331200
@@ -803,11 +849,16 @@ models:
         - vi
       license: other
       licenseLink: https://llama.com/docs/overview
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - safetensors
+        - llama4
+        - facebook
+        - meta
+        - llama
       tasks:
-        - image-text-to-text
         - text-generation
+        - image-text-to-text
       createTimeSinceEpoch: null
       lastUpdateTimeSinceEpoch: null
       artifacts:
@@ -821,7 +872,7 @@ models:
                 string_value: modelcar
     - name: RedHatAI/Llama-4-Maverick-17B-128E-Instruct-FP8
       provider: Meta
-      description: Llama 4 Maverick 17B 128E Instruct Fp8 - An instruction-tuned language model
+      description: FP8-Quantized variant of Llama-4-Maverick-17B-128E-Instruct
       readme: |
         # Llama-4-Maverick-17B-128E-Instruct-FP8
       language:
@@ -839,11 +890,23 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - facebook
+        - meta
+        - pytorch
+        - llama
+        - llama4
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - FP8
+        - conversational
+        - compressed-tensors
       tasks:
         - image-text-to-text
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: null
       lastUpdateTimeSinceEpoch: null
       artifacts:
@@ -857,7 +920,7 @@ models:
                 string_value: modelcar
     - name: RedHatAI/Llama-4-Scout-17B-16E-Instruct
       provider: Meta
-      description: Llama 4 Scout 17B 16E Instruct - An instruction-tuned language model
+      description: The Llama 4 collection of models are natively multimodal AI models that enable text and multimodal experiences. These models leverage a mixture-of-experts architecture to offer industry-leading performance in text and image understanding. These Llama 4 models mark the beginning of a new era for the Llama ecosystem. We are launching two efficient models in the Llama 4 series, Llama 4 Scout, a 17 billion parameter model with 16 experts, and Llama 4 Maverick, a 17 billion parameter model with 128 experts.
       readme: |
         # Llama-4-Scout-17B-16E-Instruct
       language:
@@ -875,11 +938,17 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - llama4
+        - facebook
+        - meta
+        - llama
+        - conversational
+        - text-generation-inference
       tasks:
         - image-text-to-text
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: null
       lastUpdateTimeSinceEpoch: null
       artifacts:
@@ -892,8 +961,8 @@ models:
             type:
                 string_value: modelcar
     - name: RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic
-      provider: Red Hat (Neural Magic)
-      description: Llama 4 Scout 17B 16E Instruct Fp8 Dynamic - An instruction-tuned language model
+      provider: Meta
+      description: FP8-Dynamic Quantized variant of Llama-4-Scout-17B-16E-Instruct
       readme: |
         # Llama-4-Scout-17B-16E-Instruct-FP8-dynamic
       language:
@@ -911,11 +980,21 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      maturity: null
-      libraryName: vllm
+      tags:
+        - validated
+        - facebook
+        - meta
+        - pytorch
+        - llama
+        - llama4
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - FP8
       tasks:
         - image-text-to-text
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: 1744675200
       lastUpdateTimeSinceEpoch: 1744675200
       artifacts:
@@ -946,11 +1025,24 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - llama4
+        - facebook
+        - meta
+        - pytorch
+        - llama
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - W4A16
+        - INT4
+        - compressed-tensors
       tasks:
-        - image-text-to-text
         - text-generation
+        - image-text-to-text
       createTimeSinceEpoch: 1745539200
       lastUpdateTimeSinceEpoch: 1745539200
       artifacts:
@@ -979,8 +1071,12 @@ models:
         - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vllm
+      tags:
+        - validated
+        - safetensors
+        - mistral
+        - mistral-small
+        - vllm
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -995,18 +1091,34 @@ models:
             type:
                 string_value: modelcar
     - name: RedHatAI/Mistral-Small-24B-Instruct-2501-FP8-dynamic
-      provider: Neural Magic
-      description: Mistral Small 24B Instruct 2501 Fp8 Dynamic - An instruction-tuned language model
+      provider: Red Hat
+      description: FP8-Quantized variant of Mistral-Small-24B-Instruct-2501.
       readme: |
         # Mistral-Small-24B-Instruct-2501-FP8-dynamic
       language:
         - en
+        - fr
+        - de
+        - es
+        - it
+        - pt
+        - zh
+        - ja
+        - ru
+        - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: null
+      tags:
+        - validated
+        - mistral
+        - mistral-small
+        - fp8
+        - vllm
+        - conversational
+        - text-generation-inference
+        - compressed-tensors
       tasks:
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: 1740787200
       lastUpdateTimeSinceEpoch: 1740787200
       artifacts:
@@ -1248,10 +1360,26 @@ models:
 
       language:
         - en
+        - fr
+        - de
+        - es
+        - it
+        - pt
+        - zh
+        - ja
+        - ru
+        - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - mistral
+        - mistral-small
+        - w4a16
+        - int4
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1740787200
@@ -1266,8 +1394,8 @@ models:
             type:
                 string_value: modelcar
     - name: RedHatAI/Mistral-Small-24B-Instruct-2501-quantized.w8a8
-      provider: Red Hat (Neural Magic)
-      description: Mistral Small 24B Instruct 2501 Quantized.w8a8 - An instruction-tuned language model
+      provider: Red Hat
+      description: This model was obtained by quantizing the weights and activations of Mistral-Small-24B-Instruct-2501 to INT8 data type.
       readme: |
         # Mistral-Small-24B-Instruct-2501-quantized.w8a8
       language:
@@ -1275,27 +1403,26 @@ models:
         - fr
         - de
         - es
-        - pt
         - it
-        - ja
-        - ko
-        - ru
+        - pt
         - zh
-        - ar
-        - id
-        - ms
-        - pl
-        - sv
-        - tr
-        - vi
-        - hi
+        - ja
+        - ru
+        - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vllm
+      tags:
+        - validated
+        - mistral
+        - mistral-small
+        - quantized
+        - W8A8
+        - vllm
+        - conversational
+        - text-generation-inference
+        - compressed-tensors
       tasks:
-        - image-text-to-text
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: 1740960000
       lastUpdateTimeSinceEpoch: 1740960000
       artifacts:
@@ -1316,27 +1443,39 @@ models:
         - fr
         - de
         - es
-        - pt
         - it
+        - pt
+        - hi
+        - id
+        - tl
+        - vi
+        - ar
+        - zh
+        - da
+        - fi
+        - he
         - ja
         - ko
-        - ru
-        - zh
-        - ar
-        - id
         - ms
+        - nl
+        - "no"
         - pl
+        - ru
         - sv
+        - th
         - tr
-        - vi
-        - hi
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vllm
+      tags:
+        - validated
+        - safetensors
+        - mistral3
+        - mistralai
+        - mistral
+        - mistral-small
       tasks:
-        - image-text-to-text
         - text-generation
+        - image-text-to-text
       createTimeSinceEpoch: null
       lastUpdateTimeSinceEpoch: null
       artifacts:
@@ -1357,24 +1496,43 @@ models:
         - fr
         - de
         - es
-        - pt
         - it
+        - pt
+        - hi
+        - id
+        - tl
+        - vi
+        - ar
+        - zh
+        - da
+        - fi
+        - he
         - ja
         - ko
-        - ru
-        - zh
-        - ar
-        - id
         - ms
+        - nl
+        - "no"
         - pl
+        - ru
         - sv
+        - th
         - tr
-        - vi
-        - hi
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - mistral3
+        - mistralai
+        - mistral
+        - mistral-small
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - FP8
+        - compressed-tensors
+        - fast
       tasks:
         - it is ideal for
       createTimeSinceEpoch: 1744675200
@@ -1397,24 +1555,44 @@ models:
         - fr
         - de
         - es
-        - pt
         - it
+        - pt
+        - hi
+        - id
+        - tl
+        - vi
+        - ar
+        - zh
+        - da
+        - fi
+        - he
         - ja
         - ko
-        - ru
-        - zh
-        - ar
-        - id
         - ms
+        - nl
+        - "no"
         - pl
+        - ru
         - sv
+        - th
         - tr
-        - vi
-        - hi
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - mistral3
+        - mistralai
+        - mistral
+        - mistral-small
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - W4A16
+        - INT4
+        - compressed-tensors
+        - fast
       tasks:
         - it is ideal for
       createTimeSinceEpoch: 1744675200
@@ -1437,24 +1615,44 @@ models:
         - fr
         - de
         - es
-        - pt
         - it
+        - pt
+        - hi
+        - id
+        - tl
+        - vi
+        - ar
+        - zh
+        - da
+        - fi
+        - he
         - ja
         - ko
-        - ru
-        - zh
-        - ar
-        - id
         - ms
+        - nl
+        - "no"
         - pl
+        - ru
         - sv
+        - th
         - tr
-        - vi
-        - hi
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - mistral3
+        - mistralai
+        - mistral
+        - mistral-small
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - W8A8
+        - compressed-tensors
+        - fast
+        - 8-bit
       tasks:
         - it is ideal for
       createTimeSinceEpoch: 1744675200
@@ -1468,16 +1666,77 @@ models:
                 string_value: registry.redhat.io
             type:
                 string_value: modelcar
+    - name: RedHatAI/Mixtral-8x7B-Instruct-v0.1
+      provider: Mistral AI
+      description: A pretrained generative Sparse Mixture of Experts model with 8x7B parameters.
+      readme: null
+      language:
+        - en
+        - fr
+        - it
+        - de
+        - es
+      license: apache-2.0
+      licenseLink: https://www.apache.org/licenses/LICENSE-2.0
+      tags:
+        - validated
+        - featured
+        - mixtral
+        - vllm
+        - conversational
+        - text-generation-inference
+        - mistral
+      tasks:
+        - text-to-text
+      createTimeSinceEpoch: null
+      lastUpdateTimeSinceEpoch: null
+      artifacts:
+        - uri: oci://registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:1.4
+          createTimeSinceEpoch: 1739776988000
+          lastUpdateTimeSinceEpoch: 1739776989000
+          customProperties:
+            source:
+                string_value: registry.redhat.io
+            type:
+                string_value: modelcar
     - name: RedHatAI/Qwen2.5-7B-Instruct
       provider: Hugging face
       description: Qwen2.5 7B Instruct - An instruction-tuned language model
       readme: "# Qwen2.5-7B-Instruct\n<a href=\"https://chat.qwenlm.ai/\" target=\"_blank\" style=\"margin: 2px;\">\n    <img alt=\"Chat\" src=\"https://img.shields.io/badge/%F0%9F%92%9C%EF%B8%8F%20Qwen%20Chat%20-536af5\" style=\"display: inline-block; vertical-align: middle;\"/>\n</a>\n\n## Introduction\n\nQwen2.5 is the latest series of Qwen large language models. For Qwen2.5, we release a number of base language models and instruction-tuned language models ranging from 0.5 to 72 billion parameters. Qwen2.5 brings the following improvements upon Qwen2:\n\n- Significantly **more knowledge** and has greatly improved capabilities in **coding** and **mathematics**, thanks to our specialized expert models in these domains.\n- Significant improvements in **instruction following**, **generating long texts** (over 8K tokens), **understanding structured data** (e.g, tables), and **generating structured outputs** especially JSON. **More resilient to the diversity of system prompts**, enhancing role-play implementation and condition-setting for chatbots.\n- **Long-context Support** up to 128K tokens and can generate up to 8K tokens.\n- **Multilingual support** for over 29 languages, including Chinese, English, French, Spanish, Portuguese, German, Italian, Russian, Japanese, Korean, Vietnamese, Thai, Arabic, and more. \n\n**This repo contains the instruction-tuned 7B Qwen2.5 model**, which has the following features:\n- Type: Causal Language Models\n- Training Stage: Pretraining & Post-training\n- Architecture: transformers with RoPE, SwiGLU, RMSNorm, and Attention QKV bias\n- Number of Parameters: 7.61B\n- Number of Paramaters (Non-Embedding): 6.53B\n- Number of Layers: 28\n- Number of Attention Heads (GQA): 28 for Q and 4 for KV\n- Context Length: Full 131,072 tokens and generation 8192 tokens\n  - Please refer to [this section](#processing-long-texts) for detailed instructions on how to deploy Qwen2.5 for handling long texts.\n\nFor more details, please refer to our [blog](https://qwenlm.github.io/blog/qwen2.5/), [GitHub](https://github.com/QwenLM/Qwen2.5), and [Documentation](https://qwen.readthedocs.io/en/latest/).\n\n## Requirements\n\nThe code of Qwen2.5 has been in the latest Hugging face `transformers` and we advise you to use the latest version of `transformers`.\n\nWith `transformers<4.37.0`, you will encounter the following error:\n```\nKeyError: 'qwen2'\n```\n\n## Quickstart\n\nHere provides a code snippet with `apply_chat_template` to show you how to load the tokenizer and model and how to generate contents.\n\n```python\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\nmodel_name = \"Qwen/Qwen2.5-7B-Instruct\"\n\nmodel = AutoModelForCausalLM.from_pretrained(\n    model_name,\n    torch_dtype=\"auto\",\n    device_map=\"auto\"\n)\ntokenizer = AutoTokenizer.from_pretrained(model_name)\n\nprompt = \"Give me a short introduction to large language model.\"\nmessages = [\n    {\"role\": \"system\", \"content\": \"You are Qwen, created by Alibaba Cloud. You are a helpful assistant.\"},\n    {\"role\": \"user\", \"content\": prompt}\n]\ntext = tokenizer.apply_chat_template(\n    messages,\n    tokenize=False,\n    add_generation_prompt=True\n)\nmodel_inputs = tokenizer([text], return_tensors=\"pt\").to(model.device)\n\ngenerated_ids = model.generate(\n    **model_inputs,\n    max_new_tokens=512\n)\ngenerated_ids = [\n    output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)\n]\n\nresponse = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]\n```\n\n### Processing Long Texts\n\nThe current `config.json` is set for context length up to 32,768 tokens.\nTo handle extensive inputs exceeding 32,768 tokens, we utilize [YaRN](https://arxiv.org/abs/2309.00071), a technique for enhancing model length extrapolation, ensuring optimal performance on lengthy texts.\n\nFor supported frameworks, you could add the following to `config.json` to enable YaRN:\n```json\n{\n  ...,\n  \"rope_scaling\": {\n    \"factor\": 4.0,\n    \"original_max_position_embeddings\": 32768,\n    \"type\": \"yarn\"\n  }\n}\n```\n\nFor deployment, we recommend using vLLM. \nPlease refer to our [Documentation](https://qwen.readthedocs.io/en/latest/deployment/vllm.html) for usage if you are not familar with vLLM.\nPresently, vLLM only supports static YARN, which means the scaling factor remains constant regardless of input length, **potentially impacting performance on shorter texts**. \nWe advise adding the `rope_scaling` configuration only when processing long contexts is required.\n\n## Evaluation & Performance\n\nDetailed evaluation results are reported in this [\U0001F4D1 blog](https://qwenlm.github.io/blog/qwen2.5/).\n\nFor requirements on GPU memory and the respective throughput, see results [here](https://qwen.readthedocs.io/en/latest/benchmark/speed_benchmark.html).\n\n## Citation\n\nIf you find our work helpful, feel free to give us a cite.\n\n```\n@misc{qwen2.5,\n    title = {Qwen2.5: A Party of Foundation Models},\n    url = {https://qwenlm.github.io/blog/qwen2.5/},\n    author = {Qwen Team},\n    month = {September},\n    year = {2024}\n}\n\n@article{qwen2,\n      title={Qwen2 Technical Report}, \n      author={An Yang and Baosong Yang and Binyuan Hui and Bo Zheng and Bowen Yu and Chang Zhou and Chengpeng Li and Chengyuan Li and Dayiheng Liu and Fei Huang and Guanting Dong and Haoran Wei and Huan Lin and Jialong Tang and Jialin Wang and Jian Yang and Jianhong Tu and Jianwei Zhang and Jianxin Ma and Jin Xu and Jingren Zhou and Jinze Bai and Jinzheng He and Junyang Lin and Kai Dang and Keming Lu and Keqin Chen and Kexin Yang and Mei Li and Mingfeng Xue and Na Ni and Pei Zhang and Peng Wang and Ru Peng and Rui Men and Ruize Gao and Runji Lin and Shijie Wang and Shuai Bai and Sinan Tan and Tianhang Zhu and Tianhao Li and Tianyu Liu and Wenbin Ge and Xiaodong Deng and Xiaohuan Zhou and Xingzhang Ren and Xinyu Zhang and Xipin Wei and Xuancheng Ren and Yang Fan and Yang Yao and Yichang Zhang and Yu Wan and Yunfei Chu and Yuqiong Liu and Zeyu Cui and Zhenru Zhang and Zhihao Fan},\n      journal={arXiv preprint arXiv:2407.10671},\n      year={2024}\n}\n```"
       language:
+        - zh
         - en
+        - fr
+        - es
+        - pt
+        - de
+        - it
+        - ru
+        - ja
+        - ko
+        - vi
+        - th
+        - ar
+        - id
+        - tr
+        - nl
+        - pl
+        - cs
+        - he
+        - sv
+        - fi
+        - da
+        - "no"
+        - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - safetensors
+        - qwen2
+        - qwen
+        - qwen2_5
+        - qwen2_5_instruct
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -1496,11 +1755,42 @@ models:
       description: '- **Model Architecture:** Qwen2'
       readme: "# Qwen2.5-7B-Instruct-FP8-dynamic\n\n## Model Overview\n- **Model Architecture:** Qwen2\n  - **Input:** Text\n  - **Output:** Text\n- **Model Optimizations:**\n  - **Activation quantization:** FP8\n  - **Weight quantization:** FP8\n- **Intended Use Cases:** Intended for commercial and research use multiple languages. Similarly to [Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B), this models is intended for assistant-like chat.\n- **Out-of-scope:** Use in any manner that violates applicable laws or regulations (including trade compliance laws).\n- **Release Date:** 11/27/2024\n- **Version:** 1.0\n- **License(s):** [apache-2.0](https://huggingface.co/Qwen/Qwen2.5-7B/blob/main/LICENSE)\n- **Model Developers:** Neural Magic\n\n### Model Optimizations\n\nThis model was obtained by quantizing activations and weights of [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct) to FP8 data type.\nThis optimization reduces the number of bits used to represent weights and activations from 16 to 8, reducing GPU memory requirements (by approximately 50%) and increasing matrix-multiply compute throughput (by approximately 2x).\nWeight quantization also reduces disk size requirements by approximately 50%.\n\nOnly weights and activations of the linear operators within transformers blocks are quantized.\nWeights are quantized with a symmetric static per-channel scheme, whereas activations are quantized with a symmetric dynamic per-token scheme.\nThe [llm-compressor](https://github.com/vllm-project/llm-compressor) library is used for quantization.\n\n## Deployment\n\nThis model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/latest/) backend, as shown in the example below.\n\n```python\nfrom vllm import LLM, SamplingParams\nfrom transformers import AutoTokenizer\n\nmodel_id = \"RedHatAI/Qwen2.5-7B-Instruct-FP8-dynamic\"\nnumber_gpus = 1\nmax_model_len = 8192\n\nsampling_params = SamplingParams(temperature=0.7, top_p=0.8, max_tokens=256)\n\ntokenizer = AutoTokenizer.from_pretrained(model_id)\n\nmessages = [\n    {\"role\": \"user\", \"content\": \"Give me a short introduction to large language model.\"},\n]\n\nprompts = tokenizer.apply_chat_template(messages, tokenize=False)\n\nllm = LLM(model=model_id, tensor_parallel_size=number_gpus, max_model_len=max_model_len)\n\noutputs = llm.generate(prompts, sampling_params)\n\ngenerated_text = outputs[0].outputs[0].text\nprint(generated_text)\n```\n\nvLLM aslo supports OpenAI-compatible serving. See the [documentation](https://docs.vllm.ai/en/latest/) for more details.\n\n## Creation\n\n<details>\n  <summary>Creation details</summary>\n  This model was created with [llm-compressor](https://github.com/vllm-project/llm-compressor) by running the code snippet below. \n\n\n  ```python\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  from llmcompressor.modifiers.quantization import QuantizationModifier\n  from llmcompressor.transformers import oneshot\n  \n  # Load model\n  model_stub = \"Qwen/Qwen2.5-7B-Instruct-FP8-dynamic\"\n  model_name = model_stub.split(\"/\")[-1]\n  \n  tokenizer = AutoTokenizer.from_pretrained(model_stub)\n  \n  model = AutoModelForCausalLM.from_pretrained(\n      model_stub,\n      device_map=\"auto\",\n      torch_dtype=\"auto\",\n  )\n  \n  # Configure the quantization algorithm and scheme\n  recipe = QuantizationModifier(\n      targets=\"Linear\",\n      scheme=\"FP8_dynamic\",\n      ignore=[\"lm_head\"],\n  )\n  \n  # Apply quantization\n  oneshot(\n      model=model,\n      recipe=recipe,\n  )\n  \n  # Save to disk in compressed-tensors format\n  save_path = model_name + \"-FP8-dynamic\"\n  model.save_pretrained(save_path)\n  tokenizer.save_pretrained(save_path)\n  print(f\"Model and tokenizer saved to: {save_path}\")\n  ```\n</details>\n\n## Evaluation\n\nThe model was evaluated on the [OpenLLM](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) leaderboard tasks (version 1) with the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/387Bbd54bc621086e05aa1b030d8d4d5635b25e6) (commit 387Bbd54bc621086e05aa1b030d8d4d5635b25e6) and the [vLLM](https://docs.vllm.ai/en/stable/) engine, using the following command:\n```\nlm_eval \\\n  --model vllm \\\n  --model_args pretrained=\"neuralmagic/Qwen2.5-7B-Instruct-FP8-dynamic\",dtype=auto,gpu_memory_utilization=0.5,max_model_len=4096,enable_chunk_prefill=True,tensor_parallel_size=1 \\\n  --apply_chat_template \\\n  --fewshot_as_multiturn \\\n  --tasks openllm \\\n  --batch_size auto\n```\n\n### Accuracy\n\n#### Open LLM Leaderboard evaluation scores\n<table>\n  <tr>\n   <th>Benchmark\n   </th>\n   <th>Qwen2.5-7B-Instruct\n   </th>\n   <th>Qwen2.5-7B-Instruct-FP8-dynamic<br>(this model)\n   </th>\n   <th>Recovery\n   </th>\n  </tr>\n  <tr>\n   <td>MMLU (5-shot)\n   </td>\n   <td>74.24\n   </td>\n   <td>74.04\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n  <tr>\n   <td>ARC Challenge (25-shot)\n   </td>\n   <td>63.40\n   </td>\n   <td>63.14\n   </td>\n   <td>99.6%\n   </td>\n  </tr>\n  <tr>\n   <td>GSM-8K (5-shot, strict-match)\n   </td>\n   <td>80.36\n   </td>\n   <td>80.06\n   </td>\n   <td>99.6%\n   </td>\n  </tr>\n  <tr>\n   <td>Hellaswag (10-shot)\n   </td>\n   <td>81.52\n   </td>\n   <td>81.11\n   </td>\n   <td>99.5%\n   </td>\n  </tr>\n  <tr>\n   <td>Winogrande (5-shot)\n   </td>\n   <td>74.66\n   </td>\n   <td>74.43\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n  <tr>\n   <td>TruthfulQA (0-shot, mc2)\n   </td>\n   <td>64.76\n   </td>\n   <td>64.87\n   </td>\n   <td>100.2%\n   </td>\n  </tr>\n  <tr>\n   <td><strong>Average</strong>\n   </td>\n   <td><strong>73.16</strong>\n   </td>\n   <td><strong>72.94</strong>\n   </td>\n   <td><strong>99.7%</strong>\n   </td>\n  </tr>\n</table>\n\n"
       language:
+        - zh
         - en
+        - fr
+        - es
+        - pt
+        - de
+        - it
+        - ru
+        - ja
+        - ko
+        - vi
+        - th
+        - ar
+        - id
+        - tr
+        - nl
+        - pl
+        - cs
+        - he
+        - sv
+        - fi
+        - da
+        - "no"
+        - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - qwen2
+        - qwen
+        - qwen2_5
+        - qwen2_5_instruct
+        - fp8
+        - quantized
+        - compressed-tensors
       tasks:
         - text-generation
         - text-generation
@@ -1521,11 +1811,43 @@ models:
       description: '- **Model Architecture:** Qwen2'
       readme: "# Qwen2.5-7B-Instruct-quantized.w4a16\n\n## Model Overview\n- **Model Architecture:** Qwen2\n  - **Input:** Text\n  - **Output:** Text\n- **Model Optimizations:**\n  - **Weight quantization:** INT4\n- **Intended Use Cases:** Intended for commercial and research use multiple languages. Similarly to [Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B), this models is intended for assistant-like chat.\n- **Out-of-scope:** Use in any manner that violates applicable laws or regulations (including trade compliance laws).\n- **Release Date:** 04/16/2025\n- **Version:** 1.0\n- **License(s):** [apache-2.0](https://huggingface.co/Qwen/Qwen2.5-7B/blob/main/LICENSE)\n- **Model Developers:** Neural Magic\n\n### Model Optimizations\n\nThis model was obtained by quantizing the weights of [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct) to INT4 data type.\nThis optimization reduces the number of bits per parameter from 16 to 4, reducing the disk size and GPU memory requirements by approximately 75%.\n\nOnly the weights of the linear operators within transformers blocks are quantized.\nWeights are quantized using a symmetric per-group scheme, with group size 128.\nThe [GPTQ](https://arxiv.org/abs/2210.17323) algorithm is applied for quantization, as implemented in the [llm-compressor](https://github.com/vllm-project/llm-compressor) library.\n\n## Deployment\n\nThis model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/latest/) backend, as shown in the example below.\n\n```python\nfrom vllm import LLM, SamplingParams\nfrom transformers import AutoTokenizer\n\nmodel_id = \"RedHatAI/Qwen2.5-7B-Instruct-quantized.w4a16\"\nnumber_gpus = 1\nmax_model_len = 8192\n\nsampling_params = SamplingParams(temperature=0.7, top_p=0.8, max_tokens=256)\n\ntokenizer = AutoTokenizer.from_pretrained(model_id)\n\nmessages = [\n    {\"role\": \"user\", \"content\": \"Give me a short introduction to large language model.\"},\n]\n\nprompts = tokenizer.apply_chat_template(messages, tokenize=False)\n\nllm = LLM(model=model_id, tensor_parallel_size=number_gpus, max_model_len=max_model_len)\n\noutputs = llm.generate(prompts, sampling_params)\n\ngenerated_text = outputs[0].outputs[0].text\nprint(generated_text)\n```\n\nvLLM aslo supports OpenAI-compatible serving. See the [documentation](https://docs.vllm.ai/en/latest/) for more details.\n\n## Creation\n\n<details>\n  <summary>Creation details</summary>\n  This model was created with [llm-compressor](https://github.com/vllm-project/llm-compressor) by running the code snippet below. \n\n\n  ```python\n  from transformers import AutoModelForCausalLM, AutoTokenizer\n  from llmcompressor.modifiers.quantization import GPTQModifier\n  from llmcompressor.transformers import oneshot\n  from datasets import load_dataset\n  \n  # Load model\n  model_stub = \"Qwen/Qwen2.5-7B-Instruct\"\n  model_name = model_stub.split(\"/\")[-1]\n  \n  num_samples = 3072\n  max_seq_len = 8192\n  \n  tokenizer = AutoTokenizer.from_pretrained(model_stub)\n  \n  model = AutoModelForCausalLM.from_pretrained(\n      model_stub,\n      device_map=\"auto\",\n      torch_dtype=\"auto\",\n  )\n  \n  def preprocess_fn(example):\n      return {\"text\": tokenizer.apply_chat_template(example[\"messages\"], add_generation_prompt=False, tokenize=False)}\n  \n  ds = load_dataset(\"neuralmagic/LLM_compression_calibration\", split=\"train\")\n  ds = ds.map(preprocess_fn)\n  \n  # Configure the quantization algorithm and scheme\n  recipe = GPTQModifier(\n      targets=\"Linear\",\n      scheme=\"W4A16\",\n      ignore=[\"lm_head\"],\n      sequential_targets=[\"Qwen2DecoderLayer\"],\n      dampening_frac=0.2,\n  )\n  \n  # Apply quantization\n  oneshot(\n      model=model,\n      dataset=ds, \n      recipe=recipe,\n      max_seq_length=max_seq_len,\n      num_calibration_samples=num_samples,\n  )\n  \n  # Save to disk in compressed-tensors format\n  save_path = model_name + \"-quantized.w4a16\"\n  model.save_pretrained(save_path)\n  tokenizer.save_pretrained(save_path)\n  print(f\"Model and tokenizer saved to: {save_path}\")\n  ```\n</details>\n\n## Evaluation\n\nThe model was evaluated on the [OpenLLM](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) leaderboard tasks (version 1) with the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/387Bbd54bc621086e05aa1b030d8d4d5635b25e6) (commit 387Bbd54bc621086e05aa1b030d8d4d5635b25e6) and the [vLLM](https://docs.vllm.ai/en/stable/) engine, using the following command:\n```\nlm_eval \\\n  --model vllm \\\n  --model_args pretrained=\"neuralmagic/Qwen2.5-7B-Instruct-quantized.w4a16\",dtype=auto,gpu_memory_utilization=0.5,max_model_len=4096,enable_chunk_prefill=True,tensor_parallel_size=1 \\\n  --apply_chat_template \\\n  --fewshot_as_multiturn \\\n  --tasks openllm \\\n  --batch_size auto\n```\n\n### Accuracy\n\n#### Open LLM Leaderboard evaluation scores\n<table>\n  <tr>\n   <th>Benchmark\n   </th>\n   <th>Qwen2.5-7B-Instruct\n   </th>\n   <th>Qwen2.5-7B-Instruct-quantized.w4a16<br>(this model)\n   </th>\n   <th>Recovery\n   </th>\n  </tr>\n  <tr>\n   <td>MMLU (5-shot)\n   </td>\n   <td>74.24\n   </td>\n   <td>73.19\n   </td>\n   <td>98.6%\n   </td>\n  </tr>\n  <tr>\n   <td>ARC Challenge (25-shot)\n   </td>\n   <td>63.40\n   </td>\n   <td>63.23\n   </td>\n   <td>99.7%\n   </td>\n  </tr>\n  <tr>\n   <td>GSM-8K (5-shot, strict-match)\n   </td>\n   <td>80.36\n   </td>\n   <td>80.59\n   </td>\n   <td>100.3%\n   </td>\n  </tr>\n  <tr>\n   <td>Hellaswag (10-shot)\n   </td>\n   <td>81.52\n   </td>\n   <td>80.65\n   </td>\n   <td>98.9%\n   </td>\n  </tr>\n  <tr>\n   <td>Winogrande (5-shot)\n   </td>\n   <td>74.66\n   </td>\n   <td>74.19\n   </td>\n   <td>99.4%\n   </td>\n  </tr>\n  <tr>\n   <td>TruthfulQA (0-shot, mc2)\n   </td>\n   <td>64.76\n   </td>\n   <td>64.27\n   </td>\n   <td>99.3%\n   </td>\n  </tr>\n  <tr>\n   <td><strong>Average</strong>\n   </td>\n   <td><strong>73.16</strong>\n   </td>\n   <td><strong>72.69</strong>\n   </td>\n   <td><strong>98.6%</strong>\n   </td>\n  </tr>\n</table>\n\n"
       language:
+        - zh
         - en
+        - fr
+        - es
+        - pt
+        - de
+        - it
+        - ru
+        - ja
+        - ko
+        - vi
+        - th
+        - ar
+        - id
+        - tr
+        - nl
+        - pl
+        - cs
+        - he
+        - sv
+        - fi
+        - da
+        - "no"
+        - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - qwen2
+        - qwen
+        - qwen2_5
+        - qwen2_5_instruct
+        - w4a16
+        - int4
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
         - text-generation
@@ -1773,11 +2095,45 @@ models:
         </table>
         *** Reference value too low to report meaningful recovery.
       language:
+        - zh
         - en
+        - fr
+        - es
+        - pt
+        - de
+        - it
+        - ru
+        - ja
+        - ko
+        - vi
+        - th
+        - ar
+        - id
+        - tr
+        - nl
+        - pl
+        - cs
+        - he
+        - sv
+        - fi
+        - da
+        - "no"
+        - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - featured
+        - safetensors
+        - qwen2
+        - qwen
+        - qwen2_5
+        - qwen2_5_instruct
+        - w8a8
+        - int8
+        - vllm
+        - compressed-tensors
+        - 8-bit
       tasks:
         - text-generation
         - text-generation
@@ -1797,11 +2153,15 @@ models:
       provider: Google
       description: 'Model Page**: [Gemma](https://ai.google.dev/gemma/docs)'
       readme: "# Gemma 2 model card\n\n**Model Page**: [Gemma](https://ai.google.dev/gemma/docs)\n\n**Resources and Technical Documentation**:\n\n* [Responsible Generative AI Toolkit][rai-toolkit]\n* [Gemma on Kaggle][kaggle-gemma]\n* [Gemma on Vertex Model Garden][vertex-mg-gemma]\n\n**Terms of Use**: [Terms](https://www.kaggle.com/models/google/gemma/license/consent/verify/huggingface?returnModelRepoId=google/gemma-2-9b-it)\n\n**Authors**: Google\n\n## Model Information\n\nSummary description and brief definition of inputs and outputs.\n\n### Description\n\nGemma is a family of lightweight, state-of-the-art open models from Google,\nbuilt from the same research and technology used to create the Gemini models.\nThey are text-to-text, decoder-only large language models, available in English,\nwith open weights for both pre-trained variants and instruction-tuned variants.\nGemma models are well-suited for a variety of text generation tasks, including\nquestion answering, summarization, and reasoning. Their relatively small size\nmakes it possible to deploy them in environments with limited resources such as\na laptop, desktop or your own cloud infrastructure, democratizing access to\nstate of the art AI models and helping foster innovation for everyone.\n\n### Usage\n\nBelow we share some code snippets on how to get quickly started with running the model. First, install the Transformers library with:\n```sh\npip install -U transformers\n```\n\nThen, copy the snippet from the section that is relevant for your usecase.\n\n#### Running with the `pipeline` API\n\n```python\nimport torch\nfrom transformers import pipeline\n\npipe = pipeline(\n    \"text-generation\",\n    model=\"google/gemma-2-9b-it\",\n    model_kwargs={\"torch_dtype\": torch.bfloat16},\n    device=\"cuda\",  # replace with \"mps\" to run on a Mac device\n)\n\nmessages = [\n    {\"role\": \"user\", \"content\": \"Who are you? Please, answer in pirate-speak.\"},\n]\n\noutputs = pipe(messages, max_new_tokens=256)\nassistant_response = outputs[0][\"generated_text\"][-1][\"content\"].strip()\nprint(assistant_response)\n# Ahoy, matey! I be Gemma, a digital scallywag, a language-slingin' parrot of the digital seas. I be here to help ye with yer wordy woes, answer yer questions, and spin ye yarns of the digital world.  So, what be yer pleasure, eh? \U0001F99C\n```\n\n#### Running the model on a single / multi GPU\n\n```python\n# pip install accelerate\nfrom transformers import AutoTokenizer, AutoModelForCausalLM\nimport torch\n\ntokenizer = AutoTokenizer.from_pretrained(\"google/gemma-2-9b-it\")\nmodel = AutoModelForCausalLM.from_pretrained(\n    \"google/gemma-2-9b-it\",\n    device_map=\"auto\",\n    torch_dtype=torch.bfloat16,\n)\n\ninput_text = \"Write me a poem about Machine Learning.\"\ninput_ids = tokenizer(input_text, return_tensors=\"pt\").to(\"cuda\")\n\noutputs = model.generate(**input_ids, max_new_tokens=32)\nprint(tokenizer.decode(outputs[0]))\n```\n\nYou can ensure the correct chat template is applied by using `tokenizer.apply_chat_template` as follows:\n```python\nmessages = [\n    {\"role\": \"user\", \"content\": \"Write me a poem about Machine Learning.\"},\n]\ninput_ids = tokenizer.apply_chat_template(messages, return_tensors=\"pt\", return_dict=True).to(\"cuda\")\n\noutputs = model.generate(**input_ids, max_new_tokens=256)\nprint(tokenizer.decode(outputs[0]))\n```\n\n<a name=\"precisions\"></a>\n#### Running the model on a GPU using different precisions\n\nThe native weights of this model were exported in `bfloat16` precision.\n\nYou can also use `float32` if you skip the dtype, but no precision increase will occur (model weights will just be upcasted to `float32`). See examples below.\n\n* _Upcasting to `torch.float32`_\n\n```python\n# pip install accelerate\nfrom transformers import AutoTokenizer, AutoModelForCausalLM\n\ntokenizer = AutoTokenizer.from_pretrained(\"google/gemma-2-9b-it\")\nmodel = AutoModelForCausalLM.from_pretrained(\n    \"google/gemma-2-9b-it\",\n    device_map=\"auto\",\n)\n\ninput_text = \"Write me a poem about Machine Learning.\"\ninput_ids = tokenizer(input_text, return_tensors=\"pt\").to(\"cuda\")\n\noutputs = model.generate(**input_ids, max_new_tokens=32)\nprint(tokenizer.decode(outputs[0]))\n```\n\n#### Running the model through a CLI\n\nThe [local-gemma](https://github.com/huggingface/local-gemma) repository contains a lightweight wrapper around Transformers\nfor running Gemma 2 through a command line interface, or CLI. Follow the [installation instructions](https://github.com/huggingface/local-gemma#cli-usage)\nfor getting started, then launch the CLI through the following command:\n\n```shell\nlocal-gemma --model 9b --preset speed\n```\n\n#### Quantized Versions through `bitsandbytes`\n\n<details>\n  <summary>\n    Using 8-bit precision (int8)  \n  </summary>\n\n```python\n# pip install bitsandbytes accelerate\nfrom transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig\n\nquantization_config = BitsAndBytesConfig(load_in_8bit=True)\n\ntokenizer = AutoTokenizer.from_pretrained(\"google/gemma-2-9b-it\")\nmodel = AutoModelForCausalLM.from_pretrained(\n    \"google/gemma-2-9b-it\",\n    quantization_config=quantization_config,\n)\n\ninput_text = \"Write me a poem about Machine Learning.\"\ninput_ids = tokenizer(input_text, return_tensors=\"pt\").to(\"cuda\")\n\noutputs = model.generate(**input_ids, max_new_tokens=32)\nprint(tokenizer.decode(outputs[0]))\n```\n</details>\n\n<details>\n  <summary>\n    Using 4-bit precision  \n  </summary>\n\n```python\n# pip install bitsandbytes accelerate\nfrom transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig\n\nquantization_config = BitsAndBytesConfig(load_in_4bit=True)\n\ntokenizer = AutoTokenizer.from_pretrained(\"google/gemma-2-9b-it\")\nmodel = AutoModelForCausalLM.from_pretrained(\n    \"google/gemma-2-9b-it\",\n    quantization_config=quantization_config,\n)\n\ninput_text = \"Write me a poem about Machine Learning.\"\ninput_ids = tokenizer(input_text, return_tensors=\"pt\").to(\"cuda\")\n\noutputs = model.generate(**input_ids, max_new_tokens=32)\nprint(tokenizer.decode(outputs[0]))\n```\n</details>\n\n#### Advanced Usage\n\n<details>\n  <summary>\n    Torch compile  \n  </summary>\n\n[Torch compile](https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html) is a method for speeding-up the \ninference of PyTorch modules. The Gemma-2 model can be run up to 6x faster by leveraging torch compile.\n\nNote that two warm-up steps are required before the full inference speed is realised:\n\n```python\nimport os\nos.environ[\"TOKENIZERS_PARALLELISM\"] = \"false\"\n\nfrom transformers import AutoTokenizer, Gemma2ForCausalLM\nfrom transformers.cache_utils import HybridCache\nimport torch\n\ntorch.set_float32_matmul_precision(\"high\")\n\n# load the model + tokenizer\ntokenizer = AutoTokenizer.from_pretrained(\"google/gemma-2-9b-it\")\nmodel = Gemma2ForCausalLM.from_pretrained(\"google/gemma-2-9b-it\", torch_dtype=torch.bfloat16)\nmodel.to(\"cuda\")\n\n# apply the torch compile transformation\nmodel.forward = torch.compile(model.forward, mode=\"reduce-overhead\", fullgraph=True)\n\n# pre-process inputs\ninput_text = \"The theory of special relativity states \"\nmodel_inputs = tokenizer(input_text, return_tensors=\"pt\").to(\"cuda\")\nprompt_length = model_inputs.input_ids.shape[1]\n\n# set-up k/v cache\npast_key_values = HybridCache(\n    config=model.config,\n    max_batch_size=1,\n    max_cache_len=model.config.max_position_embeddings,\n    device=model.device,\n    dtype=model.dtype\n)\n\n# enable passing kv cache to generate\nmodel._supports_cache_class = True\nmodel.generation_config.cache_implementation = None\n\n# two warm-up steps\nfor idx in range(2):\n    outputs = model.generate(**model_inputs, past_key_values=past_key_values, do_sample=True, temperature=1.0, max_new_tokens=128)\n    past_key_values.reset()\n\n# fast run\noutputs = model.generate(**model_inputs, past_key_values=past_key_values, do_sample=True, temperature=1.0, max_new_tokens=128)\nprint(tokenizer.decode(outputs[0], skip_special_tokens=True))\n```\n\nFor more details, refer to the [Transformers documentation](https://huggingface.co/docs/transformers/main/en/llm_optims?static-kv=basic+usage%3A+generation_config).\n\n</details>\n\n### Chat Template\n\nThe instruction-tuned models use a chat template that must be adhered to for conversational use.\nThe easiest way to apply it is using the tokenizer's built-in chat template, as shown in the following snippet.\n\nLet's load the model and apply the chat template to a conversation. In this example, we'll start with a single user interaction:\n\n```py\nfrom transformers import AutoTokenizer, AutoModelForCausalLM\nimport transformers\nimport torch\n\nmodel_id = \"google/gemma-2-9b-it\"\ndtype = torch.bfloat16\n\ntokenizer = AutoTokenizer.from_pretrained(model_id)\nmodel = AutoModelForCausalLM.from_pretrained(\n    model_id,\n    device_map=\"cuda\",\n    torch_dtype=dtype,)\n\nchat = [\n    { \"role\": \"user\", \"content\": \"Write a hello world program\" },\n]\nprompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)\n```\n\nAt this point, the prompt contains the following text:\n\n```\n<bos><start_of_turn>user\nWrite a hello world program<end_of_turn>\n<start_of_turn>model\n```\n\nAs you can see, each turn is preceded by a `<start_of_turn>` delimiter and then the role of the entity\n(either `user`, for content supplied by the user, or `model` for LLM responses). Turns finish with\nthe `<end_of_turn>` token.\n\nYou can follow this format to build the prompt manually, if you need to do it without the tokenizer's\nchat template.\n\nAfter the prompt is ready, generation can be performed like this:\n\n```py\ninputs = tokenizer.encode(prompt, add_special_tokens=False, return_tensors=\"pt\")\noutputs = model.generate(input_ids=inputs.to(model.device), max_new_tokens=150)\nprint(tokenizer.decode(outputs[0]))\n```\n\n### Inputs and outputs\n\n*   **Input:** Text string, such as a question, a prompt, or a document to be\n    summarized.\n*   **Output:** Generated English-language text in response to the input, such\n    as an answer to a question, or a summary of a document.\n\n### Citation\n\n```none\n@article{gemma_2024,\n    title={Gemma},\n    url={https://www.kaggle.com/m/3301},\n    DOI={10.34740/KAGGLE/M/3301},\n    publisher={Kaggle},\n    author={Gemma Team},\n    year={2024}\n}\n```\n\n## Model Data\n\nData used for model training and how the data was processed.\n\n### Training Dataset\n\nThese models were trained on a dataset of text data that includes a wide variety of sources. The 27B model was trained with 13 trillion tokens and the 9B model was trained with 8 trillion tokens. \nHere are the key components:\n\n* Web Documents: A diverse collection of web text ensures the model is exposed\n  to a broad range of linguistic styles, topics, and vocabulary. Primarily\n  English-language content.\n* Code: Exposing the model to code helps it to learn the syntax and patterns of\n  programming languages, which improves its ability to generate code or\n  understand code-related questions.\n* Mathematics: Training on mathematical text helps the model learn logical\n  reasoning, symbolic representation, and to address mathematical queries.\n\nThe combination of these diverse data sources is crucial for training a powerful\nlanguage model that can handle a wide variety of different tasks and text\nformats.\n\n### Data Preprocessing\n\nHere are the key data cleaning and filtering methods applied to the training\ndata:\n\n* CSAM Filtering: Rigorous CSAM (Child Sexual Abuse Material) filtering was\n  applied at multiple stages in the data preparation process to ensure the\n  exclusion of harmful and illegal content.\n* Sensitive Data Filtering: As part of making Gemma pre-trained models safe and\n  reliable, automated techniques were used to filter out certain personal\n  information and other sensitive data from training sets.\n* Additional methods: Filtering based on content quality and safety in line with\n  [our policies][safety-policies].\n\n## Implementation Information\n\nDetails about the model internals.\n\n### Hardware\n\nGemma was trained using the latest generation of\n[Tensor Processing Unit (TPU)][tpu] hardware (TPUv5p).\n\nTraining large language models requires significant computational power. TPUs,\ndesigned specifically for matrix operations common in machine learning, offer\nseveral advantages in this domain:\n\n* Performance: TPUs are specifically designed to handle the massive computations\n  involved in training LLMs. They can speed up training considerably compared to\n  CPUs.\n* Memory: TPUs often come with large amounts of high-bandwidth memory, allowing\n  for the handling of large models and batch sizes during training. This can\n  lead to better model quality.\n* Scalability: TPU Pods (large clusters of TPUs) provide a scalable solution for\n  handling the growing complexity of large foundation models. You can distribute\n  training across multiple TPU devices for faster and more efficient processing.\n* Cost-effectiveness: In many scenarios, TPUs can provide a more cost-effective\n  solution for training large models compared to CPU-based infrastructure,\n  especially when considering the time and resources saved due to faster\n  training.\n* These advantages are aligned with\n  [Google's commitments to operate sustainably][sustainability].\n\n### Software\n\nTraining was done using [JAX][jax] and [ML Pathways][ml-pathways].\n\nJAX allows researchers to take advantage of the latest generation of hardware,\nincluding TPUs, for faster and more efficient training of large models.\n\nML Pathways is Google's latest effort to build artificially intelligent systems\ncapable of generalizing across multiple tasks. This is specially suitable for\n[foundation models][foundation-models], including large language models like\nthese ones.\n\nTogether, JAX and ML Pathways are used as described in the\n[paper about the Gemini family of models][gemini-2-paper]; \"the 'single\ncontroller' programming model of Jax and Pathways allows a single Python\nprocess to orchestrate the entire training run, dramatically simplifying the\ndevelopment workflow.\"\n\n## Evaluation\n\nModel evaluation metrics and results.\n\n### Benchmark Results\n\nThese models were evaluated against a large collection of different datasets and\nmetrics to cover different aspects of text generation:\n\n| Benchmark                      | Metric        | Gemma PT 9B | Gemma PT 27B |\n| ------------------------------ | ------------- | ----------- | ------------ |\n| [MMLU][mmlu]                   | 5-shot, top-1 | 71.3        | 75.2         |\n| [HellaSwag][hellaswag]         | 10-shot       | 81.9        | 86.4         |\n| [PIQA][piqa]                   | 0-shot        | 81.7        | 83.2         |\n| [SocialIQA][socialiqa]         | 0-shot        | 53.4        | 53.7         |\n| [BoolQ][boolq]                 | 0-shot        | 84.2        | 84.8         |\n| [WinoGrande][winogrande]       | partial score | 80.6        | 83.7         |\n| [ARC-e][arc]                   | 0-shot        | 88.0        | 88.6         |\n| [ARC-c][arc]                   | 25-shot       | 68.4        | 71.4         |\n| [TriviaQA][triviaqa]           | 5-shot        | 76.6        | 83.7         |\n| [Natural Questions][naturalq]  | 5-shot        | 29.2        | 34.5         |\n| [HumanEval][humaneval]         | pass@1        | 40.2        | 51.8         |\n| [MBPP][mbpp]                   | 3-shot        | 52.4        | 62.6         |\n| [GSM8K][gsm8k]                 | 5-shot, maj@1 | 68.6        | 74.0         |\n| [MATH][math]                   | 4-shot        | 36.6        | 42.3         |\n| [AGIEval][agieval]             | 3-5-shot      | 52.8        | 55.1         |\n| [BIG-Bench][big-bench]         | 3-shot, CoT   | 68.2        | 74.9         |\n| ------------------------------ | ------------- | ----------- | ------------ |\n\n## Ethics and Safety\n\nEthics and safety evaluation approach and results.\n\n### Evaluation Approach\n\nOur evaluation methods include structured evaluations and internal red-teaming\ntesting of relevant content policies. Red-teaming was conducted by a number of\ndifferent teams, each with different goals and human evaluation metrics. These\nmodels were evaluated against a number of different categories relevant to\nethics and safety, including:\n\n* Text-to-Text Content Safety: Human evaluation on prompts covering safety\n  policies including child sexual abuse and exploitation, harassment, violence\n  and gore, and hate speech.\n* Text-to-Text Representational Harms: Benchmark against relevant academic\n  datasets such as [WinoBias][winobias] and [BBQ Dataset][bbq].\n* Memorization: Automated evaluation of memorization of training data, including\n  the risk of personally identifiable information exposure.\n* Large-scale harm: Tests for \"dangerous capabilities,\" such as chemical,\n  biological, radiological, and nuclear (CBRN) risks.\n\n### Evaluation Results\n\nThe results of ethics and safety evaluations are within acceptable thresholds\nfor meeting [internal policies][safety-policies] for categories such as child\nsafety, content safety, representational harms, memorization, large-scale harms.\nOn top of robust internal evaluations, the results of well-known safety\nbenchmarks like BBQ, BOLD, Winogender, Winobias, RealToxicity, and TruthfulQA\nare shown here.\n\n#### Gemma 2.0\n\n| Benchmark                | Metric        | Gemma 2 IT 9B | Gemma 2 IT 27B |\n| ------------------------ | ------------- | --------------- | ---------------- |\n| [RealToxicity][realtox]  | average       |  8.25           |  8.84            |\n| [CrowS-Pairs][crows]     | top-1         | 37.47           | 36.67            |\n| [BBQ Ambig][bbq]         | 1-shot, top-1 | 88.58           | 85.99            |\n| [BBQ Disambig][bbq]      | top-1         | 82.67           | 86.94            |\n| [Winogender][winogender] | top-1         | 79.17           | 77.22            |\n| [TruthfulQA][truthfulqa] |               | 50.27           | 51.60            |\n| [Winobias 1_2][winobias] |               | 78.09           | 81.94            |\n| [Winobias 2_2][winobias] |               | 95.32           | 97.22            |\n| [Toxigen][toxigen]       |               | 39.30           | 38.42            |\n| ------------------------ | ------------- | --------------- | ---------------- |\n\n## Usage and Limitations\n\nThese models have certain limitations that users should be aware of.\n\n### Intended Usage\n\nOpen Large Language Models (LLMs) have a wide range of applications across\nvarious industries and domains. The following list of potential uses is not\ncomprehensive. The purpose of this list is to provide contextual information\nabout the possible use-cases that the model creators considered as part of model\ntraining and development.\n\n* Content Creation and Communication\n  * Text Generation: These models can be used to generate creative text formats\n    such as poems, scripts, code, marketing copy, and email drafts.\n  * Chatbots and Conversational AI: Power conversational interfaces for customer\n    service, virtual assistants, or interactive applications.\n  * Text Summarization: Generate concise summaries of a text corpus, research\n    papers, or reports.\n* Research and Education\n  * Natural Language Processing (NLP) Research: These models can serve as a\n    foundation for researchers to experiment with NLP techniques, develop\n    algorithms, and contribute to the advancement of the field.\n  * Language Learning Tools: Support interactive language learning experiences,\n    aiding in grammar correction or providing writing practice.\n  * Knowledge Exploration: Assist researchers in exploring large bodies of text\n    by generating summaries or answering questions about specific topics.\n\n### Limitations\n\n* Training Data\n  * The quality and diversity of the training data significantly influence the\n    model's capabilities. Biases or gaps in the training data can lead to\n    limitations in the model's responses.\n  * The scope of the training dataset determines the subject areas the model can\n    handle effectively.\n* Context and Task Complexity\n  * LLMs are better at tasks that can be framed with clear prompts and\n    instructions. Open-ended or highly complex tasks might be challenging.\n  * A model's performance can be influenced by the amount of context provided\n    (longer context generally leads to better outputs, up to a certain point).\n* Language Ambiguity and Nuance\n  * Natural language is inherently complex. LLMs might struggle to grasp subtle\n    nuances, sarcasm, or figurative language.\n* Factual Accuracy\n  * LLMs generate responses based on information they learned from their\n    training datasets, but they are not knowledge bases. They may generate\n    incorrect or outdated factual statements.\n* Common Sense\n  * LLMs rely on statistical patterns in language. They might lack the ability\n    to apply common sense reasoning in certain situations.\n\n### Ethical Considerations and Risks\n\nThe development of large language models (LLMs) raises several ethical concerns.\nIn creating an open model, we have carefully considered the following:\n\n* Bias and Fairness\n  * LLMs trained on large-scale, real-world text data can reflect socio-cultural\n    biases embedded in the training material. These models underwent careful\n    scrutiny, input data pre-processing described and posterior evaluations\n    reported in this card.\n* Misinformation and Misuse\n  * LLMs can be misused to generate text that is false, misleading, or harmful.\n  * Guidelines are provided for responsible use with the model, see the\n    [Responsible Generative AI Toolkit][rai-toolkit].\n* Transparency and Accountability:\n  * This model card summarizes details on the models' architecture,\n    capabilities, limitations, and evaluation processes.\n  * A responsibly developed open model offers the opportunity to share\n    innovation by making LLM technology accessible to developers and researchers\n    across the AI ecosystem.\n\nRisks identified and mitigations:\n\n* Perpetuation of biases: It's encouraged to perform continuous monitoring\n  (using evaluation metrics, human review) and the exploration of de-biasing\n  techniques during model training, fine-tuning, and other use cases.\n* Generation of harmful content: Mechanisms and guidelines for content safety\n  are essential. Developers are encouraged to exercise caution and implement\n  appropriate content safety safeguards based on their specific product policies\n  and application use cases.\n* Misuse for malicious purposes: Technical limitations and developer and\n  end-user education can help mitigate against malicious applications of LLMs.\n  Educational resources and reporting mechanisms for users to flag misuse are\n  provided. Prohibited uses of Gemma models are outlined in the\n  [Gemma Prohibited Use Policy][prohibited-use].\n* Privacy violations: Models were trained on data filtered for removal of PII\n  (Personally Identifiable Information). Developers are encouraged to adhere to\n  privacy regulations with privacy-preserving techniques.\n\n### Benefits\n\nAt the time of release, this family of models provides high-performance open\nlarge language model implementations designed from the ground up for Responsible\nAI development compared to similarly sized models.\n\nUsing the benchmark evaluation metrics described in this document, these models\nhave shown to provide superior performance to other, comparably-sized open model\nalternatives.\n\n[rai-toolkit]: https://ai.google.dev/responsible\n[kaggle-gemma]: https://www.kaggle.com/models/google/gemma-2\n[terms]: https://ai.google.dev/gemma/terms\n[vertex-mg-gemma]: https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/335\n[sensitive-info]: https://cloud.google.com/dlp/docs/high-sensitivity-infotypes-reference\n[safety-policies]: https://storage.googleapis.com/gweb-uniblog-publish-prod/documents/2023_Google_AI_Principles_Progress_Update.pdf#page=11\n[prohibited-use]: https://ai.google.dev/gemma/prohibited_use_policy\n[tpu]: https://cloud.google.com/tpu/docs/intro-to-tpu\n[sustainability]: https://sustainability.google/operating-sustainably/\n[jax]: https://github.com/google/jax\n[ml-pathways]: https://blog.google/technology/ai/introducing-pathways-next-generation-ai-architecture/\n[sustainability]: https://sustainability.google/operating-sustainably/\n[foundation-models]: https://ai.google/discover/foundation-models/\n[gemini-2-paper]: https://goo.gle/gemma2report\n[mmlu]: https://arxiv.org/abs/2009.03300\n[hellaswag]: https://arxiv.org/abs/1905.07830\n[piqa]: https://arxiv.org/abs/1911.11641\n[socialiqa]: https://arxiv.org/abs/1904.09728\n[boolq]: https://arxiv.org/abs/1905.10044\n[winogrande]: https://arxiv.org/abs/1907.10641\n[commonsenseqa]: https://arxiv.org/abs/1811.00937\n[openbookqa]: https://arxiv.org/abs/1809.02789\n[arc]: https://arxiv.org/abs/1911.01547\n[triviaqa]: https://arxiv.org/abs/1705.03551\n[naturalq]: https://github.com/google-research-datasets/natural-questions\n[humaneval]: https://arxiv.org/abs/2107.03374\n[mbpp]: https://arxiv.org/abs/2108.07732\n[gsm8k]: https://arxiv.org/abs/2110.14168\n[realtox]: https://arxiv.org/abs/2009.11462\n[bold]: https://arxiv.org/abs/2101.11718\n[crows]: https://aclanthology.org/2020.emnlp-main.154/\n[bbq]: https://arxiv.org/abs/2110.08193v2\n[winogender]: https://arxiv.org/abs/1804.09301\n[truthfulqa]: https://arxiv.org/abs/2109.07958\n[winobias]: https://arxiv.org/abs/1804.06876\n[math]: https://arxiv.org/abs/2103.03874\n[agieval]: https://arxiv.org/abs/2304.06364\n[big-bench]: https://arxiv.org/abs/2206.04615\n[toxigen]: https://arxiv.org/abs/2203.09509\n"
-      language: []
+      language:
+        - en
       license: gemma
       licenseLink: https://ai.google.dev/gemma/terms
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - safetensors
+        - gemma2
+        - gemma
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -2022,11 +2382,20 @@ models:
            </td>
           </tr>
         </table>
-      language: []
+      language:
+        - en
       license: gemma
       licenseLink: https://ai.google.dev/gemma/terms
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - transformers
+        - safetensors
+        - gemma2
+        - gemma
+        - fp8
+        - vllm
+        - autotrain_compatible
+        - endpoints_compatible
       tasks:
         - text-generation
       createTimeSinceEpoch: 1720396800
@@ -2048,8 +2417,14 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - w4a16
+        - int4
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1736294400
@@ -2067,11 +2442,27 @@ models:
       provider: Granite Team, IBM
       description: Granite 3.1 8B Instruct - An instruction-tuned language model
       readme: "# Granite-3.1-8B-Instruct\n\n**Model Summary:**\nGranite-3.1-8B-Instruct is a 8B parameter long-context instruct model finetuned from Granite-3.1-8B-Base using a combination of open source instruction datasets with permissive license and internally collected synthetic datasets tailored for solving long context problems. This model is developed using a diverse set of techniques with a structured chat format, including supervised finetuning, model alignment using reinforcement learning, and model merging.\n\n- **Developers:** Granite Team, IBM\n- **GitHub Repository:** [ibm-granite/granite-3.1-language-models](https://github.com/ibm-granite/granite-3.1-language-models)\n- **Website**: [Granite Docs](https://www.ibm.com/granite/docs/)\n- **Paper:** [Granite 3.1 Language Models (coming soon)](https://huggingface.co/collections/ibm-granite/granite-31-language-models-6751dbbf2f3389bec5c6f02d) \n- **Release Date**: December 18th, 2024\n- **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)\n\n**Supported Languages:** \nEnglish, German, Spanish, French, Japanese, Portuguese, Arabic, Czech, Italian, Korean, Dutch, and Chinese. Users may finetune Granite 3.1 models for languages beyond these 12 languages.\n\n**Intended Use:** \nThe model is designed to respond to general instructions and can be used to build AI assistants for multiple domains, including business applications.\n\n*Capabilities*\n* Summarization\n* Text classification\n* Text extraction\n* Question-answering\n* Retrieval Augmented Generation (RAG)\n* Code related tasks\n* Function-calling tasks\n* Multilingual dialog use cases\n* Long-context tasks including long document/meeting summarization, long document QA, etc.\n\n**Generation:** \nThis is a simple example of how to use Granite-3.1-8B-Instruct model.\n\nInstall the following libraries:\n\n```shell\npip install torch torchvision torchaudio\npip install accelerate\npip install transformers\n```\nThen, copy the snippet from the section that is relevant for your use case.\n\n```python\nimport torch\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\n\ndevice = \"auto\"\nmodel_path = \"ibm-granite/granite-3.1-8b-instruct\"\ntokenizer = AutoTokenizer.from_pretrained(model_path)\n# drop device_map if running on CPU\nmodel = AutoModelForCausalLM.from_pretrained(model_path, device_map=device)\nmodel.eval()\n# change input text as desired\nchat = [\n    { \"role\": \"user\", \"content\": \"Please list one IBM Research laboratory located in the United States. You should only output its name and location.\" },\n]\nchat = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)\n# tokenize the text\ninput_tokens = tokenizer(chat, return_tensors=\"pt\").to(device)\n# generate output tokens\noutput = model.generate(**input_tokens, \n                        max_new_tokens=100)\n# decode output tokens into text\noutput = tokenizer.batch_decode(output)\n# print output\nprint(output)\n```\n**Evaluation Results:**\n<table>\n  <caption><b>HuggingFace Open LLM Leaderboard V1</b></caption>\n<thead>\n  <tr>\n    <th style=\"text-align:left; background-color: #001d6c; color: white;\">Models</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">ARC-Challenge</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">Hellaswag</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">MMLU</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">TruthfulQA</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">Winogrande</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">GSM8K</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">Avg</th>\n  </tr></thead>\n  <tbody>\n  <tr>\n    <td style=\"text-align:left; background-color: #DAE8FF; color: black;\">Granite-3.1-8B-Instruct</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">62.62</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">84.48</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">65.34</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">66.23</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">75.37</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">73.84</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">71.31</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: #2D2D2D;\">Granite-3.1-2B-Instruct</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">54.61</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">75.14</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">55.31</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">59.42</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">67.48</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">52.76</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">60.79</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: #2D2D2D;\">Granite-3.1-3B-A800M-Instruct</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">50.42</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">73.01</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">52.19</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">49.71</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">64.87</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">48.97</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">56.53</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: #2D2D2D;\">Granite-3.1-1B-A400M-Instruct</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">42.66</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">65.97</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">26.13</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">46.77</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">62.35</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">33.88</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">46.29</td>\n  </tr>\n</tbody></table>\n\n<table>\n  <caption><b>HuggingFace Open LLM Leaderboard V2</b></caption>\n<thead>\n  <tr>\n    <th style=\"text-align:left; background-color: #001d6c; color: white;\">Models</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">IFEval</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">BBH</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">MATH Lvl 5</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">GPQA</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">MUSR</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">MMLU-Pro</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">Avg</th>\n  </tr></thead>\n  <tbody>\n  <tr>\n    <td style=\"text-align:left; background-color: #DAE8FF; color: black;\">Granite-3.1-8B-Instruct</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">72.08</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">34.09</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">21.68</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">8.28</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">19.01</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">28.19</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">30.55</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: #2D2D2D;\">Granite-3.1-2B-Instruct</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">62.86</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">21.82</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">11.33</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">5.26</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">4.87</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">20.21</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">21.06</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: #2D2D2D;\">Granite-3.1-3B-A800M-Instruct</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">55.16</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">16.69</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">10.35</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">5.15</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">2.51</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">12.75</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">17.1</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: #2D2D2D;\">Granite-3.1-1B-A400M-Instruct</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">46.86</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">6.18</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">4.08</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">0</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">0.78</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">2.41</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: #2D2D2D;\">10.05</td>\n  </tr>\n</tbody></table>\n\n**Model Architecture:**\nGranite-3.1-8B-Instruct is based on a decoder-only dense transformer architecture. Core components of this architecture are: GQA and RoPE, MLP with SwiGLU, RMSNorm, and shared input/output embeddings.\n\n<table>\n<thead>\n  <tr>\n    <th style=\"text-align:left; background-color: #001d6c; color: white;\">Model</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">2B Dense</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">8B Dense</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">1B MoE</th>\n    <th style=\"text-align:center; background-color: #001d6c; color: white;\">3B MoE</th>\n  </tr></thead>\n<tbody>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Embedding size</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">2048</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">4096</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">1024</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">1536</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Number of layers</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">40</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">40</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">24</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">32</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Attention head size</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">64</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">128</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">64</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">64</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Number of attention heads</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">32</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">32</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">16</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">24</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Number of KV heads</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">8</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">8</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">8</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">8</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">MLP hidden size</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">8192</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">12800</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">512</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">512</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">MLP activation</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">SwiGLU</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">SwiGLU</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">SwiGLU</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">SwiGLU</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Number of experts</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">—</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">—</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">32</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">40</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">MoE TopK</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">—</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">—</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">8</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">8</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Initialization std</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">0.1</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">0.1</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">0.1</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">0.1</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Sequence length</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">128K</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">128K</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">128K</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">128K</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\">Position embedding</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">RoPE</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">RoPE</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">RoPE</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">RoPE</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\"># Parameters</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">2.5B</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">8.1B</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">1.3B</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">3.3B</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\"># Active parameters</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">2.5B</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">8.1B</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">400M</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">800M</td>\n  </tr>\n  <tr>\n    <td style=\"text-align:left; background-color: #FFFFFF; color: black;\"># Training tokens</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">12T</td>\n    <td style=\"text-align:center; background-color: #DAE8FF; color: black;\">12T</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">10T</td>\n    <td style=\"text-align:center; background-color: #FFFFFF; color: black;\">10T</td>\n  </tr>\n</tbody></table>\n\n**Training Data:** \nOverall, our SFT data is largely comprised of three key sources: (1) publicly available datasets with permissive license, (2) internal synthetic data targeting specific capabilities including long-context tasks, and (3) very small amounts of human-curated data. A detailed attribution of datasets can be found in the [Granite 3.0 Technical Report](https://github.com/ibm-granite/granite-3.0-language-models/blob/main/paper.pdf), [Granite 3.1 Technical Report (coming soon)](https://huggingface.co/collections/ibm-granite/granite-31-language-models-6751dbbf2f3389bec5c6f02d), and [Accompanying Author List](https://github.com/ibm-granite/granite-3.0-language-models/blob/main/author-ack.pdf).\n\n**Infrastructure:**\nWe train Granite 3.1 Language Models using IBM's super computing cluster, Blue Vela, which is outfitted with NVIDIA H100 GPUs. This cluster provides a scalable and efficient infrastructure for training our models over thousands of GPUs.\n\n**Ethical Considerations and Limitations:** \nGranite 3.1 Instruct Models are primarily finetuned using instruction-response pairs mostly in English, but also multilingual data covering eleven languages. Although this model can handle multilingual dialog use cases, its performance might not be similar to English tasks. In such case, introducing a small number of examples (few-shot) can help the model in generating more accurate outputs. While this model has been aligned by keeping safety in consideration, the model may in some cases produce inaccurate, biased, or unsafe responses to user prompts. So we urge the community to use this model with proper safety testing and tuning tailored for their specific tasks.\n\n**Resources**\n- ⭐️ Learn about the latest updates with Granite: https://www.ibm.com/granite\n- \U0001F4C4 Get started with tutorials, best practices, and prompt engineering advice: https://www.ibm.com/granite/docs/\n- \U0001F4A1 Learn about the latest Granite learning resources: https://ibm.biz/granite-learning-resources\n\n<!-- ## Citation\n```\n@misc{granite-models,\n  author = {author 1, author2, ...},\n  title = {},\n  journal = {},\n  volume = {},\n  year = {2024},\n  url = {https://arxiv.org/abs/0000.00000},\n}\n``` -->"
-      language: []
+      language:
+        - en
+        - de
+        - es
+        - fr
+        - ja
+        - pt
+        - ar
+        - cs
+        - it
+        - ko
+        - nl
+        - zh
       license: Apache 2.0
       licenseLink: https://github.com/ibm-granite/granite-3.1-language-models
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - language
+        - granite-3.1
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -2091,10 +2482,26 @@ models:
       readme: "# granite-3.1-8b-instruct-FP8-dynamic\n\n## Model Overview\n- **Model Architecture:** granite-3.1-8b-instruct\n  - **Input:** Text\n  - **Output:** Text\n- **Model Optimizations:**\n  - **Weight quantization:** FP8\n  - **Activation quantization:** FP8\n- **Release Date:** 1/8/2025\n- **Version:** 1.0\n- **Model Developers:** Neural Magic\n\nQuantized version of [ibm-granite/granite-3.1-8b-instruct](https://huggingface.co/ibm-granite/granite-3.1-8b-instruct).\nIt achieves an average score of 70.57 on the [OpenLLM](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) benchmark (version 1), whereas the unquantized model achieves 70.30.\n\n### Model Optimizations\n\nThis model was obtained by quantizing the weights and activations of [ibm-granite/granite-3.1-8b-instruct](https://huggingface.co/ibm-granite/granite-3.1-8b-instruct) to FP8 data type, ready for inference with vLLM >= 0.5.2.\nThis optimization reduces the number of bits per parameter from 16 to 8, reducing the disk size and GPU memory requirements by approximately 50%. Only the weights and activations of the linear operators within transformers blocks are quantized. \n\n## Deployment\n\n### Use with vLLM\n\nThis model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/latest/) backend, as shown in the example below.\n\n```python\nfrom transformers import AutoTokenizer\nfrom vllm import LLM, SamplingParams\n\nmax_model_len, tp_size = 4096, 1\nmodel_name = \"neuralmagic/granite-3.1-8b-instruct-FP8-dynamic\"\ntokenizer = AutoTokenizer.from_pretrained(model_name)\nllm = LLM(model=model_name, tensor_parallel_size=tp_size, max_model_len=max_model_len, trust_remote_code=True)\nsampling_params = SamplingParams(temperature=0.3, max_tokens=256, stop_token_ids=[tokenizer.eos_token_id])\n\nmessages_list = [\n    [{\"role\": \"user\", \"content\": \"Who are you? Please respond in pirate speak!\"}],\n]\n\nprompt_token_ids = [tokenizer.apply_chat_template(messages, add_generation_prompt=True) for messages in messages_list]\n\noutputs = llm.generate(prompt_token_ids=prompt_token_ids, sampling_params=sampling_params)\n\ngenerated_text = [output.outputs[0].text for output in outputs]\nprint(generated_text)\n```\n\nvLLM also supports OpenAI-compatible serving. See the [documentation](https://docs.vllm.ai/en/latest/) for more details.\n\n## Creation\n\nThis model was created with [llm-compressor](https://github.com/vllm-project/llm-compressor) by running the code snippet below. \n\n<details>\n  <summary>Model Creation Code</summary>\n\n```bash\npython quantize.py --model_id ibm-granite/granite-3.1-8b-instruct --save_path \"output_dir/\"\n```\n\n```python\nimport argparse\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\nfrom llmcompressor.modifiers.quantization import QuantizationModifier\nfrom llmcompressor.transformers import oneshot\nimport os\n\ndef main():\n    parser = argparse.ArgumentParser(description='Quantize a transformer model to FP8')\n    parser.add_argument('--model_id', type=str, required=True,\n                        help='The model ID from HuggingFace (e.g., \"meta-llama/Meta-Llama-3-8B-Instruct\")')\n    parser.add_argument('--save_path', type=str, default='.',\n                        help='Custom path to save the quantized model. If not provided, will use model_name-FP8-dynamic')\n    args = parser.parse_args()\n\n    # Load model\n    model = AutoModelForCausalLM.from_pretrained(\n        args.model_id, device_map=\"auto\", torch_dtype=\"auto\", trust_remote_code=True,\n    )\n    tokenizer = AutoTokenizer.from_pretrained(args.model_id)\n\n    # Configure the quantization algorithm and scheme\n    recipe = QuantizationModifier(\n        targets=\"Linear\", scheme=\"FP8_DYNAMIC\", ignore=[\"lm_head\"]\n    )\n\n    # Apply quantization\n    oneshot(model=model, recipe=recipe)\n\n    save_path = os.path.join(args.save_path, args.model_id.split(\"/\")[1] + \"-FP8-dynamic\")\n    os.makedirs(save_path, exist_ok=True)\n\n    # Save to disk in compressed-tensors format\n    model.save_pretrained(save_path)\n    tokenizer.save_pretrained(save_path)\n    print(f\"Model and tokenizer saved to: {save_path}\")\n\nif __name__ == \"__main__\":\n    main()\n```\n</details>\n\n## Evaluation\n\nThe model was evaluated on OpenLLM Leaderboard [V1](https://huggingface.co/spaces/open-llm-leaderboard-old/open_llm_leaderboard), OpenLLM Leaderboard [V2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard#/) and on [HumanEval](https://github.com/neuralmagic/evalplus), using the following commands:\n\n<details>\n<summary>Evaluation Commands</summary>\n  \nOpenLLM Leaderboard V1:\n```\nlm_eval \\\n  --model vllm \\\n  --model_args pretrained=\"neuralmagic/granite-3.1-8b-instruct-FP8-dynamic\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1,gpu_memory_utilization=0.8,enable_chunked_prefill=True,trust_remote_code=True \\\n  --tasks openllm \\\n  --write_out \\\n  --batch_size auto \\\n  --output_path output_dir \\\n  --show_config\n```\n\nOpenLLM Leaderboard V2:\n```\nlm_eval \\\n  --model vllm \\\n  --model_args pretrained=\"neuralmagic/granite-3.1-8b-instruct-FP8-dynamic\",dtype=auto,add_bos_token=True,max_model_len=4096,tensor_parallel_size=1,gpu_memory_utilization=0.8,enable_chunked_prefill=True,trust_remote_code=True \\\n  --tasks leaderboard \\\n  --write_out \\\n  --batch_size auto \\\n  --output_path output_dir \\\n  --show_config\n```\n\n#### HumanEval\n##### Generation\n```\npython3 codegen/generate.py \\\n  --model neuralmagic/granite-3.1-8b-instruct-FP8-dynamic \\\n  --bs 16 \\\n  --temperature 0.2 \\\n  --n_samples 50 \\\n  --root \".\" \\\n  --dataset humaneval\n```\n##### Sanitization\n```\npython3 evalplus/sanitize.py \\\n  humaneval/neuralmagic--granite-3.1-8b-instruct-FP8-dynamic_vllm_temp_0.2\n```\n##### Evaluation\n```\nevalplus.evaluate \\\n  --dataset humaneval \\\n  --samples humaneval/neuralmagic--granite-3.1-8b-instruct-FP8-dynamic_vllm_temp_0.2-sanitized\n```\n</details>\n\n### Accuracy\n\n<table>\n  <thead>\n    <tr>\n      <th>Category</th>\n      <th>Metric</th>\n      <th>ibm-granite/granite-3.1-8b-instruct</th>\n      <th>neuralmagic/granite-3.1-8b-instruct-FP8-dynamic</th>\n      <th>Recovery (%)</th>\n    </tr>\n  </thead>\n  <tbody>\n    <!-- OpenLLM Leaderboard V1 -->\n    <tr>\n      <td rowspan=\"7\"><b>OpenLLM V1</b></td>\n      <td>ARC-Challenge (Acc-Norm, 25-shot)</td>\n      <td>66.81</td>\n      <td>66.81</td>\n      <td>100.00</td>\n    </tr>\n    <tr>\n      <td>GSM8K (Strict-Match, 5-shot)</td>\n      <td>64.52</td>\n      <td>66.64</td>\n      <td>103.29</td>\n    </tr>\n    <tr>\n      <td>HellaSwag (Acc-Norm, 10-shot)</td>\n      <td>84.18</td>\n      <td>84.16</td>\n      <td>99.98</td>\n    </tr>\n    <tr>\n      <td>MMLU (Acc, 5-shot)</td>\n      <td>65.52</td>\n      <td>65.36</td>\n      <td>99.76</td>\n    </tr>\n    <tr>\n      <td>TruthfulQA (MC2, 0-shot)</td>\n      <td>60.57</td>\n      <td>60.52</td>\n      <td>99.92</td>\n    </tr>\n    <tr>\n      <td>Winogrande (Acc, 5-shot)</td>\n      <td>80.19</td>\n      <td>79.95</td>\n      <td>99.70</td>\n    </tr>\n    <tr>\n      <td><b>Average Score</b></td>\n      <td><b>70.30</b></td>\n      <td><b>70.57</b></td>\n      <td><b>100.39</b></td>\n    </tr>\n    <!-- OpenLLM Leaderboard V2 -->\n    <tr>\n      <td rowspan=\"7\"><b>OpenLLM V2</b></td>\n      <td>IFEval (Inst Level Strict Acc, 0-shot)</td>\n      <td>74.10</td>\n      <td>73.62</td>\n      <td>99.35</td>\n    </tr>\n    <tr>\n      <td>BBH (Acc-Norm, 3-shot)</td>\n      <td>53.19</td>\n      <td>53.26</td>\n      <td>100.13</td>\n    </tr>\n    <tr>\n      <td>Math-Hard (Exact-Match, 4-shot)</td>\n      <td>14.77</td>\n      <td>16.79</td>\n      <td>113.66</td>\n    </tr>\n    <tr>\n      <td>GPQA (Acc-Norm, 0-shot)</td>\n      <td>31.76</td>\n      <td>32.58</td>\n      <td>102.58</td>\n    </tr>\n    <tr>\n      <td>MUSR (Acc-Norm, 0-shot)</td>\n      <td>46.01</td>\n      <td>47.34</td>\n      <td>102.89</td>\n    </tr>\n    <tr>\n      <td>MMLU-Pro (Acc, 5-shot)</td>\n      <td>35.81</td>\n      <td>35.72</td>\n      <td>99.75</td>\n    </tr>\n    <tr>\n      <td><b>Average Score</b></td>\n      <td><b>42.61</b></td>\n      <td><b>43.22</b></td>\n      <td><b>101.43</b></td>\n    </tr>\n    <!-- HumanEval -->\n    <tr>\n      <td rowspan=\"2\"><b>Coding</b></td>\n      <td>HumanEval Pass@1</td>\n      <td>71.00</td>\n      <td>69.90</td>\n      <td><b>98.45</b></td>\n    </tr>\n  </tbody>\n</table>\n\n\n\n## Inference Performance\n\n\nThis model achieves up to 1.5x speedup in single-stream deployment and up to 1.1x speedup in multi-stream asynchronous deployment on L40 GPUs.\nThe following performance benchmarks were conducted with [vLLM](https://docs.vllm.ai/en/latest/) version 0.6.6.post1, and [GuideLLM](https://github.com/neuralmagic/guidellm).\n\n<details>\n<summary>Benchmarking Command</summary>\n\n```\nguidellm --model neuralmagic/granite-3.1-8b-instruct-FP8-dynamic --target \"http://localhost:8000/v1\" --data-type emulated --data \"prompt_tokens=<prompt_tokens>,generated_tokens=<generated_tokens>\" --max seconds 360 --backend aiohttp_server\n```\n\n</details>\n\n\n### Single-stream performance (measured with vLLM version 0.6.6.post1)\n<table>\n  <tr>\n    <td></td>\n    <td></td>\n    <td></td>\n    <th style=\"text-align: center;\" colspan=\"7\" >Latency (s)</th>\n  </tr>\n  <tr>\n    <th>GPU class</th>\n    <th>Model</th>\n    <th>Speedup</th>\n    <th>Code Completion<br>prefill: 256 tokens<br>decode: 1024 tokens</th>\n    <th>Docstring Generation<br>prefill: 768 tokens<br>decode: 128 tokens</th>\n    <th>Code Fixing<br>prefill: 1024 tokens<br>decode: 1024 tokens</th>\n    <th>RAG<br>prefill: 1024 tokens<br>decode: 128 tokens</th>\n    <th>Instruction Following<br>prefill: 256 tokens<br>decode: 128 tokens</th>\n    <th>Multi-turn Chat<br>prefill: 512 tokens<br>decode: 256 tokens</th>\n    <th>Large Summarization<br>prefill: 4096 tokens<br>decode: 512 tokens</th>\n  </tr>\n  <tr>\n    <td style=\"vertical-align: middle;\" rowspan=\"3\" >L40</td>\n    <td>granite-3.1-8b-instruct</td>\n    <td></td>\n    <td>25.1</td>\n    <td>3.2</td>\n    <td>25.3</td>\n    <td>3.2</td>\n    <td>3.2</td>\n    <td>6.3</td>\n    <td>13.4</td>\n  </tr>\n  <tr>\n    <td>granite-3.1-8b-instruct-FP8-dynamic<br>(this model)</td>\n    <td>1.47</td>\n    <td>16.8</td>\n    <td>2.2</td>\n    <td>17.1</td>\n    <td>2.2</td>\n    <td>2.1</td>\n    <td>4.2</td>\n    <td>9.3</td>\n  </tr>\n  <tr>\n    <td>granite-3.1-8b-instruct-quantized.w4a16</td>\n    <td>2.72</td>\n    <td>8.9</td>\n    <td>1.2</td>\n    <td>9.2</td>\n    <td>1.2</td>\n    <td>1.1</td>\n    <td>2.3</td>\n    <td>5.3</td>\n  </tr>\n</table>\n\n\n### Multi-stream asynchronous performance (measured with vLLM version 0.6.6.post1)\n<table>\n  <tr>\n    <td></td>\n    <td></td>\n    <td></td>\n    <th style=\"text-align: center;\" colspan=\"7\" >Maximum Throughput (Queries per Second)</th>\n  </tr>\n  <tr>\n    <th>GPU class</th>\n    <th>Model</th>\n    <th>Speedup</th>\n    <th>Code Completion<br>prefill: 256 tokens<br>decode: 1024 tokens</th>\n    <th>Docstring Generation<br>prefill: 768 tokens<br>decode: 128 tokens</th>\n    <th>Code Fixing<br>prefill: 1024 tokens<br>decode: 1024 tokens</th>\n    <th>RAG<br>prefill: 1024 tokens<br>decode: 128 tokens</th>\n    <th>Instruction Following<br>prefill: 256 tokens<br>decode: 128 tokens</th>\n    <th>Multi-turn Chat<br>prefill: 512 tokens<br>decode: 256 tokens</th>\n    <th>Large Summarization<br>prefill: 4096 tokens<br>decode: 512 tokens</th>\n  </tr>\n  <tr>\n    <td style=\"vertical-align: middle;\" rowspan=\"3\" >L40</td>\n    <td>granite-3.1-8b-instruct</td>\n    <td></td>\n    <td>1.4</td>\n    <td>7.8</td>\n    <td>1.1</td>\n    <td>6.2</td>\n    <td>15.5</td>\n    <td>6.0</td>\n    <td>0.7</td>\n  </tr>\n  <tr>\n    <td>granite-3.1-8b-instruct-FP8-dynamic<br>(this model)</td>\n    <td>1.12</td>\n    <td>2.1</td>\n    <td>7.4</td>\n    <td>1.3</td>\n    <td>5.9</td>\n    <td>15.3</td>\n    <td>6.9</td>\n    <td>0.8</td>\n  </tr>\n  <tr>\n    <td>granite-3.1-2b-instruct-quantized.w4a16</td>\n    <td>1.29</td>\n    <td>2.4</td>\n    <td>8.9</td>\n    <td>1.4</td>\n    <td>7.1</td>\n    <td>17.8</td>\n    <td>7.8</td>\n    <td>1.0</td>\n  </tr>\n</table>\n"
       language:
         - en
+        - de
+        - es
+        - fr
+        - ja
+        - pt
+        - ar
+        - cs
+        - it
+        - ko
+        - nl
+        - zh
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - fp8
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1736294400
@@ -2567,10 +2974,26 @@ models:
         ```
       language:
         - en
+        - de
+        - es
+        - fr
+        - ja
+        - pt
+        - ar
+        - cs
+        - it
+        - ko
+        - nl
+        - zh
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - fp8
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1721692800
@@ -2592,8 +3015,14 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - w4a16
+        - int4
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1736294400
@@ -2615,8 +3044,14 @@ models:
         - en
       license: Llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - w4a16
+        - int4
+        - vllm
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1721952000
@@ -2638,8 +3073,15 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - w8a8
+        - int8
+        - vllm
+        - 8-bit
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1736294400
@@ -2661,8 +3103,15 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - granite
+        - w8a8
+        - int8
+        - vllm
+        - 8-bit
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1720656000
@@ -2684,8 +3133,19 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - safetensors
+        - phi3
+        - phi
+        - nlp
+        - math
+        - code
+        - chat
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: null
@@ -2707,8 +3167,21 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - phi3
+        - phi
+        - nlp
+        - math
+        - code
+        - chat
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - FP8
+        - compressed-tensors
       tasks:
         - text-generation
       createTimeSinceEpoch: 1740960000
@@ -2723,18 +3196,32 @@ models:
             type:
                 string_value: modelcar
     - name: RedHatAI/phi-4-quantized.w4a16
-      provider: Red Hat (Neural Magic)
-      description: Phi 4 Quantized.w4a16 - A large language model
+      provider: Red Hat
+      description: This model was obtained by quantizing the weights of phi-4 to INT4 data type.
       readme: |
         # phi-4-quantized.w4a16
       language:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      maturity: null
-      libraryName: null
+      tags:
+        - validated
+        - phi
+        - phi3
+        - nlp
+        - math
+        - code
+        - chat
+        - conversational
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - W4A16
+        - INT4
+        - compressed-tensors
       tasks:
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: 1740960000
       lastUpdateTimeSinceEpoch: 1740960000
       artifacts:
@@ -2754,8 +3241,23 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      maturity: null
-      libraryName: vLLM
+      tags:
+        - validated
+        - safetensors
+        - phi3
+        - phi
+        - nlp
+        - math
+        - code
+        - chat
+        - neuralmagic
+        - redhat
+        - llmcompressor
+        - quantized
+        - W8A8
+        - INT8
+        - compressed-tensors
+        - 8-bit
       tasks:
         - text-generation
       createTimeSinceEpoch: 1740960000
@@ -2770,19 +3272,37 @@ models:
             type:
                 string_value: modelcar
     - name: granite-3.1-8b-starter-v2
-      provider: Granite Team, IBM
-      description: Granite 3.1 8b Starter V2 - A large language model
+      provider: IBM
+      description: The model is designed to respond to general instructions and can be used to build AI assistants for multiple domains, including business applications.
       readme: |
         # granite-3.1-8b-starter-v2
 
         Version 2 of the base/student Granite 3.1 model for fine-tuning
-      language: []
+      language:
+        - en
+        - de
+        - es
+        - fr
+        - ja
+        - pt
+        - ar
+        - cs
+        - it
+        - ko
+        - nl
+        - zh
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      maturity: null
-      libraryName: transformers
+      tags:
+        - validated
+        - featured
+        - granite
+        - language
+        - granite-3.1
+        - conversational
+        - text-generation-inference
       tasks:
-        - text-generation
+        - text-to-text
       createTimeSinceEpoch: null
       lastUpdateTimeSinceEpoch: null
       artifacts:

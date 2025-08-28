@@ -8,7 +8,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
 )
 
 func TestFetchCollections(t *testing.T) {

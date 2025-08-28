@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/report"
+	"github.com/opendatahub-io/model-metadata-collection/internal/report"
 )
 
 func main() {

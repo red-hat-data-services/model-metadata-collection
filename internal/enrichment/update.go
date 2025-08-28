@@ -8,10 +8,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/huggingface"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/metadata"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
+	"github.com/opendatahub-io/model-metadata-collection/internal/huggingface"
+	"github.com/opendatahub-io/model-metadata-collection/internal/metadata"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
 
 // UpdateModelMetadataFile updates an existing metadata.yaml file with enriched data and creates separate enrichment.yaml
@@ -43,13 +43,12 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 			Description          string `yaml:"description,omitempty"`
 			License              string `yaml:"license,omitempty"`
 			LicenseLink          string `yaml:"license_link,omitempty"`
-			LibraryName          string `yaml:"library_name,omitempty"`
 			Language             string `yaml:"language,omitempty"`
+			Tags                 string `yaml:"tags,omitempty"`
 			Tasks                string `yaml:"tasks,omitempty"`
 			LastModified         string `yaml:"last_modified,omitempty"`
 			CreateTimeSinceEpoch string `yaml:"create_time_since_epoch,omitempty"`
 			Readme               string `yaml:"readme,omitempty"`
-			Maturity             string `yaml:"maturity,omitempty"`
 		} `yaml:"data_sources"`
 	}{}
 
@@ -88,7 +87,9 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 	}
 
 	if enrichedData.Provider.Source != "null" {
-		if existingMetadata.Provider == nil {
+		// Always override with HuggingFace YAML data (highest priority)
+		shouldOverride := existingMetadata.Provider == nil || enrichedData.Provider.Source == "huggingface.yaml"
+		if shouldOverride {
 			providerStr := enrichedData.Provider.Value.(string)
 			existingMetadata.Provider = &providerStr
 		}
@@ -96,7 +97,9 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 	}
 
 	if enrichedData.Description.Source != "null" {
-		if existingMetadata.Description == nil {
+		// Always override with HuggingFace YAML data (highest priority)
+		shouldOverride := existingMetadata.Description == nil || enrichedData.Description.Source == "huggingface.yaml"
+		if shouldOverride {
 			descStr := enrichedData.Description.Value.(string)
 			existingMetadata.Description = &descStr
 		}
@@ -104,7 +107,9 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 	}
 
 	if enrichedData.License.Source != "null" {
-		if existingMetadata.License == nil {
+		// Always override with HuggingFace YAML data (highest priority)
+		shouldOverride := existingMetadata.License == nil || enrichedData.License.Source == "huggingface.yaml"
+		if shouldOverride {
 			licenseStr := enrichedData.License.Value.(string)
 			existingMetadata.License = &licenseStr
 			// Automatically set license link if we have a well-known license
@@ -114,15 +119,6 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 			}
 		}
 		enrichmentInfo.DataSources.License = enrichedData.License.Source
-	}
-
-	// Handle library name from enriched data
-	if enrichedData.LibraryName.Source != "null" {
-		if existingMetadata.LibraryName == nil {
-			libraryStr := enrichedData.LibraryName.Value.(string)
-			existingMetadata.LibraryName = &libraryStr
-		}
-		enrichmentInfo.DataSources.LibraryName = enrichedData.LibraryName.Source
 	}
 
 	// Handle license from tags
@@ -142,15 +138,51 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 		}
 	}
 
-	// Handle languages from tags
-	if enrichedData.Tags.Source == "huggingface.tags" && enrichedData.Tags.Value != nil {
-		tags, ok := enrichedData.Tags.Value.([]string)
-		if ok {
-			languages, _, _ := huggingface.ParseTagsForStructuredData(tags)
-			if len(languages) > 0 && len(existingMetadata.Language) == 0 {
+	// Handle languages from enriched Language field
+	if enrichedData.Language.Source != "null" && enrichedData.Language.Value != nil {
+		if languages, ok := enrichedData.Language.Value.([]string); ok && len(languages) > 0 {
+			// Always override with enriched language data (highest priority sources)
+			shouldOverride := len(existingMetadata.Language) == 0 || enrichedData.Language.Source == "huggingface.yaml"
+			if shouldOverride {
 				existingMetadata.Language = languages
-				enrichmentInfo.DataSources.Language = "huggingface.tags"
 			}
+			enrichmentInfo.DataSources.Language = enrichedData.Language.Source
+		}
+	}
+
+	// Handle tags from enriched Tags field
+	if enrichedData.Tags.Source != "null" && enrichedData.Tags.Value != nil {
+		if newTags, ok := enrichedData.Tags.Value.([]string); ok && len(newTags) > 0 {
+			// Always merge with existing tags to preserve "validated" and "featured" tags
+			shouldMerge := len(existingMetadata.Tags) == 0 || enrichedData.Tags.Source == "huggingface.yaml" || enrichedData.Tags.Source == "huggingface.tags"
+			if shouldMerge {
+				// Preserve existing tags (like "validated", "featured") and merge with new ones
+				mergedTags := make([]string, 0)
+
+				// First, add existing tags to preserve "validated" and "featured"
+				mergedTags = append(mergedTags, existingMetadata.Tags...)
+
+				// Then add new tags, avoiding duplicates
+				for _, newTag := range newTags {
+					found := false
+					for _, existingTag := range mergedTags {
+						if existingTag == newTag {
+							found = true
+							break
+						}
+					}
+					if !found {
+						mergedTags = append(mergedTags, newTag)
+					}
+				}
+
+				originalTags := make([]string, len(existingMetadata.Tags))
+				copy(originalTags, existingMetadata.Tags)
+
+				existingMetadata.Tags = mergedTags
+				log.Printf("  Merged tags: existing %v + new %v = %v", originalTags, newTags, mergedTags)
+			}
+			enrichmentInfo.DataSources.Tags = enrichedData.Tags.Source
 		}
 	}
 
@@ -158,8 +190,12 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 	if enrichedData.Tasks.Source != "null" && enrichedData.Tasks.Value != nil {
 		tasks, ok := enrichedData.Tasks.Value.([]string)
 		if ok && len(tasks) > 0 {
-			log.Printf("  Debug: Using tasks from enrichedData.Tasks: %v", tasks)
-			existingMetadata.Tasks = tasks
+			// Always override with HuggingFace YAML tasks (highest priority)
+			shouldOverride := len(existingMetadata.Tasks) == 0 || enrichedData.Tasks.Source == "huggingface.yaml"
+			if shouldOverride {
+				log.Printf("  Debug: Using tasks from enrichedData.Tasks: %v", tasks)
+				existingMetadata.Tasks = tasks
+			}
 			enrichmentInfo.DataSources.Tasks = enrichedData.Tasks.Source
 		}
 	} else if enrichedData.Tags.Source == "huggingface.tags" && enrichedData.Tags.Value != nil {
@@ -168,7 +204,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 		if ok {
 			_, _, tasks := huggingface.ParseTagsForStructuredData(tags)
 			log.Printf("  Debug: Parsed tasks from tags: %v", tasks)
-			if len(tasks) > 0 {
+			if len(tasks) > 0 && len(existingMetadata.Tasks) == 0 {
 				existingMetadata.Tasks = tasks
 				enrichmentInfo.DataSources.Tasks = "huggingface.tags"
 			}

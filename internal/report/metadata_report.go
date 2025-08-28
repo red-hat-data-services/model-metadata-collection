@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
 )
 
 // MetadataReport represents a comprehensive report of metadata completeness and sources
@@ -192,7 +192,7 @@ func generateReport(catalog *types.ModelsCatalog, enrichmentData map[string]*Sim
 	// Field names we want to track
 	trackedFields := []string{
 		"name", "provider", "description", "readme", "language", "license",
-		"licenseLink", "maturity", "libraryName", "tasks", "artifacts",
+		"licenseLink", "tags", "tasks", "artifacts",
 		"createTimeSinceEpoch",
 	}
 
@@ -363,11 +363,11 @@ func analyzeField(fieldName string, model types.ExtractedMetadata, enriched *Sim
 			status.Source = getSourceFromEnriched(enriched, "licenseLink")
 			status.DetectionMethod = getDetectionMethod(status.Source)
 		}
-	case "maturity":
-		if model.Maturity != nil && *model.Maturity != "" {
-			status.Value = *model.Maturity
+	case "tags":
+		if len(model.Tags) > 0 {
+			status.Value = model.Tags
 			status.IsNull = false
-			status.Source = getSourceFromEnriched(enriched, "maturity")
+			status.Source = getSourceFromEnriched(enriched, "tags")
 			status.DetectionMethod = getDetectionMethod(status.Source)
 		}
 	case "tasks":
@@ -390,16 +390,6 @@ func analyzeField(fieldName string, model types.ExtractedMetadata, enriched *Sim
 			status.IsNull = false
 			status.Source = getSourceFromEnriched(enriched, "createTimeSinceEpoch")
 			status.DetectionMethod = getDetectionMethod(status.Source)
-		}
-	case "libraryName":
-		if model.LibraryName != nil && *model.LibraryName != "" {
-			status.Value = *model.LibraryName
-			status.IsNull = false
-			status.Source = getSourceFromEnriched(enriched, "libraryName")
-			status.DetectionMethod = getDetectionMethod(status.Source)
-		} else if enriched != nil && enriched.DataSources["library_name"] != "" {
-			// LibraryName is only tracked in enriched data, not in model metadata
-			status.IsNull = true
 		}
 	}
 
@@ -435,8 +425,8 @@ func getSourceFromEnriched(enriched *SimpleEnrichmentData, fieldName string) str
 		sourceKey = "description"
 	case "license":
 		sourceKey = "license"
-	case "libraryName":
-		sourceKey = "library_name"
+	case "tags":
+		sourceKey = "tags"
 	case "tasks":
 		sourceKey = "tasks"
 	case "createTimeSinceEpoch":
@@ -447,8 +437,6 @@ func getSourceFromEnriched(enriched *SimpleEnrichmentData, fieldName string) str
 		sourceKey = "language"
 	case "licenseLink":
 		sourceKey = "license_link"
-	case "maturity":
-		sourceKey = "maturity"
 	default:
 		return "modelcard.regex"
 	}

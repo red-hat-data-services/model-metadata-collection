@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
 )
 
 func TestParseModelCardMetadata(t *testing.T) {
@@ -28,7 +28,6 @@ This is a test model for text generation tasks.
 **Tasks:** text-generation, question-answering
 **Release Date:** 1/8/2025
 **Last Update:** 1/10/2025
-**Maturity:** production
 
 Download from registry.redhat.io
 `,
@@ -40,8 +39,6 @@ Download from registry.redhat.io
 				Language:                 true,
 				License:                  true,
 				LicenseLink:              false,
-				Maturity:                 true,
-				LibraryName:              true,
 				Tasks:                    true,
 				CreateTimeSinceEpoch:     true,
 				LastUpdateTimeSinceEpoch: true,
@@ -62,8 +59,6 @@ Basic model description.
 				Language:                 false,
 				License:                  false,
 				LicenseLink:              false,
-				Maturity:                 false,
-				LibraryName:              false,
 				Tasks:                    false,
 				CreateTimeSinceEpoch:     false,
 				LastUpdateTimeSinceEpoch: false,
@@ -84,8 +79,6 @@ Licensed under Apache-2.0 (https://www.apache.org/licenses/LICENSE-2.0)
 				Language:                 false,
 				License:                  true,
 				LicenseLink:              true,
-				Maturity:                 false,
-				LibraryName:              false,
 				Tasks:                    false,
 				CreateTimeSinceEpoch:     false,
 				LastUpdateTimeSinceEpoch: false,
@@ -103,8 +96,6 @@ Licensed under Apache-2.0 (https://www.apache.org/licenses/LICENSE-2.0)
 				Language:                 false,
 				License:                  false,
 				LicenseLink:              false,
-				Maturity:                 false,
-				LibraryName:              false,
 				Tasks:                    false,
 				CreateTimeSinceEpoch:     false,
 				LastUpdateTimeSinceEpoch: false,
@@ -154,7 +145,6 @@ This model can be deployed efficiently using the [vLLM](https://docs.vllm.ai/en/
 				LicenseLink: stringPtr("https://www.apache.org/licenses/LICENSE-2.0"),
 				Tasks:       []string{"text-generation"},
 				Language:    []string{"en", "es", "fr"},
-				LibraryName: stringPtr("vLLM"),
 				Artifacts:   []types.OCIArtifact{},
 			},
 		},
@@ -210,7 +200,6 @@ This model works with PyTorch >= 2.0 and can be used with transformers library.
 				Name:        stringPtr("PyTorch Model"),
 				Provider:    stringPtr("Research Lab"),
 				Description: stringPtr("This model works with PyTorch >= 2.0 and can be used with transformers library"),
-				LibraryName: stringPtr("PyTorch"),
 				Artifacts:   []types.OCIArtifact{},
 			},
 		},
@@ -290,9 +279,6 @@ Some examples here.
 			}
 			if !compareStringPtr(result.LicenseLink, tt.expected.LicenseLink) {
 				t.Errorf("LicenseLink: got %v, want %v", derefStringPtr(result.LicenseLink), derefStringPtr(tt.expected.LicenseLink))
-			}
-			if !compareStringPtr(result.LibraryName, tt.expected.LibraryName) {
-				t.Errorf("LibraryName: got %v, want %v", derefStringPtr(result.LibraryName), derefStringPtr(tt.expected.LibraryName))
 			}
 			// Handle nil vs empty slice for Language comparison
 			resultLang := result.Language

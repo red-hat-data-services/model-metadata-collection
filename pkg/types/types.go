@@ -2,9 +2,17 @@ package types
 
 import "time"
 
+// ModelEntry represents a single model entry in the models index
+type ModelEntry struct {
+	Type      string `yaml:"type"`      // "oci" for registry-based modelcar or "hf" for HuggingFace models
+	URI       string `yaml:"uri"`       // OCI link or HuggingFace link
+	Validated bool   `yaml:"validated"` // Whether the model has been validated
+	Featured  bool   `yaml:"featured"`  // Whether the model is featured
+}
+
 // ModelsConfig represents the configuration of models to process
 type ModelsConfig struct {
-	Models []string `yaml:"models"`
+	Models []ModelEntry `yaml:"models"`
 }
 
 // HuggingFace Collection structures
@@ -67,8 +75,7 @@ type ExtractedMetadata struct {
 	Language                 []string      `yaml:"language"`
 	License                  *string       `yaml:"license"`
 	LicenseLink              *string       `yaml:"licenseLink"`
-	Maturity                 *string       `yaml:"maturity"`
-	LibraryName              *string       `yaml:"libraryName"`
+	Tags                     []string      `yaml:"tags"`
 	Tasks                    []string      `yaml:"tasks"`
 	CreateTimeSinceEpoch     *int64        `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64        `yaml:"lastUpdateTimeSinceEpoch"`
@@ -84,8 +91,7 @@ type LegacyExtractedMetadata struct {
 	Language                 []string `yaml:"language"`
 	License                  *string  `yaml:"license"`
 	LicenseLink              *string  `yaml:"licenseLink"`
-	Maturity                 *string  `yaml:"maturity"`
-	LibraryName              *string  `yaml:"libraryName"`
+	Tags                     []string `yaml:"tags"`
 	Tasks                    []string `yaml:"tasks"`
 	CreateTimeSinceEpoch     *int64   `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64   `yaml:"lastUpdateTimeSinceEpoch"`
@@ -101,8 +107,7 @@ type MixedTypeExtractedMetadata struct {
 	Language                 []string      `yaml:"language"`
 	License                  *string       `yaml:"license"`
 	LicenseLink              *string       `yaml:"licenseLink"`
-	Maturity                 *string       `yaml:"maturity"`
-	LibraryName              *string       `yaml:"libraryName"`
+	Tags                     []string      `yaml:"tags"`
 	Tasks                    []string      `yaml:"tasks"`
 	CreateTimeSinceEpoch     interface{}   `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch interface{}   `yaml:"lastUpdateTimeSinceEpoch"`
@@ -140,7 +145,7 @@ type EnrichedModelMetadata struct {
 	Provider             MetadataSource `yaml:"provider"`
 	Description          MetadataSource `yaml:"description"`
 	License              MetadataSource `yaml:"license"`
-	LibraryName          MetadataSource `yaml:"library_name"`
+	Language             MetadataSource `yaml:"language"`
 	LastModified         MetadataSource `yaml:"last_modified"`
 	CreateTimeSinceEpoch MetadataSource `yaml:"create_time_since_epoch"`
 	Tags                 MetadataSource `yaml:"tags"`
@@ -160,8 +165,7 @@ type EnrichmentInfo struct {
 		Language                 string `json:"language"`
 		License                  string `json:"license"`
 		LicenseLink              string `json:"licenseLink"`
-		Maturity                 string `json:"maturity"`
-		LibraryName              string `json:"libraryName"`
+		Tags                     string `json:"tags"`
 		Tasks                    string `json:"tasks"`
 		CreateTimeSinceEpoch     string `json:"createTimeSinceEpoch"`
 		LastUpdateTimeSinceEpoch string `json:"lastUpdateTimeSinceEpoch"`
@@ -192,8 +196,7 @@ type ModelMetadata struct {
 	Language                 bool `yaml:"language"`
 	License                  bool `yaml:"license"`
 	LicenseLink              bool `yaml:"licenseLink"`
-	Maturity                 bool `yaml:"maturity"`
-	LibraryName              bool `yaml:"libraryName"`
+	Tags                     bool `yaml:"tags"`
 	Tasks                    bool `yaml:"tasks"`
 	CreateTimeSinceEpoch     bool `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch bool `yaml:"lastUpdateTimeSinceEpoch"`

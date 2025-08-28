@@ -131,3 +131,87 @@ func InferTasksFromReadme(readme string) []string {
 
 	return tasks
 }
+
+// FilterTagsForCleanTagList filters HuggingFace repository tags to only include clean tags
+// suitable for the tags field, excluding language codes, arxiv references, and other metadata
+func FilterTagsForCleanTagList(tags []string) []string {
+	var filteredTags []string
+
+	// Known language codes to exclude (comprehensive list)
+	languageCodes := map[string]bool{
+		// Common ISO 639-1 codes
+		"en": true, "fr": true, "de": true, "es": true, "it": true, "pt": true, "ru": true,
+		"zh": true, "ja": true, "ko": true, "ar": true, "hi": true, "nl": true, "sv": true,
+		"da": true, "no": true, "fi": true, "pl": true, "cs": true, "hu": true, "tr": true,
+		"he": true, "th": true, "vi": true, "id": true, "ms": true, "tl": true, "sw": true,
+		// Additional language codes found in repository tags
+		"bg": true, "el": true, "fa": true, "ro": true, "sr": true, "uk": true, "ur": true,
+		"zsm": true, "nld": true, "ca": true, "eu": true, "gl": true, "hr": true, "lv": true,
+		"lt": true, "mk": true, "mt": true, "sk": true, "sl": true, "et": true, "bn": true,
+		"ne": true, "ta": true, "te": true, "ml": true, "si": true, "my": true, "km": true,
+		"lo": true, "ka": true, "am": true, "is": true, "ga": true, "cy": true, "sq": true,
+		"be": true, "bs": true, "eo": true, "fo": true, "fy": true, "gd": true, "lb": true,
+		"mn": true, "nn": true, "oc": true, "rm": true, "sc": true, "tt": true, "uz": true,
+		"wo": true, "yo": true, "zu": true, "af": true, "az": true, "hy": true,
+		"kk": true, "ky": true, "tg": true, "tk": true, "ug": true, "xh": true,
+	}
+
+	// Known task types to exclude (these should go in tasks field, not tags)
+	taskTypes := map[string]bool{
+		"text-generation": true, "text-classification": true, "text-to-text-generation": true,
+		"translation": true, "summarization": true, "question-answering": true,
+		"conversational": true, "text-to-speech": true, "automatic-speech-recognition": true,
+		"image-classification": true, "image-to-text": true, "text-to-image": true,
+		"feature-extraction": true, "sentence-similarity": true, "zero-shot-classification": true,
+		"token-classification": true, "fill-mask": true, "multiple-choice": true,
+		"table-question-answering": true, "visual-question-answering": true,
+		"any-to-any": true, "image-text-to-text": true, "image-to-image": true,
+		"text-ranking": true, "text-to-video": true, "video-to-video": true,
+		"text-generation-inference": true,
+	}
+
+	for _, tag := range tags {
+		originalTag := strings.TrimSpace(tag)
+		lowerTag := strings.ToLower(originalTag)
+
+		// Skip if empty
+		if originalTag == "" {
+			continue
+		}
+
+		// Skip language codes
+		if languageCodes[lowerTag] {
+			continue
+		}
+
+		// Skip task types (these should be in tasks field)
+		if taskTypes[lowerTag] {
+			continue
+		}
+
+		// Skip arxiv references
+		if strings.HasPrefix(lowerTag, "arxiv:") {
+			continue
+		}
+
+		// Skip base_model references
+		if strings.HasPrefix(lowerTag, "base_model:") {
+			continue
+		}
+
+		// Skip license references (these should be in license field)
+		if strings.HasPrefix(lowerTag, "license:") {
+			continue
+		}
+
+		// Skip region references
+		if strings.HasPrefix(lowerTag, "region:") {
+			continue
+		}
+
+		// Include everything else as legitimate tags
+		filteredTags = append(filteredTags, originalTag)
+	}
+
+	return filteredTags
+}

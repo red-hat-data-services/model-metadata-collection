@@ -5,8 +5,9 @@ A Go application for extracting, enriching, and cataloging metadata from Red Hat
 ## Features
 
 - **HuggingFace Collections Integration**: Automatically discovers and processes Red Hat AI validated model collections with version support (v1.0, v2.1, etc.)
-- **OCI Container Analysis**: Extracts model cards from container image layers with annotation-based detection
+- **OCI Container Analysis**: Extracts model cards from container image layers with annotation-based detection; creates skeleton metadata when extraction fails to ensure enrichment continuity
 - **Metadata Enrichment**: Enriches model metadata with HuggingFace data including date-to-epoch conversion and quality validation, **with modelcard.md data taking priority over external sources**
+- **Automated Tagging**: Automatically adds "validated" and "featured" tags based on model configuration with intelligent tag merging
 - **Registry Integration**: Fetches OCI artifact metadata from container registries
 - **Metadata Reporting**: Comprehensive analysis of metadata completeness, data source tracking, and quality metrics
 - **Flexible CLI**: Configurable input/output paths and processing options with skip flags for individual components
@@ -88,7 +89,7 @@ The project is organized into modular packages for maintainability and testabili
 ### From Source
 
 ```bash
-git clone https://gitlab.cee.redhat.com/data-hub/model-metadata-collection.git
+git clone https://github.com/opendatahub-io/model-metadata-collection.git
 cd model-metadata-collection
 make build
 ```
@@ -101,10 +102,10 @@ This will create binaries at:
 
 ```bash
 # Install the metadata extraction tool
-go install gitlab.cee.redhat.com/data-hub/model-metadata-collection/cmd/model-extractor@latest
+go install github.com/opendatahub-io/model-metadata-collection/cmd/model-extractor@latest
 
 # Install the metadata reporting tool
-go install gitlab.cee.redhat.com/data-hub/model-metadata-collection/cmd/metadata-report@latest
+go install github.com/opendatahub-io/model-metadata-collection/cmd/metadata-report@latest
 ```
 
 ## Usage
@@ -245,14 +246,31 @@ The tool can work with multiple input sources:
 Automatically discovers Red Hat AI validated model collections from HuggingFace and generates version-specific index files like `data/hugging-face-redhat-ai-validated-v1-0.yaml`.
 
 ### Manual YAML Input
-You can also provide a YAML file listing container registry references:
+You can also provide a YAML file with structured model entries supporting both OCI registry and HuggingFace model references:
 
 ```yaml
 models:
-  - registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5
-  - registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct:1.5
-  - registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-quantized-w8a8:1.5
+  - type: "oci"
+    uri: "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5"
+    validated: true
+    featured: false
+  - type: "oci" 
+    uri: "registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct:1.5"
+    validated: true
+    featured: true
+  - type: "hf"
+    uri: "https://huggingface.co/microsoft/Phi-3.5-mini-instruct"
+    validated: true
+    featured: false
 ```
+
+Each model entry supports the following fields:
+- **type**: `"oci"` for registry-based modelcar containers or `"hf"` for HuggingFace model links
+- **uri**: The OCI registry reference or HuggingFace model URL
+- **validated**: Boolean indicating whether the model has been validated (should be `true` for production models)
+  - Models with `validated: true` automatically receive a "validated" tag in their metadata
+- **featured**: Boolean indicating whether the model should be highlighted as featured (defaults to `false`)
+  - Models with `featured: true` automatically receive a "featured" tag in their metadata
 
 ### Version-Specific Index Files
 Generated automatically from HuggingFace collections:
@@ -276,10 +294,12 @@ For each model, the tool generates:
 output/
 └── registry.redhat.io_rhelai1_modelcar-granite-3-1-8b-base-quantized-w4a16_1.5/
     └── models/
-        ├── modelcard.md          # Original model card content
-        ├── metadata.yaml         # Structured metadata
+        ├── modelcard.md          # Original model card content (when available)
+        ├── metadata.yaml         # Structured metadata (always created)
         └── enrichment.yaml       # Data source tracking
 ```
+
+**Note**: When modelcard extraction fails (e.g., no modelcard layer found in the container), the tool automatically creates a skeleton `metadata.yaml` file to ensure the enrichment process can still populate data from HuggingFace and other sources.
 
 ### Metadata Schema
 
@@ -294,6 +314,11 @@ language:
   - en
 license: apache-2.0
 licenseLink: https://www.apache.org/licenses/LICENSE-2.0
+tags:
+  - validated                    # Automatically added when validated: true
+  - featured                     # Automatically added when featured: true
+  - granite                      # Tags from HuggingFace enrichment
+  - language                     # Additional tags merged from various sources
 tasks:
   - text-generation
 artifacts:
@@ -359,7 +384,6 @@ reports/
 | readme | 39 | 0 | 100.0% |
 | provider | 38 | 1 | 97.4% |
 | licenseLink | 37 | 2 | 94.9% |
-| libraryName | 36 | 3 | 92.3% |
 | language | 35 | 4 | 89.7% |
 | createTimeSinceEpoch | 26 | 13 | 66.7% |
 | maturity | 0 | 39 | 0.0% |
@@ -456,6 +480,13 @@ The tool integrates with HuggingFace APIs to:
 1. **Primary**: Data extracted from `modelcard.md` files in container layers (highest priority)
 2. **Secondary**: HuggingFace API data (used only when modelcard.md data is missing or empty)
 3. **Fallback**: Registry metadata and generated defaults
+4. **Skeleton Creation**: When modelcard extraction fails completely, creates minimal metadata structure for enrichment
+
+**Tag Management**: The tool implements intelligent tag merging:
+- "validated" and "featured" tags are automatically added based on model configuration
+- Existing modelcard tags are preserved and merged with HuggingFace enrichment tags
+- Duplicate tags are automatically deduplicated
+- Tag precedence follows the same hierarchy as data prioritization
 
 This ensures that when non-empty data is present in the modelcard.md, it is always preserved and used over any external enrichment sources.
 
@@ -474,6 +505,8 @@ The tool includes comprehensive error handling:
 - **Malformed Data**: Robust parsing with fallback mechanisms
 - **Missing Files**: Clear error messages and suggestions
 - **Concurrent Processing**: Proper error isolation between goroutines
+- **Failed Modelcard Extraction**: Automatically creates skeleton metadata files when modelcard layers are missing or corrupted, ensuring enrichment processes can continue
+- **Tag Merging**: Intelligent tag merging that preserves existing tags while adding new ones from multiple sources
 
 ## Migration and Compatibility
 
@@ -554,5 +587,5 @@ This project is licensed under the terms specified in the LICENSE file.
 For issues and questions:
 
 1. Check the troubleshooting section above
-2. Search existing [GitLab issues](https://gitlab.cee.redhat.com/data-hub/model-metadata-collection/-/issues)
+2. Search existing [GitHub issues](https://github.com/opendatahub-io/model-metadata-collection/issues)
 3. Create a new issue with detailed information

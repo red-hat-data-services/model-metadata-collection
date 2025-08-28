@@ -7,18 +7,23 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
 
 // ModelCardYAMLFrontmatter represents the YAML frontmatter in modelcard.md files
 type ModelCardYAMLFrontmatter struct {
-	LibraryName string   `yaml:"library_name"`
 	Language    []string `yaml:"language"`
+	BaseModel   []string `yaml:"base_model"`
 	PipelineTag string   `yaml:"pipeline_tag"`
 	License     string   `yaml:"license"`
 	LicenseName string   `yaml:"license_name"`
+	LicenseLink string   `yaml:"license_link"`
 	Tags        []string `yaml:"tags"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	Tasks       []string `yaml:"tasks"`
+	Provider    string   `yaml:"provider"`
 }
 
 // ExtractYAMLFrontmatterFromModelCard extracts YAML frontmatter from modelcard.md content
@@ -108,8 +113,7 @@ func ParseModelCardMetadata(content []byte) types.ModelMetadata {
 		Language:                 utils.ContainsMetadataField(contentStr, []string{"language:", "languages:", "supported language"}),
 		License:                  utils.ContainsMetadataField(contentStr, []string{"license:", "licensing", "apache", "mit", "gpl"}),
 		LicenseLink:              utils.ContainsMetadataField(contentStr, []string{"license link", "license url", "licensing terms", "www.apache.org"}),
-		Maturity:                 utils.ContainsMetadataField(contentStr, []string{"maturity:", "development", "production", "beta", "alpha", "stable"}),
-		LibraryName:              utils.ContainsMetadataField(contentStr, []string{"library:", "framework:", "vllm", "transformers", "pytorch", "tensorflow"}),
+		Tags:                     utils.ContainsMetadataField(contentStr, []string{"tag:", "tags:", "categories:", "keywords:"}),
 		Tasks:                    utils.ContainsMetadataField(contentStr, []string{"task:", "tasks:", "use case", "application"}),
 		CreateTimeSinceEpoch:     utils.ContainsMetadataField(contentStr, []string{"created:", "creation date", "release date:", "date:"}),
 		LastUpdateTimeSinceEpoch: utils.ContainsMetadataField(contentStr, []string{"updated:", "last update", "modified:", "version:"}),
@@ -129,9 +133,19 @@ func ExtractMetadataValues(content []byte) types.ExtractedMetadata {
 	if err == nil {
 		// Populate metadata from YAML frontmatter first (highest priority)
 
-		// Library name from YAML
-		if frontmatter.LibraryName != "" {
-			metadata.LibraryName = &frontmatter.LibraryName
+		// Name from YAML
+		if frontmatter.Name != "" {
+			metadata.Name = &frontmatter.Name
+		}
+
+		// Provider from YAML
+		if frontmatter.Provider != "" {
+			metadata.Provider = &frontmatter.Provider
+		}
+
+		// Description from YAML
+		if frontmatter.Description != "" {
+			metadata.Description = &frontmatter.Description
 		}
 
 		// Language from YAML
@@ -153,9 +167,21 @@ func ExtractMetadataValues(content []byte) types.ExtractedMetadata {
 			}
 		}
 
-		// Pipeline tag for tasks
-		if frontmatter.PipelineTag != "" {
+		// License link from YAML
+		if frontmatter.LicenseLink != "" {
+			metadata.LicenseLink = &frontmatter.LicenseLink
+		}
+
+		// Tasks from YAML (prefer tasks field over pipeline_tag)
+		if len(frontmatter.Tasks) > 0 {
+			metadata.Tasks = frontmatter.Tasks
+		} else if frontmatter.PipelineTag != "" {
 			metadata.Tasks = []string{frontmatter.PipelineTag}
+		}
+
+		// Tags from YAML
+		if len(frontmatter.Tags) > 0 {
+			metadata.Tags = frontmatter.Tags
 		}
 	}
 
@@ -341,24 +367,6 @@ func ExtractMetadataValues(content []byte) types.ExtractedMetadata {
 						}
 					}
 					break
-				}
-			}
-		}
-	}
-
-	// Extract library/framework - look for vLLM, transformers, etc. in usage context (only if not already set by YAML frontmatter)
-	if metadata.LibraryName == nil {
-		libRegex := regexp.MustCompile(`(?i)using the \[([a-zA-Z]+)\]|with ([a-zA-Z]+) >=|backend.*?([a-zA-Z]+)`)
-		if libMatch := libRegex.FindStringSubmatch(contentStr); libMatch != nil {
-			for i := 1; i < len(libMatch); i++ {
-				if libMatch[i] != "" {
-					lib := utils.CleanExtractedValue(libMatch[i])
-					if utils.IsValidValue(lib, 3, 20, []string{`^[a-zA-Z]+$`}) &&
-						(strings.ToLower(lib) == "vllm" || strings.ToLower(lib) == "transformers" ||
-							strings.ToLower(lib) == "pytorch" || strings.ToLower(lib) == "tensorflow") {
-						metadata.LibraryName = &lib
-						break
-					}
 				}
 			}
 		}

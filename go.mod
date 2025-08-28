@@ -1,4 +1,4 @@
-module gitlab.cee.redhat.com/data-hub/model-metadata-collection
+module github.com/opendatahub-io/model-metadata-collection
 
 go 1.24
 

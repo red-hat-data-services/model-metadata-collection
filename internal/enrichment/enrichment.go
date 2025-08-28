@@ -7,12 +7,12 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/config"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/huggingface"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/metadata"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/internal/registry"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/utils"
+	"github.com/opendatahub-io/model-metadata-collection/internal/config"
+	"github.com/opendatahub-io/model-metadata-collection/internal/huggingface"
+	"github.com/opendatahub-io/model-metadata-collection/internal/metadata"
+	"github.com/opendatahub-io/model-metadata-collection/internal/registry"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
 
 // EnrichMetadataFromHuggingFace enriches registry model metadata using HuggingFace data
@@ -60,7 +60,7 @@ func EnrichMetadataFromHuggingFace() error {
 		enriched.Provider = metadata.CreateMetadataSource(nil, "null")
 		enriched.Description = metadata.CreateMetadataSource(nil, "null")
 		enriched.License = metadata.CreateMetadataSource(nil, "null")
-		enriched.LibraryName = metadata.CreateMetadataSource(nil, "null")
+		enriched.Language = metadata.CreateMetadataSource(nil, "null")
 		enriched.LastModified = metadata.CreateMetadataSource(nil, "null")
 		enriched.CreateTimeSinceEpoch = metadata.CreateMetadataSource(nil, "null")
 		enriched.Tags = metadata.CreateMetadataSource(nil, "null")
@@ -86,15 +86,31 @@ func EnrichMetadataFromHuggingFace() error {
 					// Determine sources based on YAML frontmatter presence
 					// Note: Only check fields that exist in ModelCardYAMLFrontmatter struct
 
-					// Name and Provider are not in YAML frontmatter, so they're always from regex/text
+					// Name can come from YAML frontmatter
 					if existingMetadata.Name != nil && *existingMetadata.Name != "" {
-						enriched.Name = metadata.CreateMetadataSource(*existingMetadata.Name, "modelcard.regex")
+						source := "modelcard.regex"
+						if frontmatter.Name != "" && frontmatter.Name == *existingMetadata.Name {
+							source = "modelcard.yaml"
+						}
+						enriched.Name = metadata.CreateMetadataSource(*existingMetadata.Name, source)
 					}
+
+					// Provider can come from YAML frontmatter
 					if existingMetadata.Provider != nil && *existingMetadata.Provider != "" {
-						enriched.Provider = metadata.CreateMetadataSource(*existingMetadata.Provider, "modelcard.regex")
+						source := "modelcard.regex"
+						if frontmatter.Provider != "" && frontmatter.Provider == *existingMetadata.Provider {
+							source = "modelcard.yaml"
+						}
+						enriched.Provider = metadata.CreateMetadataSource(*existingMetadata.Provider, source)
 					}
+
+					// Description can come from YAML frontmatter
 					if existingMetadata.Description != nil && *existingMetadata.Description != "" {
-						enriched.Description = metadata.CreateMetadataSource(*existingMetadata.Description, "modelcard.regex")
+						source := "modelcard.regex"
+						if frontmatter.Description != "" && frontmatter.Description == *existingMetadata.Description {
+							source = "modelcard.yaml"
+						}
+						enriched.Description = metadata.CreateMetadataSource(*existingMetadata.Description, source)
 					}
 
 					// License can come from YAML frontmatter
@@ -108,22 +124,61 @@ func EnrichMetadataFromHuggingFace() error {
 						enriched.License = metadata.CreateMetadataSource(*existingMetadata.License, source)
 					}
 
-					// LibraryName can come from YAML frontmatter
-					if existingMetadata.LibraryName != nil && *existingMetadata.LibraryName != "" {
-						source := "modelcard.regex"
-						if frontmatter.LibraryName != "" && frontmatter.LibraryName == *existingMetadata.LibraryName {
-							source = "modelcard.yaml"
-						}
-						enriched.LibraryName = metadata.CreateMetadataSource(*existingMetadata.LibraryName, source)
-					}
-
-					// Tasks can come from YAML frontmatter (pipeline_tag)
+					// Tasks can come from YAML frontmatter (tasks field or pipeline_tag)
 					if len(existingMetadata.Tasks) > 0 {
 						source := "modelcard.regex"
-						if frontmatter.PipelineTag != "" && len(existingMetadata.Tasks) == 1 && existingMetadata.Tasks[0] == frontmatter.PipelineTag {
+						// Check if tasks match the tasks field or pipeline_tag
+						if len(frontmatter.Tasks) > 0 && len(existingMetadata.Tasks) == len(frontmatter.Tasks) {
+							allMatch := true
+							for i, task := range existingMetadata.Tasks {
+								if i >= len(frontmatter.Tasks) || task != frontmatter.Tasks[i] {
+									allMatch = false
+									break
+								}
+							}
+							if allMatch {
+								source = "modelcard.yaml"
+							}
+						} else if frontmatter.PipelineTag != "" && len(existingMetadata.Tasks) == 1 && existingMetadata.Tasks[0] == frontmatter.PipelineTag {
 							source = "modelcard.yaml"
 						}
 						enriched.Tasks = metadata.CreateMetadataSource(existingMetadata.Tasks, source)
+					}
+
+					// Language can come from YAML frontmatter
+					if len(existingMetadata.Language) > 0 {
+						source := "modelcard.regex"
+						if len(frontmatter.Language) > 0 && len(existingMetadata.Language) == len(frontmatter.Language) {
+							allMatch := true
+							for i, lang := range existingMetadata.Language {
+								if i >= len(frontmatter.Language) || lang != frontmatter.Language[i] {
+									allMatch = false
+									break
+								}
+							}
+							if allMatch {
+								source = "modelcard.yaml"
+							}
+						}
+						enriched.Language = metadata.CreateMetadataSource(existingMetadata.Language, source)
+					}
+
+					// Tags can come from YAML frontmatter
+					if len(existingMetadata.Tags) > 0 {
+						source := "modelcard.regex"
+						if len(frontmatter.Tags) > 0 && len(existingMetadata.Tags) == len(frontmatter.Tags) {
+							allMatch := true
+							for i, tag := range existingMetadata.Tags {
+								if i >= len(frontmatter.Tags) || tag != frontmatter.Tags[i] {
+									allMatch = false
+									break
+								}
+							}
+							if allMatch {
+								source = "modelcard.yaml"
+							}
+						}
+						enriched.Tags = metadata.CreateMetadataSource(existingMetadata.Tags, source)
 					}
 				}
 			}
@@ -142,8 +197,11 @@ func EnrichMetadataFromHuggingFace() error {
 				if existingMetadata.License != nil && *existingMetadata.License != "" {
 					enriched.License = metadata.CreateMetadataSource(*existingMetadata.License, "modelcard.regex")
 				}
-				if existingMetadata.LibraryName != nil && *existingMetadata.LibraryName != "" {
-					enriched.LibraryName = metadata.CreateMetadataSource(*existingMetadata.LibraryName, "modelcard.regex")
+				if len(existingMetadata.Language) > 0 {
+					enriched.Language = metadata.CreateMetadataSource(existingMetadata.Language, "modelcard.regex")
+				}
+				if len(existingMetadata.Tags) > 0 {
+					enriched.Tags = metadata.CreateMetadataSource(existingMetadata.Tags, "modelcard.regex")
 				}
 				if len(existingMetadata.Tasks) > 0 {
 					enriched.Tasks = metadata.CreateMetadataSource(existingMetadata.Tasks, "modelcard.regex")
@@ -208,12 +266,18 @@ func EnrichMetadataFromHuggingFace() error {
 				if enriched.LastModified.Source == "null" && hfDetails.LastModified != "" {
 					enriched.LastModified = metadata.CreateMetadataSource(hfDetails.LastModified, "huggingface.api")
 				}
-				if enriched.Tags.Source == "null" && len(hfDetails.Tags) > 0 {
-					enriched.Tags = metadata.CreateMetadataSource(hfDetails.Tags, "huggingface.tags")
-
+				if len(hfDetails.Tags) > 0 {
 					// Parse tags for structured data and potentially extract license
 					languages, tagLicense, tasks := huggingface.ParseTagsForStructuredData(hfDetails.Tags)
 					log.Printf("  Parsed from tags - Languages: %v, License: %s, Tasks: %v", languages, tagLicense, tasks)
+
+					// NOTE: Do NOT store raw repository tags here - they will be used as fallback later
+					// Raw repository tags contain language codes, arxiv refs, and other metadata that should be filtered
+
+					// Store parsed languages (if no YAML frontmatter languages available)
+					if enriched.Language.Source == "null" && len(languages) > 0 {
+						enriched.Language = metadata.CreateMetadataSource(languages, "huggingface.tags")
+					}
 
 					// Use license from tags if not already set
 					if enriched.License.Source == "null" && tagLicense != "" {
@@ -238,13 +302,12 @@ func EnrichMetadataFromHuggingFace() error {
 			// Extract release date if we don't have a valid date yet (even from modelcard.regex with null value)
 			needsReleaseDate := enriched.LastModified.Source == "null" ||
 				(enriched.LastModified.Source == "modelcard.regex" && enriched.LastModified.Value == nil)
-			needsLibraryName := true // Always try to get library name from YAML
-			needsLanguageFromYAML := len(enriched.Tags.Value.([]string)) == 0 || enriched.Tags.Source == "null"
+			needsLanguageFromYAML := enriched.Language.Source == "null"
 
 			log.Printf("  DEBUG: LastModified source='%s', value=%v, needsReleaseDate=%v",
 				enriched.LastModified.Source, enriched.LastModified.Value, needsReleaseDate)
 
-			if needsProvider || needsReleaseDate || needsLibraryName || needsLanguageFromYAML {
+			if needsProvider || needsReleaseDate || needsLanguageFromYAML {
 				log.Printf("  Fetching HuggingFace README for additional metadata: %s", bestMatch.Name)
 				hfReadme, err := huggingface.FetchReadme(bestMatch.Name)
 				if err != nil {
@@ -255,32 +318,54 @@ func EnrichMetadataFromHuggingFace() error {
 					if err == nil {
 						log.Printf("  Successfully extracted YAML frontmatter from HF README")
 
-						// Use library name from YAML
-						if frontmatter.LibraryName != "" {
-							enriched.LibraryName = metadata.CreateMetadataSource(frontmatter.LibraryName, "huggingface.yaml")
-							log.Printf("  Found library_name in YAML frontmatter: %s", frontmatter.LibraryName)
+						// Always use name from HuggingFace YAML (highest priority)
+						if frontmatter.Name != "" {
+							enriched.Name = metadata.CreateMetadataSource(frontmatter.Name, "huggingface.yaml")
+							log.Printf("  Found name in YAML frontmatter: %s", frontmatter.Name)
 						}
 
-						// Use language from YAML frontmatter if more comprehensive
+						// Always use provider from HuggingFace YAML (highest priority)
+						if frontmatter.Provider != "" {
+							enriched.Provider = metadata.CreateMetadataSource(frontmatter.Provider, "huggingface.yaml")
+							log.Printf("  Found provider in YAML frontmatter: %s", frontmatter.Provider)
+						}
+
+						// Always use description from HuggingFace YAML (highest priority)
+						if frontmatter.Description != "" {
+							enriched.Description = metadata.CreateMetadataSource(frontmatter.Description, "huggingface.yaml")
+							log.Printf("  Found description in YAML frontmatter: %s", frontmatter.Description)
+						}
+
+						// Always use language from HuggingFace YAML frontmatter (highest priority)
 						if len(frontmatter.Language) > 0 {
+							enriched.Language = metadata.CreateMetadataSource(frontmatter.Language, "huggingface.yaml")
 							log.Printf("  Found languages in YAML frontmatter: %v", frontmatter.Language)
-							// This will override tag-based language detection with more reliable YAML data
 						}
 
-						// Use license from YAML frontmatter
-						if frontmatter.License != "" && enriched.License.Source == "null" {
+						// Always use tags from HuggingFace YAML frontmatter (highest priority)
+						if len(frontmatter.Tags) > 0 {
+							enriched.Tags = metadata.CreateMetadataSource(frontmatter.Tags, "huggingface.yaml")
+							log.Printf("  Found tags in YAML frontmatter: %v", frontmatter.Tags)
+						}
+
+						// Always use license from HuggingFace YAML frontmatter (highest priority)
+						if frontmatter.License != "" {
 							enriched.License = metadata.CreateMetadataSource(frontmatter.License, "huggingface.yaml")
 							log.Printf("  Extracted license from YAML frontmatter: %s", frontmatter.License)
 						}
 
-						// Use license_name if available and more specific
+						// Always use license_name if available and more specific (highest priority)
 						if frontmatter.LicenseName != "" {
 							enriched.License = metadata.CreateMetadataSource(frontmatter.LicenseName, "huggingface.yaml")
 							log.Printf("  Extracted license_name from YAML frontmatter: %s", frontmatter.LicenseName)
 						}
 
-						// Use pipeline_tag for tasks
-						if frontmatter.PipelineTag != "" && enriched.Tasks.Source == "null" {
+						// Always use tasks from HuggingFace YAML (highest priority)
+						if len(frontmatter.Tasks) > 0 {
+							enriched.Tasks = metadata.CreateMetadataSource(frontmatter.Tasks, "huggingface.yaml")
+							log.Printf("  Extracted tasks from YAML frontmatter: %v", frontmatter.Tasks)
+						} else if frontmatter.PipelineTag != "" {
+							// Fallback to pipeline_tag for tasks if tasks field is not available
 							tasks := []string{frontmatter.PipelineTag}
 							enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.yaml")
 							log.Printf("  Extracted pipeline_tag from YAML frontmatter: %s", frontmatter.PipelineTag)
@@ -314,6 +399,47 @@ func EnrichMetadataFromHuggingFace() error {
 							}
 						}
 					}
+				}
+			}
+
+			// Use repository tags as additional enrichment: Apply if no YAML frontmatter tags were found
+			// This will merge with existing modelcard tags (like "validated"/"featured") during update phase
+			if enriched.Tags.Source == "null" && len(hfDetails.Tags) > 0 {
+				log.Printf("  No YAML frontmatter tags found, using filtered repository tags")
+				// Filter out language codes, arxiv references, and other non-tag metadata
+				filteredTags := huggingface.FilterTagsForCleanTagList(hfDetails.Tags)
+				if len(filteredTags) > 0 {
+					enriched.Tags = metadata.CreateMetadataSource(filteredTags, "huggingface.tags")
+					log.Printf("  Using filtered repository tags: %v", filteredTags)
+				}
+			} else if enriched.Tags.Source == "modelcard.regex" && len(hfDetails.Tags) > 0 {
+				log.Printf("  Found modelcard tags, merging with filtered repository tags")
+				// Filter out language codes, arxiv references, and other non-tag metadata
+				filteredTags := huggingface.FilterTagsForCleanTagList(hfDetails.Tags)
+				if len(filteredTags) > 0 {
+					// Merge existing modelcard tags with HuggingFace tags
+					existingTags := enriched.Tags.Value.([]string)
+					allTags := make([]string, 0)
+
+					// First add existing tags
+					allTags = append(allTags, existingTags...)
+
+					// Then add new tags, avoiding duplicates
+					for _, newTag := range filteredTags {
+						found := false
+						for _, existingTag := range allTags {
+							if existingTag == newTag {
+								found = true
+								break
+							}
+						}
+						if !found {
+							allTags = append(allTags, newTag)
+						}
+					}
+
+					enriched.Tags = metadata.CreateMetadataSource(allTags, "huggingface.tags")
+					log.Printf("  Merged modelcard + repository tags: %v", allTags)
 				}
 			}
 

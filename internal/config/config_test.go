@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
 	"gopkg.in/yaml.v3"
 )
 
@@ -19,13 +19,22 @@ func TestLoadModelsFromYAML(t *testing.T) {
 		{
 			name: "valid models config",
 			fileContent: `models:
-  - "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base:1.0"
-  - "registry.redhat.io/rhelai1/modelcar-llama-3-2-1b-instruct:1.0"
-  - "registry.redhat.io/rhelai1/modelcar-mistral-7b-instruct:1.0"`,
+  - type: "oci"
+    uri: "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base:1.0"
+    validated: true
+    featured: false
+  - type: "oci"
+    uri: "registry.redhat.io/rhelai1/modelcar-llama-3-2-1b-instruct:1.0"
+    validated: true
+    featured: false
+  - type: "hf"
+    uri: "https://huggingface.co/microsoft/Phi-3.5-mini-instruct"
+    validated: true
+    featured: true`,
 			expected: []string{
 				"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base:1.0",
 				"registry.redhat.io/rhelai1/modelcar-llama-3-2-1b-instruct:1.0",
-				"registry.redhat.io/rhelai1/modelcar-mistral-7b-instruct:1.0",
+				"https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
 			},
 			expectError: false,
 		},
@@ -38,7 +47,10 @@ func TestLoadModelsFromYAML(t *testing.T) {
 		{
 			name: "single model",
 			fileContent: `models:
-  - "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base:1.0"`,
+  - type: "oci"
+    uri: "registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base:1.0"
+    validated: true
+    featured: false`,
 			expected: []string{
 				"registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base:1.0",
 			},

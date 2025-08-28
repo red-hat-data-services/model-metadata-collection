@@ -6,7 +6,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"gitlab.cee.redhat.com/data-hub/model-metadata-collection/pkg/types"
+	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
 )
 
 func TestEnrichMetadataFromHuggingFace_FilesNotExist(t *testing.T) {
@@ -171,7 +171,7 @@ func TestEnrichMetadataFromHuggingFace_EmptyFiles(t *testing.T) {
 
 	// Create empty models config
 	modelsConfig := types.ModelsConfig{
-		Models: []string{},
+		Models: []types.ModelEntry{},
 	}
 
 	modelsData, err := yaml.Marshal(modelsConfig)
@@ -219,7 +219,6 @@ func TestUpdateModelMetadataFile_NoExistingFile(t *testing.T) {
 		Provider:         types.MetadataSource{Value: "Test Provider", Source: "huggingface"},
 		License:          types.MetadataSource{Value: "apache-2.0", Source: "huggingface"},
 		Description:      types.MetadataSource{Value: "Test Description", Source: "huggingface"},
-		LibraryName:      types.MetadataSource{Value: "transformers", Source: "huggingface"},
 	}
 
 	// Create output directory structure
@@ -297,7 +296,6 @@ func TestUpdateModelMetadataFile_WithExistingFile(t *testing.T) {
 		Provider:         types.MetadataSource{Value: "Enriched Provider", Source: "huggingface"},
 		License:          types.MetadataSource{Value: "mit", Source: "huggingface"},
 		Description:      types.MetadataSource{Value: "Enriched Description", Source: "huggingface"},
-		LibraryName:      types.MetadataSource{Value: "transformers", Source: "huggingface"},
 	}
 
 	// Call UpdateModelMetadataFile
@@ -345,9 +343,9 @@ func TestUpdateAllModelsWithOCIArtifacts(t *testing.T) {
 
 	// Create models config with test models
 	modelsConfig := types.ModelsConfig{
-		Models: []string{
-			"registry.example.com/test/model1:latest",
-			"registry.example.com/test/model2:latest",
+		Models: []types.ModelEntry{
+			{Type: "oci", URI: "registry.example.com/test/model1:latest", Validated: true, Featured: false},
+			{Type: "oci", URI: "registry.example.com/test/model2:latest", Validated: true, Featured: false},
 		},
 	}
 

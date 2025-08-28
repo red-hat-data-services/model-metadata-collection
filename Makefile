@@ -54,7 +54,6 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf output/
 	rm -f data/hugging-face-redhat-ai-validated-*.yaml
-	rm -f data/models-catalog.yaml
 
 # Run tests
 test:
@@ -110,10 +109,6 @@ deps:
 # Run all checks
 check: fmt-check vet lint
 
-# Install the binary
-install: build
-	@echo "Installing $(BINARY_NAME)..."
-	cp $(BUILD_DIR)/$(BINARY_NAME) $(GOPATH)/bin/
 
 # Run the application with default settings
 run: build
@@ -151,7 +146,7 @@ release: clean
 # Initialize go module (only run once)
 init-module:
 	@echo "Initializing Go module..."
-	$(GOMOD) init gitlab.cee.redhat.com/data-hub/model-metadata-collection
+	$(GOMOD) init github.com/opendatahub-io/model-metadata-collection
 
 # Update dependencies
 update-deps:
@@ -169,14 +164,6 @@ docs:
 		echo "godoc not installed. Install it with: go install golang.org/x/tools/cmd/godoc@latest"; \
 	fi
 
-# Run security scan
-security:
-	@echo "Running security scan..."
-	@if command -v gosec >/dev/null 2>&1; then \
-		gosec ./...; \
-	else \
-		echo "gosec not installed. Install it with: go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest"; \
-	fi
 
 # Setup development environment
 setup:
@@ -184,7 +171,6 @@ setup:
 	$(GOMOD) download
 	@echo "Installing development tools..."
 	$(GOGET) github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	$(GOGET) github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
 	$(GOGET) golang.org/x/tools/cmd/godoc@latest
 
 # Docker targets
@@ -235,7 +221,6 @@ help:
 	@echo "  fmt-check    - Check code formatting"
 	@echo "  deps         - Download dependencies"
 	@echo "  check        - Run all checks (fmt-check, vet, lint)"
-	@echo "  install      - Install binary to GOPATH/bin"
 	@echo "  run          - Run with default settings"
 	@echo "  process      - Run with custom input/output paths"
 	@echo "  report       - Generate metadata completeness report"
@@ -245,7 +230,6 @@ help:
 	@echo "  release      - Create optimized release build"
 	@echo "  update-deps  - Update dependencies"
 	@echo "  docs         - Generate documentation"
-	@echo "  security     - Run security scan"
 	@echo "  setup        - Setup development environment"
 	@echo "  docker-build - Build Docker image"
 	@echo "  help         - Show this help"
