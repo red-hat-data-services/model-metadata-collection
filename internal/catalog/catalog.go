@@ -96,6 +96,9 @@ func CreateModelsCatalog() error {
 			catalogArtifacts = append(catalogArtifacts, catalogArtifact)
 		}
 
+		// Convert tags to customProperties
+		customProps := convertTagsToCustomProperties(model.Tags)
+
 		catalogModel := types.CatalogMetadata{
 			Name:                     model.Name,
 			Provider:                 model.Provider,
@@ -107,6 +110,7 @@ func CreateModelsCatalog() error {
 			Tasks:                    model.Tasks,
 			CreateTimeSinceEpoch:     createTimeStr,
 			LastUpdateTimeSinceEpoch: lastUpdateTimeStr,
+			CustomProperties:         customProps,
 			Artifacts:                catalogArtifacts,
 		}
 		catalogModels = append(catalogModels, catalogModel)
@@ -142,4 +146,20 @@ func convertTimestampToString(timestamp *int64) *string {
 	}
 	str := strconv.FormatInt(*timestamp, 10)
 	return &str
+}
+
+// convertTagsToCustomProperties converts all tags to customProperties format
+func convertTagsToCustomProperties(tags []string) map[string]types.MetadataValue {
+	customProps := make(map[string]types.MetadataValue)
+	
+	for _, tag := range tags {
+		if tag != "" { // Skip empty tags
+			customProps[tag] = types.MetadataValue{
+				MetadataType: "MetadataStringValue",
+				StringValue:  "",
+			}
+		}
+	}
+	
+	return customProps
 }

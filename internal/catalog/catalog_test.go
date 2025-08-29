@@ -29,6 +29,7 @@ func TestCreateModelsCatalog(t *testing.T) {
 				License:     stringPtr("Apache-2.0"),
 				Language:    []string{"en"},
 				Tasks:       []string{"text-generation"},
+				Tags:        []string{"validated", "featured", "test-tag"},
 			},
 		},
 		{
@@ -40,6 +41,7 @@ func TestCreateModelsCatalog(t *testing.T) {
 				License:     stringPtr("MIT"),
 				Language:    []string{"en", "es"},
 				Tasks:       []string{"text-classification"},
+				Tags:        []string{"validated"},
 			},
 		},
 		{

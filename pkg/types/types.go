@@ -173,6 +173,12 @@ type EnrichmentInfo struct {
 	} `json:"dataSources"`
 }
 
+// MetadataValue represents a metadata value with type information
+type MetadataValue struct {
+	MetadataType string `yaml:"metadataType"`
+	StringValue  string `yaml:"string_value"`
+}
+
 // CatalogOCIArtifact represents an OCI artifact for catalog output with string timestamps
 type CatalogOCIArtifact struct {
 	URI                      string                 `yaml:"uri"`
@@ -193,6 +199,7 @@ type CatalogMetadata struct {
 	Tasks                    []string             `yaml:"tasks"`
 	CreateTimeSinceEpoch     *string              `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *string              `yaml:"lastUpdateTimeSinceEpoch"`
+	CustomProperties         map[string]MetadataValue `yaml:"customProperties,omitempty"`
 	Artifacts                []CatalogOCIArtifact `yaml:"artifacts"`
 }
 

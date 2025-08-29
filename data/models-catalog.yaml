@@ -19,6 +19,25 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744896921000"
+      customProperties:
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama-3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -40,6 +59,25 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1746720264000"
+      customProperties:
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama3.1:
+            metadataType: MetadataStringValue
+            string_value: ""
+        nvidia:
+            metadataType: MetadataStringValue
+            string_value: ""
+        text-generation-inference:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-nemotron-70b-instruct-hf:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -61,6 +99,25 @@ models:
         - text-generation
       createTimeSinceEpoch: "1740787200"
       lastUpdateTimeSinceEpoch: "1740787200"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-nemotron-70b-instruct-hf-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -89,6 +146,25 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744927337000"
+      customProperties:
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama-3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -117,6 +193,34 @@ models:
         - text-generation
       createTimeSinceEpoch: "1733875200"
       lastUpdateTimeSinceEpoch: "1733875200"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama-3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -145,6 +249,46 @@ models:
         - text-generation
       createTimeSinceEpoch: "1733875200"
       lastUpdateTimeSinceEpoch: "1733875200"
+      customProperties:
+        4-bit precision:
+            metadataType: MetadataStringValue
+            string_value: ""
+        chat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama-3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -754,6 +898,49 @@ models:
         - text-generation
       createTimeSinceEpoch: "1737331200"
       lastUpdateTimeSinceEpoch: "1737331200"
+      customProperties:
+        8-bit:
+            metadataType: MetadataStringValue
+            string_value: ""
+        8-bit precision:
+            metadataType: MetadataStringValue
+            string_value: ""
+        chat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama-3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -787,6 +974,25 @@ models:
         - image-text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1746920441000"
+      customProperties:
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-maverick-17b-128e-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -821,6 +1027,46 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1746799996000"
+      customProperties:
+        FP8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        pytorch:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-maverick-17b-128e-instruct-fp8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -855,6 +1101,28 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1746783441000"
+      customProperties:
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        text-generation-inference:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -889,6 +1157,40 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1744675200"
       lastUpdateTimeSinceEpoch: "1744675200"
+      customProperties:
+        FP8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        pytorch:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -922,6 +1224,49 @@ models:
         - image-text-to-text
       createTimeSinceEpoch: "1745539200"
       lastUpdateTimeSinceEpoch: "1745539200"
+      customProperties:
+        INT4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        W4A16:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        facebook:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llama4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        meta:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        pytorch:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -952,6 +1297,22 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744999584000"
+      customProperties:
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -983,6 +1344,31 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1740787200"
       lastUpdateTimeSinceEpoch: "1740787200"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        text-generation-inference:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1237,6 +1623,31 @@ models:
         - text-generation
       createTimeSinceEpoch: "1740787200"
       lastUpdateTimeSinceEpoch: "1740787200"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w4a16:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1268,6 +1679,34 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1740960000"
       lastUpdateTimeSinceEpoch: "1740960000"
+      customProperties:
+        W8A8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        text-generation-inference:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1314,6 +1753,25 @@ models:
         - image-text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744989629000"
+      customProperties:
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistralai:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1359,6 +1817,46 @@ models:
         - it is ideal for
       createTimeSinceEpoch: "1744675200"
       lastUpdateTimeSinceEpoch: "1744675200"
+      customProperties:
+        FP8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fast:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistralai:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1404,6 +1902,49 @@ models:
         - it is ideal for
       createTimeSinceEpoch: "1744675200"
       lastUpdateTimeSinceEpoch: "1744675200"
+      customProperties:
+        INT4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        W4A16:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fast:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistralai:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1449,6 +1990,49 @@ models:
         - it is ideal for
       createTimeSinceEpoch: "1744675200"
       lastUpdateTimeSinceEpoch: "1744675200"
+      customProperties:
+        8-bit:
+            metadataType: MetadataStringValue
+            string_value: ""
+        W8A8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fast:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral-small:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistralai:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1474,6 +2058,28 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1739776989000"
+      customProperties:
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        featured:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mistral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        mixtral:
+            metadataType: MetadataStringValue
+            string_value: ""
+        text-generation-inference:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:1.4
           createTimeSinceEpoch: "1739776988000"
@@ -1518,6 +2124,25 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744988136000"
+      customProperties:
+        qwen:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5_instruct:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1564,6 +2189,34 @@ models:
         - question-answering
       createTimeSinceEpoch: "1732665600"
       lastUpdateTimeSinceEpoch: "1732665600"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5_instruct:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1610,6 +2263,37 @@ models:
         - question-answering
       createTimeSinceEpoch: "1744761600"
       lastUpdateTimeSinceEpoch: "1744761600"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5_instruct:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w4a16:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1883,6 +2567,43 @@ models:
         - question-answering
       createTimeSinceEpoch: "1728432000"
       lastUpdateTimeSinceEpoch: "1728432000"
+      customProperties:
+        8-bit:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        featured:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5:
+            metadataType: MetadataStringValue
+            string_value: ""
+        qwen2_5_instruct:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w8a8:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1904,6 +2625,19 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1747669712000"
+      customProperties:
+        gemma:
+            metadataType: MetadataStringValue
+            string_value: ""
+        gemma2:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2128,6 +2862,34 @@ models:
         - text-generation
       createTimeSinceEpoch: "1720396800"
       lastUpdateTimeSinceEpoch: "1720396800"
+      customProperties:
+        autotrain_compatible:
+            metadataType: MetadataStringValue
+            string_value: ""
+        endpoints_compatible:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        gemma:
+            metadataType: MetadataStringValue
+            string_value: ""
+        gemma2:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        transformers:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it-fp8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2149,6 +2911,28 @@ models:
         - text-generation
       createTimeSinceEpoch: "1736294400"
       lastUpdateTimeSinceEpoch: "1736294400"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w4a16:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2181,6 +2965,22 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744995384000"
+      customProperties:
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite-3.1:
+            metadataType: MetadataStringValue
+            string_value: ""
+        language:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2213,6 +3013,25 @@ models:
         - text-generation
       createTimeSinceEpoch: "1736294400"
       lastUpdateTimeSinceEpoch: "1736294400"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2698,6 +3517,25 @@ models:
         - text-generation
       createTimeSinceEpoch: "1721692800"
       lastUpdateTimeSinceEpoch: "1721692800"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        fp8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2719,6 +3557,28 @@ models:
         - text-generation
       createTimeSinceEpoch: "1736294400"
       lastUpdateTimeSinceEpoch: "1736294400"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w4a16:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2740,6 +3600,28 @@ models:
         - text-generation
       createTimeSinceEpoch: "1721952000"
       lastUpdateTimeSinceEpoch: "1721952000"
+      customProperties:
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w4a16:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2761,6 +3643,31 @@ models:
         - text-generation
       createTimeSinceEpoch: "1736294400"
       lastUpdateTimeSinceEpoch: "1736294400"
+      customProperties:
+        8-bit:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w8a8:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2782,6 +3689,31 @@ models:
         - text-generation
       createTimeSinceEpoch: "1720656000"
       lastUpdateTimeSinceEpoch: "1720656000"
+      customProperties:
+        8-bit:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        int8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
+        vllm:
+            metadataType: MetadataStringValue
+            string_value: ""
+        w8a8:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2803,6 +3735,43 @@ models:
         - text-generation
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1744993914000"
+      customProperties:
+        chat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        code:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        math:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        nlp:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2824,6 +3793,49 @@ models:
         - text-generation
       createTimeSinceEpoch: "1740960000"
       lastUpdateTimeSinceEpoch: "1740960000"
+      customProperties:
+        FP8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        chat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        code:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        math:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        nlp:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2846,6 +3858,52 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1740960000"
       lastUpdateTimeSinceEpoch: "1740960000"
+      customProperties:
+        INT4:
+            metadataType: MetadataStringValue
+            string_value: ""
+        W4A16:
+            metadataType: MetadataStringValue
+            string_value: ""
+        chat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        code:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        math:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        nlp:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2867,6 +3925,55 @@ models:
         - text-generation
       createTimeSinceEpoch: "1740960000"
       lastUpdateTimeSinceEpoch: "1740960000"
+      customProperties:
+        8-bit:
+            metadataType: MetadataStringValue
+            string_value: ""
+        INT8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        W8A8:
+            metadataType: MetadataStringValue
+            string_value: ""
+        chat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        code:
+            metadataType: MetadataStringValue
+            string_value: ""
+        compressed-tensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        llmcompressor:
+            metadataType: MetadataStringValue
+            string_value: ""
+        math:
+            metadataType: MetadataStringValue
+            string_value: ""
+        neuralmagic:
+            metadataType: MetadataStringValue
+            string_value: ""
+        nlp:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi:
+            metadataType: MetadataStringValue
+            string_value: ""
+        phi3:
+            metadataType: MetadataStringValue
+            string_value: ""
+        quantized:
+            metadataType: MetadataStringValue
+            string_value: ""
+        redhat:
+            metadataType: MetadataStringValue
+            string_value: ""
+        safetensors:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2902,6 +4009,28 @@ models:
         - text-to-text
       createTimeSinceEpoch: "1739776988000"
       lastUpdateTimeSinceEpoch: "1747377277000"
+      customProperties:
+        conversational:
+            metadataType: MetadataStringValue
+            string_value: ""
+        featured:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite:
+            metadataType: MetadataStringValue
+            string_value: ""
+        granite-3.1:
+            metadataType: MetadataStringValue
+            string_value: ""
+        language:
+            metadataType: MetadataStringValue
+            string_value: ""
+        text-generation-inference:
+            metadataType: MetadataStringValue
+            string_value: ""
+        validated:
+            metadataType: MetadataStringValue
+            string_value: ""
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:1.5
           createTimeSinceEpoch: "1739776988000"
