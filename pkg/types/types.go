@@ -173,10 +173,33 @@ type EnrichmentInfo struct {
 	} `json:"dataSources"`
 }
 
+// CatalogOCIArtifact represents an OCI artifact for catalog output with string timestamps
+type CatalogOCIArtifact struct {
+	URI                      string                 `yaml:"uri"`
+	CreateTimeSinceEpoch     *string                `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch *string                `yaml:"lastUpdateTimeSinceEpoch"`
+	CustomProperties         map[string]interface{} `yaml:"customProperties,omitempty"`
+}
+
+// CatalogMetadata represents metadata for the catalog output without tags field
+type CatalogMetadata struct {
+	Name                     *string              `yaml:"name"`
+	Provider                 *string              `yaml:"provider"`
+	Description              *string              `yaml:"description"`
+	Readme                   *string              `yaml:"readme"`
+	Language                 []string             `yaml:"language"`
+	License                  *string              `yaml:"license"`
+	LicenseLink              *string              `yaml:"licenseLink"`
+	Tasks                    []string             `yaml:"tasks"`
+	CreateTimeSinceEpoch     *string              `yaml:"createTimeSinceEpoch"`
+	LastUpdateTimeSinceEpoch *string              `yaml:"lastUpdateTimeSinceEpoch"`
+	Artifacts                []CatalogOCIArtifact `yaml:"artifacts"`
+}
+
 // ModelsCatalog represents the aggregated catalog of all models
 type ModelsCatalog struct {
-	Source string              `yaml:"source"`
-	Models []ExtractedMetadata `yaml:"models"`
+	Source string            `yaml:"source"`
+	Models []CatalogMetadata `yaml:"models"`
 }
 
 // Config represents the application configuration

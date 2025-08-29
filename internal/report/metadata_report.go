@@ -125,7 +125,7 @@ type SimpleEnrichmentData struct {
 }
 
 // loadEnrichmentData loads enrichment data for all models
-func loadEnrichmentData(outputDir string, models []types.ExtractedMetadata) (map[string]*SimpleEnrichmentData, error) {
+func loadEnrichmentData(outputDir string, models []types.CatalogMetadata) (map[string]*SimpleEnrichmentData, error) {
 	enrichmentData := make(map[string]*SimpleEnrichmentData)
 
 	// Build a map of model names to enrichment data by scanning all directories
@@ -192,7 +192,7 @@ func generateReport(catalog *types.ModelsCatalog, enrichmentData map[string]*Sim
 	// Field names we want to track
 	trackedFields := []string{
 		"name", "provider", "description", "readme", "language", "license",
-		"licenseLink", "tags", "tasks", "artifacts",
+		"licenseLink", "tasks", "artifacts",
 		"createTimeSinceEpoch",
 	}
 
@@ -227,7 +227,7 @@ func generateReport(catalog *types.ModelsCatalog, enrichmentData map[string]*Sim
 }
 
 // analyzeModel analyzes a single model's metadata completeness and sources
-func analyzeModel(model types.ExtractedMetadata, enriched *SimpleEnrichmentData, trackedFields []string) ModelReport {
+func analyzeModel(model types.CatalogMetadata, enriched *SimpleEnrichmentData, trackedFields []string) ModelReport {
 	modelName := ""
 	if model.Name != nil {
 		modelName = *model.Name
@@ -306,7 +306,7 @@ func getDetectionMethod(source string) string {
 }
 
 // analyzeField analyzes a specific field for a model
-func analyzeField(fieldName string, model types.ExtractedMetadata, enriched *SimpleEnrichmentData) FieldStatus {
+func analyzeField(fieldName string, model types.CatalogMetadata, enriched *SimpleEnrichmentData) FieldStatus {
 	status := FieldStatus{
 		Source:          "unknown",
 		DetectionMethod: "Unknown",
@@ -363,13 +363,6 @@ func analyzeField(fieldName string, model types.ExtractedMetadata, enriched *Sim
 			status.Source = getSourceFromEnriched(enriched, "licenseLink")
 			status.DetectionMethod = getDetectionMethod(status.Source)
 		}
-	case "tags":
-		if len(model.Tags) > 0 {
-			status.Value = model.Tags
-			status.IsNull = false
-			status.Source = getSourceFromEnriched(enriched, "tags")
-			status.DetectionMethod = getDetectionMethod(status.Source)
-		}
 	case "tasks":
 		if len(model.Tasks) > 0 {
 			status.Value = model.Tasks
@@ -385,7 +378,7 @@ func analyzeField(fieldName string, model types.ExtractedMetadata, enriched *Sim
 			status.DetectionMethod = "Registry artifacts"
 		}
 	case "createTimeSinceEpoch":
-		if model.CreateTimeSinceEpoch != nil && *model.CreateTimeSinceEpoch > 0 {
+		if model.CreateTimeSinceEpoch != nil && *model.CreateTimeSinceEpoch != "" {
 			status.Value = *model.CreateTimeSinceEpoch
 			status.IsNull = false
 			status.Source = getSourceFromEnriched(enriched, "createTimeSinceEpoch")
@@ -425,8 +418,6 @@ func getSourceFromEnriched(enriched *SimpleEnrichmentData, fieldName string) str
 		sourceKey = "description"
 	case "license":
 		sourceKey = "license"
-	case "tags":
-		sourceKey = "tags"
 	case "tasks":
 		sourceKey = "tasks"
 	case "createTimeSinceEpoch":

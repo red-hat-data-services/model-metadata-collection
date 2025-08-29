@@ -19,8 +19,9 @@ MAIN_PATH=./cmd/model-extractor
 MODELS_INDEX_PATH=data/models-index.yaml
 CATALOG_OUTPUT_PATH=data/models-catalog.yaml
 
-# Docker parameters
-DOCKER_IMAGE_NAME?=model-metadata-collection
+# Container parameters
+CONTAINER_RUNTIME?=$(shell command -v podman 2>/dev/null || command -v docker 2>/dev/null || echo docker)
+DOCKER_IMAGE_NAME?=quay.io/opendatahub/odh-model-metadata-collection
 DOCKER_IMAGE_TAG?=latest
 DOCKER_FULL_IMAGE_NAME=$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
 
@@ -175,36 +176,18 @@ setup:
 
 # Docker targets
 
-# Build Docker image
+# Build container image
 docker-build:
-	@echo "Building Docker image: $(DOCKER_FULL_IMAGE_NAME)"
-	@echo "Using host Docker authentication for registry access..."
-	@# Use buildkit to mount Docker config for registry authentication
-	@if [ -f ~/.docker/config.json ]; then \
-		echo "Found Docker config, using host authentication"; \
-		DOCKER_BUILDKIT=1 docker build \
+	@if [ "$(CONTAINER_RUNTIME)" = "podman" ]; then \
+		podman build -t $(DOCKER_FULL_IMAGE_NAME) .; \
+	elif [ -f ~/.docker/config.json ]; then \
+		DOCKER_BUILDKIT=1 $(CONTAINER_RUNTIME) build \
 			--secret id=dockerconfig,src=$$HOME/.docker/config.json \
 			--build-arg BUILDKIT_INLINE_CACHE=1 \
 			-t $(DOCKER_FULL_IMAGE_NAME) .; \
 	else \
-		echo "No Docker config found, building without registry authentication"; \
-		docker build -t $(DOCKER_FULL_IMAGE_NAME) .; \
+		$(CONTAINER_RUNTIME) build -t $(DOCKER_FULL_IMAGE_NAME) .; \
 	fi
-	@echo "Build completed successfully!"
-	@echo "Image: $(DOCKER_FULL_IMAGE_NAME)"
-	@echo ""
-	@echo "Image details:"
-	@docker images $(DOCKER_IMAGE_NAME) --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}"
-	@echo ""
-	@echo "Usage examples:"
-	@echo "  # Run container:"
-	@echo "  docker run -d --name model-metadata-catalog $(DOCKER_FULL_IMAGE_NAME)"
-	@echo ""
-	@echo "  # Copy catalog from container:"
-	@echo "  docker cp model-metadata-catalog:/app/data/models-catalog.yaml ./models-catalog.yaml"
-	@echo ""
-	@echo "  # Mount catalog directory:"
-	@echo "  docker run -d -v \$$(pwd)/catalog-data:/app/data --name catalog $(DOCKER_FULL_IMAGE_NAME)"
 	
 # Show help
 help:

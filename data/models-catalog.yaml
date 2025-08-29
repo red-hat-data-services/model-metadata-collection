@@ -15,21 +15,14 @@ models:
         - th
       license: llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama
-        - facebook
-        - meta
-        - llama-3
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744896921000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744896921000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744896921000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -43,21 +36,14 @@ models:
         - en
       license: llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      tags:
-        - validated
-        - llama
-        - nvidia
-        - llama3.1
-        - conversational
-        - text-generation-inference
       tasks:
         - text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1746720264000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-nemotron-70b-instruct-hf:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746720264000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746720264000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -71,21 +57,14 @@ models:
         - en
       license: llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama
-        - fp8
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1740787200
-      lastUpdateTimeSinceEpoch: 1740787200
+      createTimeSinceEpoch: "1740787200"
+      lastUpdateTimeSinceEpoch: "1740787200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-nemotron-70b-instruct-hf-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746683511000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746683511000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -106,21 +85,14 @@ models:
         - th
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama
-        - facebook
-        - meta
-        - llama-3
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744927337000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744927337000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744927337000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -141,24 +113,14 @@ models:
         - th
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama
-        - facebook
-        - meta
-        - llama-3
-        - fp8
-        - quantized
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1733875200
-      lastUpdateTimeSinceEpoch: 1733875200
+      createTimeSinceEpoch: "1733875200"
+      lastUpdateTimeSinceEpoch: "1733875200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744990133000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744990133000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -179,28 +141,14 @@ models:
         - th
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama
-        - facebook
-        - meta
-        - llama-3
-        - int4
-        - vllm
-        - chat
-        - neuralmagic
-        - llmcompressor
-        - 4-bit precision
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1733875200
-      lastUpdateTimeSinceEpoch: 1733875200
+      createTimeSinceEpoch: "1733875200"
+      lastUpdateTimeSinceEpoch: "1733875200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744986485000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744986485000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -802,29 +750,14 @@ models:
         - th
       license: llama3.3
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_3/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama
-        - facebook
-        - meta
-        - llama-3
-        - int8
-        - vllm
-        - chat
-        - neuralmagic
-        - llmcompressor
-        - 8-bit precision
-        - compressed-tensors
-        - 8-bit
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1737331200
-      lastUpdateTimeSinceEpoch: 1737331200
+      createTimeSinceEpoch: "1737331200"
+      lastUpdateTimeSinceEpoch: "1737331200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1745843193000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1745843193000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -849,22 +782,15 @@ models:
         - vi
       license: other
       licenseLink: https://llama.com/docs/overview
-      tags:
-        - validated
-        - safetensors
-        - llama4
-        - facebook
-        - meta
-        - llama
       tasks:
         - text-generation
         - image-text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1746920441000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-maverick-17b-128e-instruct:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746920441000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746920441000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -890,29 +816,15 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      tags:
-        - validated
-        - facebook
-        - meta
-        - pytorch
-        - llama
-        - llama4
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - FP8
-        - conversational
-        - compressed-tensors
       tasks:
         - image-text-to-text
         - text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1746799996000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-maverick-17b-128e-instruct-fp8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746799996000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746799996000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -938,23 +850,15 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      tags:
-        - validated
-        - llama4
-        - facebook
-        - meta
-        - llama
-        - conversational
-        - text-generation-inference
       tasks:
         - image-text-to-text
         - text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1746783441000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746783441000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746783441000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -980,27 +884,15 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      tags:
-        - validated
-        - facebook
-        - meta
-        - pytorch
-        - llama
-        - llama4
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - FP8
       tasks:
         - image-text-to-text
         - text-to-text
-      createTimeSinceEpoch: 1744675200
-      lastUpdateTimeSinceEpoch: 1744675200
+      createTimeSinceEpoch: "1744675200"
+      lastUpdateTimeSinceEpoch: "1744675200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744907644000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744907644000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1025,30 +917,15 @@ models:
         - vi
       license: llama4
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama4/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - llama4
-        - facebook
-        - meta
-        - pytorch
-        - llama
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - W4A16
-        - INT4
-        - compressed-tensors
       tasks:
         - text-generation
         - image-text-to-text
-      createTimeSinceEpoch: 1745539200
-      lastUpdateTimeSinceEpoch: 1745539200
+      createTimeSinceEpoch: "1745539200"
+      lastUpdateTimeSinceEpoch: "1745539200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746640711000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746640711000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1071,20 +948,14 @@ models:
         - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - mistral
-        - mistral-small
-        - vllm
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744999584000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744999584000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744999584000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1108,23 +979,14 @@ models:
         - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - mistral
-        - mistral-small
-        - fp8
-        - vllm
-        - conversational
-        - text-generation-inference
-        - compressed-tensors
       tasks:
         - text-to-text
-      createTimeSinceEpoch: 1740787200
-      lastUpdateTimeSinceEpoch: 1740787200
+      createTimeSinceEpoch: "1740787200"
+      lastUpdateTimeSinceEpoch: "1740787200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744385424000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744385424000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1371,23 +1233,14 @@ models:
         - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - mistral
-        - mistral-small
-        - w4a16
-        - int4
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1740787200
-      lastUpdateTimeSinceEpoch: 1740787200
+      createTimeSinceEpoch: "1740787200"
+      lastUpdateTimeSinceEpoch: "1740787200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744984639000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744984639000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1411,24 +1264,14 @@ models:
         - ko
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - mistral
-        - mistral-small
-        - quantized
-        - W8A8
-        - vllm
-        - conversational
-        - text-generation-inference
-        - compressed-tensors
       tasks:
         - text-to-text
-      createTimeSinceEpoch: 1740960000
-      lastUpdateTimeSinceEpoch: 1740960000
+      createTimeSinceEpoch: "1740960000"
+      lastUpdateTimeSinceEpoch: "1740960000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744985936000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744985936000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1466,22 +1309,15 @@ models:
         - tr
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - mistral3
-        - mistralai
-        - mistral
-        - mistral-small
       tasks:
         - text-generation
         - image-text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744989629000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744989629000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744989629000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1519,28 +1355,14 @@ models:
         - tr
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - mistral3
-        - mistralai
-        - mistral
-        - mistral-small
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - FP8
-        - compressed-tensors
-        - fast
       tasks:
         - it is ideal for
-      createTimeSinceEpoch: 1744675200
-      lastUpdateTimeSinceEpoch: 1744675200
+      createTimeSinceEpoch: "1744675200"
+      lastUpdateTimeSinceEpoch: "1744675200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744988857000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744988857000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1578,29 +1400,14 @@ models:
         - tr
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - mistral3
-        - mistralai
-        - mistral
-        - mistral-small
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - W4A16
-        - INT4
-        - compressed-tensors
-        - fast
       tasks:
         - it is ideal for
-      createTimeSinceEpoch: 1744675200
-      lastUpdateTimeSinceEpoch: 1744675200
+      createTimeSinceEpoch: "1744675200"
+      lastUpdateTimeSinceEpoch: "1744675200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744920668000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744920668000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1638,29 +1445,14 @@ models:
         - tr
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - mistral3
-        - mistralai
-        - mistral
-        - mistral-small
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - W8A8
-        - compressed-tensors
-        - fast
-        - 8-bit
       tasks:
         - it is ideal for
-      createTimeSinceEpoch: 1744675200
-      lastUpdateTimeSinceEpoch: 1744675200
+      createTimeSinceEpoch: "1744675200"
+      lastUpdateTimeSinceEpoch: "1744675200"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744989864000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744989864000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1678,22 +1470,14 @@ models:
         - es
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - featured
-        - mixtral
-        - vllm
-        - conversational
-        - text-generation-inference
-        - mistral
       tasks:
         - text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1739776989000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:1.4
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1739776989000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1739776989000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1730,21 +1514,14 @@ models:
         - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - qwen2
-        - qwen
-        - qwen2_5
-        - qwen2_5_instruct
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744988136000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744988136000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744988136000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1781,26 +1558,16 @@ models:
         - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - qwen2
-        - qwen
-        - qwen2_5
-        - qwen2_5_instruct
-        - fp8
-        - quantized
-        - compressed-tensors
       tasks:
         - text-generation
         - text-generation
         - question-answering
-      createTimeSinceEpoch: 1732665600
-      lastUpdateTimeSinceEpoch: 1732665600
+      createTimeSinceEpoch: "1732665600"
+      lastUpdateTimeSinceEpoch: "1732665600"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744987926000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744987926000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -1837,27 +1604,16 @@ models:
         - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - qwen2
-        - qwen
-        - qwen2_5
-        - qwen2_5_instruct
-        - w4a16
-        - int4
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
         - text-generation
         - question-answering
-      createTimeSinceEpoch: 1744761600
-      lastUpdateTimeSinceEpoch: 1744761600
+      createTimeSinceEpoch: "1744761600"
+      lastUpdateTimeSinceEpoch: "1744761600"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1745836482000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1745836482000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2121,29 +1877,16 @@ models:
         - ms
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - featured
-        - safetensors
-        - qwen2
-        - qwen
-        - qwen2_5
-        - qwen2_5_instruct
-        - w8a8
-        - int8
-        - vllm
-        - compressed-tensors
-        - 8-bit
       tasks:
         - text-generation
         - text-generation
         - question-answering
-      createTimeSinceEpoch: 1728432000
-      lastUpdateTimeSinceEpoch: 1728432000
+      createTimeSinceEpoch: "1728432000"
+      lastUpdateTimeSinceEpoch: "1728432000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744384464000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744384464000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2157,19 +1900,14 @@ models:
         - en
       license: gemma
       licenseLink: https://ai.google.dev/gemma/terms
-      tags:
-        - validated
-        - safetensors
-        - gemma2
-        - gemma
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1747669712000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1747669712000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1747669712000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2386,24 +2124,14 @@ models:
         - en
       license: gemma
       licenseLink: https://ai.google.dev/gemma/terms
-      tags:
-        - validated
-        - transformers
-        - safetensors
-        - gemma2
-        - gemma
-        - fp8
-        - vllm
-        - autotrain_compatible
-        - endpoints_compatible
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1720396800
-      lastUpdateTimeSinceEpoch: 1720396800
+      createTimeSinceEpoch: "1720396800"
+      lastUpdateTimeSinceEpoch: "1720396800"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it-fp8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1747669323000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1747669323000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2417,22 +2145,14 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - w4a16
-        - int4
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1736294400
-      lastUpdateTimeSinceEpoch: 1736294400
+      createTimeSinceEpoch: "1736294400"
+      lastUpdateTimeSinceEpoch: "1736294400"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744384230000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744384230000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2457,20 +2177,14 @@ models:
         - zh
       license: Apache 2.0
       licenseLink: https://github.com/ibm-granite/granite-3.1-language-models
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - language
-        - granite-3.1
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744995384000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744995384000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744995384000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2495,21 +2209,14 @@ models:
         - zh
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - fp8
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1736294400
-      lastUpdateTimeSinceEpoch: 1736294400
+      createTimeSinceEpoch: "1736294400"
+      lastUpdateTimeSinceEpoch: "1736294400"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744993200000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744993200000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -2987,21 +2694,14 @@ models:
         - zh
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - fp8
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1721692800
-      lastUpdateTimeSinceEpoch: 1721692800
+      createTimeSinceEpoch: "1721692800"
+      lastUpdateTimeSinceEpoch: "1721692800"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744887641000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744887641000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3015,22 +2715,14 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - w4a16
-        - int4
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1736294400
-      lastUpdateTimeSinceEpoch: 1736294400
+      createTimeSinceEpoch: "1736294400"
+      lastUpdateTimeSinceEpoch: "1736294400"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1746714934000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1746714934000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3044,22 +2736,14 @@ models:
         - en
       license: Llama3.1
       licenseLink: https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - w4a16
-        - int4
-        - vllm
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1721952000
-      lastUpdateTimeSinceEpoch: 1721952000
+      createTimeSinceEpoch: "1721952000"
+      lastUpdateTimeSinceEpoch: "1721952000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744136202000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744136202000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3073,23 +2757,14 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - w8a8
-        - int8
-        - vllm
-        - 8-bit
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1736294400
-      lastUpdateTimeSinceEpoch: 1736294400
+      createTimeSinceEpoch: "1736294400"
+      lastUpdateTimeSinceEpoch: "1736294400"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744994076000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744994076000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3103,23 +2778,14 @@ models:
         - en
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - safetensors
-        - granite
-        - w8a8
-        - int8
-        - vllm
-        - 8-bit
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1720656000
-      lastUpdateTimeSinceEpoch: 1720656000
+      createTimeSinceEpoch: "1720656000"
+      lastUpdateTimeSinceEpoch: "1720656000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744886948000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744886948000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3133,27 +2799,14 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      tags:
-        - validated
-        - safetensors
-        - phi3
-        - phi
-        - nlp
-        - math
-        - code
-        - chat
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1744993914000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744993914000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744993914000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3167,29 +2820,14 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      tags:
-        - validated
-        - safetensors
-        - phi3
-        - phi
-        - nlp
-        - math
-        - code
-        - chat
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - FP8
-        - compressed-tensors
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1740960000
-      lastUpdateTimeSinceEpoch: 1740960000
+      createTimeSinceEpoch: "1740960000"
+      lastUpdateTimeSinceEpoch: "1740960000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-fp8-dynamic:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744995118000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744995118000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3204,30 +2842,14 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      tags:
-        - validated
-        - phi
-        - phi3
-        - nlp
-        - math
-        - code
-        - chat
-        - conversational
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - W4A16
-        - INT4
-        - compressed-tensors
       tasks:
         - text-to-text
-      createTimeSinceEpoch: 1740960000
-      lastUpdateTimeSinceEpoch: 1740960000
+      createTimeSinceEpoch: "1740960000"
+      lastUpdateTimeSinceEpoch: "1740960000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w4a16:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744135896000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744135896000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3241,31 +2863,14 @@ models:
         - en
       license: mit
       licenseLink: https://opensource.org/licenses/MIT
-      tags:
-        - validated
-        - safetensors
-        - phi3
-        - phi
-        - nlp
-        - math
-        - code
-        - chat
-        - neuralmagic
-        - redhat
-        - llmcompressor
-        - quantized
-        - W8A8
-        - INT8
-        - compressed-tensors
-        - 8-bit
       tasks:
         - text-generation
-      createTimeSinceEpoch: 1740960000
-      lastUpdateTimeSinceEpoch: 1740960000
+      createTimeSinceEpoch: "1740960000"
+      lastUpdateTimeSinceEpoch: "1740960000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w8a8:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1744995117000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1744995117000"
           customProperties:
             source:
                 string_value: registry.redhat.io
@@ -3293,22 +2898,14 @@ models:
         - zh
       license: apache-2.0
       licenseLink: https://www.apache.org/licenses/LICENSE-2.0
-      tags:
-        - validated
-        - featured
-        - granite
-        - language
-        - granite-3.1
-        - conversational
-        - text-generation-inference
       tasks:
         - text-to-text
-      createTimeSinceEpoch: null
-      lastUpdateTimeSinceEpoch: null
+      createTimeSinceEpoch: "1739776988000"
+      lastUpdateTimeSinceEpoch: "1747377277000"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:1.5
-          createTimeSinceEpoch: 1739776988000
-          lastUpdateTimeSinceEpoch: 1747377277000
+          createTimeSinceEpoch: "1739776988000"
+          lastUpdateTimeSinceEpoch: "1747377277000"
           customProperties:
             source:
                 string_value: registry.redhat.io

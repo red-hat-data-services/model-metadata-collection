@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 
 	"gopkg.in/yaml.v3"
 
@@ -64,10 +65,57 @@ func CreateModelsCatalog() error {
 		return nameI < nameJ
 	})
 
+	// Convert to catalog metadata (excluding tags)
+	var catalogModels []types.CatalogMetadata
+	for _, model := range allModels {
+		// Convert timestamps to strings and use artifact values when model values are null
+		createTimeStr := convertTimestampToString(model.CreateTimeSinceEpoch)
+		lastUpdateTimeStr := convertTimestampToString(model.LastUpdateTimeSinceEpoch)
+
+		// If model timestamps are null, try to use values from the first artifact
+		if createTimeStr == nil && len(model.Artifacts) > 0 {
+			if model.Artifacts[0].CreateTimeSinceEpoch != nil {
+				createTimeStr = convertTimestampToString(model.Artifacts[0].CreateTimeSinceEpoch)
+			}
+		}
+		if lastUpdateTimeStr == nil && len(model.Artifacts) > 0 {
+			if model.Artifacts[0].LastUpdateTimeSinceEpoch != nil {
+				lastUpdateTimeStr = convertTimestampToString(model.Artifacts[0].LastUpdateTimeSinceEpoch)
+			}
+		}
+
+		// Convert artifacts to catalog format with string timestamps
+		var catalogArtifacts []types.CatalogOCIArtifact
+		for _, artifact := range model.Artifacts {
+			catalogArtifact := types.CatalogOCIArtifact{
+				URI:                      artifact.URI,
+				CreateTimeSinceEpoch:     convertTimestampToString(artifact.CreateTimeSinceEpoch),
+				LastUpdateTimeSinceEpoch: convertTimestampToString(artifact.LastUpdateTimeSinceEpoch),
+				CustomProperties:         artifact.CustomProperties,
+			}
+			catalogArtifacts = append(catalogArtifacts, catalogArtifact)
+		}
+
+		catalogModel := types.CatalogMetadata{
+			Name:                     model.Name,
+			Provider:                 model.Provider,
+			Description:              model.Description,
+			Readme:                   model.Readme,
+			Language:                 model.Language,
+			License:                  model.License,
+			LicenseLink:              model.LicenseLink,
+			Tasks:                    model.Tasks,
+			CreateTimeSinceEpoch:     createTimeStr,
+			LastUpdateTimeSinceEpoch: lastUpdateTimeStr,
+			Artifacts:                catalogArtifacts,
+		}
+		catalogModels = append(catalogModels, catalogModel)
+	}
+
 	// Create the catalog structure
 	catalog := types.ModelsCatalog{
 		Source: "Red Hat",
-		Models: allModels,
+		Models: catalogModels,
 	}
 
 	// Marshal to YAML
@@ -85,4 +133,13 @@ func CreateModelsCatalog() error {
 
 	log.Printf("Successfully created %s with %d models", catalogPath, len(allModels))
 	return nil
+}
+
+// convertTimestampToString converts an int64 timestamp to a string, returning nil if input is nil
+func convertTimestampToString(timestamp *int64) *string {
+	if timestamp == nil {
+		return nil
+	}
+	str := strconv.FormatInt(*timestamp, 10)
+	return &str
 }
