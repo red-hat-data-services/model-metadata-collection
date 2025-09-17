@@ -1,64 +1,21 @@
 {
   "version": "1.0.0",
   "generated_at": "2025-01-15T12:00:00Z",
-  "description": "Sample model benchmark data organized by namespace/model/version",
+  "description": "Sample model benchmark data organized by provider/model structure",
   "files": {
-    "models/testcorp/sample-model/v1.0/model.json": {
-      "sha256": "a1b2c3d4e5f6789abcdef0123456789abcdef0123456789abcdef0123456789a",
-      "size": 256,
-      "last_modified": "2025-01-15T12:00:00Z",
-      "entity_type": "model_metadata"
-    },
-    "models/testcorp/sample-model/v1.0/performance-abc123def456.ndjson": {
-      "sha256": "b2c3d4e5f6789abcdef0123456789abcdef0123456789abcdef0123456789ab2",
-      "size": 512,
-      "last_modified": "2025-01-15T12:00:00Z",
-      "entity_type": "performance_metrics"
-    },
-    "models/testcorp/sample-model/v1.0/evaluations.ndjson": {
-      "sha256": "c3d4e5f6789abcdef0123456789abcdef0123456789abcdef0123456789abc3",
-      "size": 256,
-      "last_modified": "2025-01-15T12:00:00Z",
-      "entity_type": "model_evaluations"
-    },
-    "models/testcorp/sample-model/v1.0/validations.ndjson": {
-      "sha256": "d4e5f6789abcdef0123456789abcdef0123456789abcdef0123456789abcd4",
-      "size": 128,
-      "last_modified": "2025-01-15T12:00:00Z",
-      "entity_type": "model_validations"
-    },
-    "models/acmetech/text-analyzer/v2.1/model.json": {
-      "sha256": "e5f6789abcdef0123456789abcdef0123456789abcdef0123456789abcde5",
-      "size": 312,
-      "last_modified": "2025-01-15T14:30:00Z",
-      "entity_type": "model_metadata"
-    },
-    "models/acmetech/text-analyzer/v2.1/performance-xyz789abc123.ndjson": {
-      "sha256": "f6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef6",
-      "size": 648,
-      "last_modified": "2025-01-15T14:30:00Z",
-      "entity_type": "performance_metrics"
-    },
-    "models/acmetech/text-analyzer/v2.1/evaluations.ndjson": {
-      "sha256": "6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef67",
-      "size": 278,
-      "last_modified": "2025-01-15T14:30:00Z",
-      "entity_type": "model_evaluations"
-    },
-    "models/acmetech/text-analyzer/v2.1/validations.ndjson": {
-      "sha256": "789abcdef0123456789abcdef0123456789abcdef0123456789abcdef678",
-      "size": 186,
-      "last_modified": "2025-01-15T14:30:00Z",
-      "entity_type": "model_validations"
-    }
+    "testcorp/sample-model-1.0/metadata.json": "model_metadata",
+    "testcorp/sample-model-1.0/performance.ndjson": "performance_metrics",
+    "testcorp/sample-model-1.0/evaluations.ndjson": "model_evaluations",
+    "testcorp/sample-model-1.0/validation.ndjson": "model_validations",
+    "acmetech/text-analyzer-2.1/metadata.json": "model_metadata",
+    "acmetech/text-analyzer-2.1/performance.ndjson": "performance_metrics",
+    "acmetech/text-analyzer-2.1/evaluations.ndjson": "model_evaluations",
+    "acmetech/text-analyzer-2.1/validation.ndjson": "model_validations"
   },
   "statistics": {
     "total_files": 8,
     "total_models": 2,
-    "total_namespaces": 2
-  },
-  "integrity": {
-    "checksum_algorithm": "sha256",
-    "verification_command": "find sample-data/model_benchmarks -name '*.ndjson' -exec sha256sum {} \\; | sort"
+    "total_providers": 2
   }
 }
+
