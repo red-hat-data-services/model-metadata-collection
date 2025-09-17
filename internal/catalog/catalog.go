@@ -1,6 +1,7 @@
 package catalog
 
 import (
+	"encoding/base64"
 	"fmt"
 	"log"
 	"os"
@@ -112,6 +113,7 @@ func CreateModelsCatalog() error {
 			LastUpdateTimeSinceEpoch: lastUpdateTimeStr,
 			CustomProperties:         customProps,
 			Artifacts:                catalogArtifacts,
+			Logo:                     determineLogo(model.Tags),
 		}
 		catalogModels = append(catalogModels, catalogModel)
 	}
@@ -162,4 +164,45 @@ func convertTagsToCustomProperties(tags []string) map[string]types.MetadataValue
 	}
 
 	return customProps
+}
+
+// determineLogo determines which logo to use based on model tags and returns base64-encoded data URI
+func determineLogo(tags []string) *string {
+	var svgPath string
+
+	// Check if the model has the "validated" label
+	for _, tag := range tags {
+		if tag == "validated" {
+			svgPath = "assets/catalog-validated_model.svg"
+			break
+		}
+	}
+
+	// Default logo for non-validated models
+	if svgPath == "" {
+		svgPath = "assets/catalog-model.svg"
+	}
+
+	// Read and encode the SVG file
+	dataUri := encodeSVGToDataURI(svgPath)
+	return dataUri
+}
+
+// encodeSVGToDataURI reads an SVG file and returns a base64-encoded data URI
+func encodeSVGToDataURI(svgPath string) *string {
+	// Read the SVG file
+	svgContent, err := os.ReadFile(svgPath)
+	if err != nil {
+		log.Printf("Warning: Failed to read SVG file %s: %v", svgPath, err)
+		// Return the file path as fallback
+		fallback := svgPath
+		return &fallback
+	}
+
+	// Encode to base64
+	base64Content := base64.StdEncoding.EncodeToString(svgContent)
+
+	// Create data URI
+	dataUri := "data:image/svg+xml;base64," + base64Content
+	return &dataUri
 }
