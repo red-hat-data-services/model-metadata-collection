@@ -33,14 +33,16 @@ import (
 
 // Command line flags
 var (
-	modelsIndexPath   = flag.String("input", "data/models-index.yaml", "Path to models index YAML file")
-	outputDir         = flag.String("output-dir", "output", "Output directory for extracted metadata")
-	catalogOutputPath = flag.String("catalog-output", "data/models-catalog.yaml", "Path for the generated models catalog")
-	maxConcurrent     = flag.Int("max-concurrent", 5, "Maximum number of concurrent model processing jobs")
-	skipHuggingFace   = flag.Bool("skip-huggingface", false, "Skip HuggingFace collection processing and enrichment")
-	skipEnrichment    = flag.Bool("skip-enrichment", false, "Skip metadata enrichment from HuggingFace")
-	skipCatalog       = flag.Bool("skip-catalog", false, "Skip catalog generation")
-	help              = flag.Bool("help", false, "Show help message")
+	modelsIndexPath          = flag.String("input", "data/models-index.yaml", "Path to models index YAML file")
+	outputDir                = flag.String("output-dir", "output", "Output directory for extracted metadata")
+	catalogOutputPath        = flag.String("catalog-output", "data/models-catalog.yaml", "Path for the generated models catalog")
+	maxConcurrent            = flag.Int("max-concurrent", 5, "Maximum number of concurrent model processing jobs")
+	skipHuggingFace          = flag.Bool("skip-huggingface", false, "Skip HuggingFace collection processing and enrichment")
+	skipEnrichment           = flag.Bool("skip-enrichment", false, "Skip metadata enrichment from HuggingFace")
+	skipCatalog              = flag.Bool("skip-catalog", false, "Skip catalog generation")
+	staticCatalogFiles       = flag.String("static-catalog-files", "", "Comma-separated list of static catalog files to include")
+	skipDefaultStaticCatalog = flag.Bool("skip-default-static-catalog", false, "Skip processing the default input/supplemental-catalog.yaml file")
+	help                     = flag.Bool("help", false, "Show help message")
 )
 
 // ModelResult represents the result of processing a single model
@@ -66,6 +68,8 @@ func main() {
 	log.Printf("  Skip HuggingFace: %v", *skipHuggingFace)
 	log.Printf("  Skip Enrichment: %v", *skipEnrichment)
 	log.Printf("  Skip Catalog: %v", *skipCatalog)
+	log.Printf("  Static Catalog Files: %s", *staticCatalogFiles)
+	log.Printf("  Skip Default Static Catalog: %v", *skipDefaultStaticCatalog)
 
 	// Ensure output directory exists
 	if err := os.MkdirAll(*outputDir, 0755); err != nil {
@@ -125,8 +129,27 @@ func main() {
 
 	// Create the models catalog (unless skipped)
 	if !*skipCatalog {
+		// Load static catalogs
+		staticCatalogPaths := getStaticCatalogPaths(*staticCatalogFiles, *skipDefaultStaticCatalog)
+
+		var staticModels []types.CatalogMetadata
+		if len(staticCatalogPaths) > 0 {
+			log.Printf("Loading static catalogs...")
+			loadedStaticModels, err := catalog.LoadStaticCatalogs(staticCatalogPaths)
+			if err != nil {
+				log.Printf("Warning: Failed to load static catalogs: %v", err)
+				staticModels = []types.CatalogMetadata{} // Continue with empty static models
+			} else {
+				staticModels = loadedStaticModels
+			}
+		} else {
+			log.Printf("No static catalog files to process")
+			staticModels = []types.CatalogMetadata{}
+		}
+
+		// Create the models catalog with both dynamic and static models
 		log.Printf("Creating models catalog...")
-		err = catalog.CreateModelsCatalog()
+		err = catalog.CreateModelsCatalogWithStatic(*outputDir, *catalogOutputPath, staticModels)
 		if err != nil {
 			log.Fatalf("Failed to create models catalog: %v", err)
 		}
@@ -158,6 +181,38 @@ func printHelp() {
 	fmt.Println("")
 	fmt.Println("  # Process only metadata extraction")
 	fmt.Printf("  %s --skip-huggingface --skip-enrichment --skip-catalog\n", os.Args[0])
+	fmt.Println("")
+	fmt.Println("  # Include custom static catalog files")
+	fmt.Printf("  %s --static-catalog-files custom1.yaml,custom2.yaml\n", os.Args[0])
+	fmt.Println("")
+	fmt.Println("  # Skip default static catalog but include custom ones")
+	fmt.Printf("  %s --skip-default-static-catalog --static-catalog-files custom.yaml\n", os.Args[0])
+}
+
+// getStaticCatalogPaths returns the list of static catalog files to process
+func getStaticCatalogPaths(staticCatalogFiles string, skipDefaultStaticCatalog bool) []string {
+	var paths []string
+
+	// Add custom static catalog files if specified
+	if staticCatalogFiles != "" {
+		customPaths := strings.Split(staticCatalogFiles, ",")
+		for _, path := range customPaths {
+			path = strings.TrimSpace(path)
+			if path != "" {
+				paths = append(paths, path)
+			}
+		}
+	}
+
+	// Add default static catalog file if not skipped and exists
+	if !skipDefaultStaticCatalog {
+		defaultPath := "input/supplemental-catalog.yaml"
+		if _, err := os.Stat(defaultPath); err == nil {
+			paths = append(paths, defaultPath)
+		}
+	}
+
+	return paths
 }
 
 // loadModelsWithMetadata loads models with their metadata from various sources with fallback logic
