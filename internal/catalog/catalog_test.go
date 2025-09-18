@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -99,13 +100,14 @@ func TestCreateModelsCatalog(t *testing.T) {
 	}
 
 	// Test CreateModelsCatalog
-	err = CreateModelsCatalog()
+	testCatalogPath := filepath.Join("data", "test-models-catalog.yaml")
+	err = CreateModelsCatalog("output", testCatalogPath)
 	if err != nil {
 		t.Fatalf("CreateModelsCatalog failed: %v", err)
 	}
 
 	// Verify the catalog file was created
-	catalogPath := filepath.Join(tmpDir, "data", "models-catalog.yaml")
+	catalogPath := filepath.Join(tmpDir, "data", "test-models-catalog.yaml")
 	if _, err := os.Stat(catalogPath); os.IsNotExist(err) {
 		t.Fatal("Catalog file was not created")
 	}
@@ -190,13 +192,14 @@ func TestCreateModelsCatalog_EmptyOutput(t *testing.T) {
 	}
 
 	// Test CreateModelsCatalog with empty directory
-	err = CreateModelsCatalog()
+	testCatalogPath := filepath.Join("data", "test-models-catalog.yaml")
+	err = CreateModelsCatalog("output", testCatalogPath)
 	if err != nil {
 		t.Fatalf("CreateModelsCatalog failed with empty directory: %v", err)
 	}
 
 	// Verify catalog file was created with empty models list
-	catalogPath := filepath.Join(tmpDir, "data", "models-catalog.yaml")
+	catalogPath := filepath.Join(tmpDir, "data", "test-models-catalog.yaml")
 	catalogData, err := os.ReadFile(catalogPath)
 	if err != nil {
 		t.Fatalf("Failed to read catalog file: %v", err)
@@ -241,7 +244,8 @@ func TestCreateModelsCatalog_NoOutputDirectory(t *testing.T) {
 	}
 
 	// Test CreateModelsCatalog with no output directory - should not fail
-	err = CreateModelsCatalog()
+	testCatalogPath := filepath.Join("data", "test-models-catalog.yaml")
+	err = CreateModelsCatalog("output", testCatalogPath)
 	if err != nil {
 		// The function should handle missing output directory gracefully
 		t.Logf("CreateModelsCatalog returned error (expected for missing output dir): %v", err)
@@ -249,7 +253,7 @@ func TestCreateModelsCatalog_NoOutputDirectory(t *testing.T) {
 	}
 
 	// If it succeeded, should create catalog with empty models list
-	catalogPath := filepath.Join(tmpDir, "data", "models-catalog.yaml")
+	catalogPath := filepath.Join(tmpDir, "data", "test-models-catalog.yaml")
 	if _, err := os.Stat(catalogPath); os.IsNotExist(err) {
 		t.Fatal("Catalog file was not created")
 	}
@@ -297,13 +301,14 @@ func TestCreateModelsCatalog_InvalidMetadata(t *testing.T) {
 	}
 
 	// Test CreateModelsCatalog - should continue processing despite invalid file
-	err = CreateModelsCatalog()
+	testCatalogPath := filepath.Join("data", "test-models-catalog.yaml")
+	err = CreateModelsCatalog("output", testCatalogPath)
 	if err != nil {
 		t.Fatalf("CreateModelsCatalog failed: %v", err)
 	}
 
 	// Verify catalog was still created (invalid files are skipped)
-	catalogPath := filepath.Join(tmpDir, "data", "models-catalog.yaml")
+	catalogPath := filepath.Join(tmpDir, "data", "test-models-catalog.yaml")
 	if _, err := os.Stat(catalogPath); os.IsNotExist(err) {
 		t.Fatal("Catalog file was not created")
 	}
@@ -456,13 +461,14 @@ func TestLogoAssignment(t *testing.T) {
 	}
 
 	// Test CreateModelsCatalog
-	err = CreateModelsCatalog()
+	testCatalogPath := filepath.Join("data", "test-models-catalog.yaml")
+	err = CreateModelsCatalog("output", testCatalogPath)
 	if err != nil {
 		t.Fatalf("CreateModelsCatalog failed: %v", err)
 	}
 
 	// Verify catalog was created
-	catalogPath := filepath.Join(tmpDir, "data", "models-catalog.yaml")
+	catalogPath := filepath.Join(tmpDir, "data", "test-models-catalog.yaml")
 	if _, err := os.Stat(catalogPath); os.IsNotExist(err) {
 		t.Fatal("Catalog file was not created")
 	}
@@ -606,4 +612,511 @@ func TestDetermineLogo(t *testing.T) {
 // Helper function to create string pointers for testing
 func stringPtr(s string) *string {
 	return &s
+}
+
+func TestLoadStaticCatalogs(t *testing.T) {
+	// Create temporary directory for test files
+	tmpDir := t.TempDir()
+
+	// Test case 1: Valid static catalog file
+	validCatalog := types.ModelsCatalog{
+		Source: "Test Source",
+		Models: []types.CatalogMetadata{
+			{
+				Name:        stringPtr("Static Model 1"),
+				Provider:    stringPtr("Static Provider"),
+				Description: stringPtr("A static test model"),
+				License:     stringPtr("MIT"),
+				Language:    []string{"en"},
+				Tasks:       []string{"text-generation"},
+				Artifacts: []types.CatalogOCIArtifact{
+					{
+						URI: "oci://example.com/model:1.0",
+					},
+				},
+			},
+			{
+				Name:        stringPtr("Static Model 2"),
+				Provider:    stringPtr("Another Provider"),
+				Description: stringPtr("Another static model"),
+				Artifacts: []types.CatalogOCIArtifact{
+					{
+						URI: "oci://example.com/model2:1.0",
+					},
+				},
+			},
+		},
+	}
+
+	validCatalogPath := filepath.Join(tmpDir, "valid-catalog.yaml")
+	validData, err := yaml.Marshal(validCatalog)
+	if err != nil {
+		t.Fatalf("Failed to marshal valid catalog: %v", err)
+	}
+	err = os.WriteFile(validCatalogPath, validData, 0644)
+	if err != nil {
+		t.Fatalf("Failed to write valid catalog file: %v", err)
+	}
+
+	// Test case 2: Invalid YAML file
+	invalidCatalogPath := filepath.Join(tmpDir, "invalid-catalog.yaml")
+	invalidYAML := "invalid: yaml: content: ["
+	err = os.WriteFile(invalidCatalogPath, []byte(invalidYAML), 0644)
+	if err != nil {
+		t.Fatalf("Failed to write invalid catalog file: %v", err)
+	}
+
+	// Test case 3: Valid YAML but invalid structure (missing required fields)
+	invalidStructurePath := filepath.Join(tmpDir, "invalid-structure.yaml")
+	invalidStructure := types.ModelsCatalog{
+		Source: "", // Missing source
+		Models: []types.CatalogMetadata{
+			{
+				Name: stringPtr("Model Without Artifacts"),
+				// Missing artifacts
+			},
+		},
+	}
+	invalidStructureData, err := yaml.Marshal(invalidStructure)
+	if err != nil {
+		t.Fatalf("Failed to marshal invalid structure catalog: %v", err)
+	}
+	err = os.WriteFile(invalidStructurePath, invalidStructureData, 0644)
+	if err != nil {
+		t.Fatalf("Failed to write invalid structure catalog file: %v", err)
+	}
+
+	// Test successful loading of valid catalog
+	t.Run("ValidCatalog", func(t *testing.T) {
+		models, err := LoadStaticCatalogs([]string{validCatalogPath})
+		if err != nil {
+			t.Fatalf("LoadStaticCatalogs failed: %v", err)
+		}
+
+		if len(models) != 2 {
+			t.Errorf("Expected 2 models, got %d", len(models))
+		}
+
+		if models[0].Name == nil || *models[0].Name != "Static Model 1" {
+			t.Error("First model should be 'Static Model 1'")
+		}
+		if models[1].Name == nil || *models[1].Name != "Static Model 2" {
+			t.Error("Second model should be 'Static Model 2'")
+		}
+	})
+
+	// Test handling of missing files
+	t.Run("MissingFile", func(t *testing.T) {
+		missingFilePath := filepath.Join(tmpDir, "nonexistent.yaml")
+		models, err := LoadStaticCatalogs([]string{missingFilePath})
+		if err != nil {
+			t.Fatalf("LoadStaticCatalogs failed: %v", err)
+		}
+
+		if len(models) != 0 {
+			t.Errorf("Expected 0 models for missing file, got %d", len(models))
+		}
+	})
+
+	// Test handling of invalid YAML
+	t.Run("InvalidYAML", func(t *testing.T) {
+		models, err := LoadStaticCatalogs([]string{invalidCatalogPath})
+		if err != nil {
+			t.Fatalf("LoadStaticCatalogs failed: %v", err)
+		}
+
+		if len(models) != 0 {
+			t.Errorf("Expected 0 models for invalid YAML, got %d", len(models))
+		}
+	})
+
+	// Test handling of invalid structure
+	t.Run("InvalidStructure", func(t *testing.T) {
+		models, err := LoadStaticCatalogs([]string{invalidStructurePath})
+		if err != nil {
+			t.Fatalf("LoadStaticCatalogs failed: %v", err)
+		}
+
+		if len(models) != 0 {
+			t.Errorf("Expected 0 models for invalid structure, got %d", len(models))
+		}
+	})
+
+	// Test loading multiple files
+	t.Run("MultipleFiles", func(t *testing.T) {
+		// Create second valid catalog
+		validCatalog2 := types.ModelsCatalog{
+			Source: "Second Source",
+			Models: []types.CatalogMetadata{
+				{
+					Name:        stringPtr("Static Model 3"),
+					Provider:    stringPtr("Third Provider"),
+					Description: stringPtr("Third static model"),
+					Artifacts: []types.CatalogOCIArtifact{
+						{
+							URI: "oci://example.com/model3:1.0",
+						},
+					},
+				},
+			},
+		}
+
+		validCatalog2Path := filepath.Join(tmpDir, "valid-catalog2.yaml")
+		validData2, err := yaml.Marshal(validCatalog2)
+		if err != nil {
+			t.Fatalf("Failed to marshal second valid catalog: %v", err)
+		}
+		err = os.WriteFile(validCatalog2Path, validData2, 0644)
+		if err != nil {
+			t.Fatalf("Failed to write second valid catalog file: %v", err)
+		}
+
+		models, err := LoadStaticCatalogs([]string{validCatalogPath, validCatalog2Path})
+		if err != nil {
+			t.Fatalf("LoadStaticCatalogs failed: %v", err)
+		}
+
+		if len(models) != 3 {
+			t.Errorf("Expected 3 models from two files, got %d", len(models))
+		}
+	})
+
+	// Test empty file list
+	t.Run("EmptyFileList", func(t *testing.T) {
+		models, err := LoadStaticCatalogs([]string{})
+		if err != nil {
+			t.Fatalf("LoadStaticCatalogs failed: %v", err)
+		}
+
+		if len(models) != 0 {
+			t.Errorf("Expected 0 models for empty file list, got %d", len(models))
+		}
+	})
+}
+
+func TestValidateStaticCatalog(t *testing.T) {
+	// Test valid catalog
+	t.Run("ValidCatalog", func(t *testing.T) {
+		catalog := &types.ModelsCatalog{
+			Source: "Test Source",
+			Models: []types.CatalogMetadata{
+				{
+					Name: stringPtr("Valid Model"),
+					Artifacts: []types.CatalogOCIArtifact{
+						{
+							URI: "oci://example.com/model:1.0",
+						},
+					},
+				},
+			},
+		}
+
+		err := validateStaticCatalog(catalog)
+		if err != nil {
+			t.Errorf("Valid catalog should not produce error: %v", err)
+		}
+	})
+
+	// Test missing source
+	t.Run("MissingSource", func(t *testing.T) {
+		catalog := &types.ModelsCatalog{
+			Source: "",
+			Models: []types.CatalogMetadata{
+				{
+					Name: stringPtr("Model"),
+					Artifacts: []types.CatalogOCIArtifact{
+						{
+							URI: "oci://example.com/model:1.0",
+						},
+					},
+				},
+			},
+		}
+
+		err := validateStaticCatalog(catalog)
+		if err == nil {
+			t.Error("Expected error for missing source")
+		}
+		if !strings.Contains(err.Error(), "missing required 'source' field") {
+			t.Errorf("Error should mention missing source field: %v", err)
+		}
+	})
+
+	// Test missing model name
+	t.Run("MissingModelName", func(t *testing.T) {
+		catalog := &types.ModelsCatalog{
+			Source: "Test Source",
+			Models: []types.CatalogMetadata{
+				{
+					Name: nil,
+					Artifacts: []types.CatalogOCIArtifact{
+						{
+							URI: "oci://example.com/model:1.0",
+						},
+					},
+				},
+			},
+		}
+
+		err := validateStaticCatalog(catalog)
+		if err == nil {
+			t.Error("Expected error for missing model name")
+		}
+		if !strings.Contains(err.Error(), "missing required 'name' field") {
+			t.Errorf("Error should mention missing name field: %v", err)
+		}
+	})
+
+	// Test empty model name
+	t.Run("EmptyModelName", func(t *testing.T) {
+		catalog := &types.ModelsCatalog{
+			Source: "Test Source",
+			Models: []types.CatalogMetadata{
+				{
+					Name: stringPtr(""),
+					Artifacts: []types.CatalogOCIArtifact{
+						{
+							URI: "oci://example.com/model:1.0",
+						},
+					},
+				},
+			},
+		}
+
+		err := validateStaticCatalog(catalog)
+		if err == nil {
+			t.Error("Expected error for empty model name")
+		}
+		if !strings.Contains(err.Error(), "missing required 'name' field") {
+			t.Errorf("Error should mention missing name field: %v", err)
+		}
+	})
+
+	// Test missing artifacts
+	t.Run("MissingArtifacts", func(t *testing.T) {
+		catalog := &types.ModelsCatalog{
+			Source: "Test Source",
+			Models: []types.CatalogMetadata{
+				{
+					Name:      stringPtr("Model Without Artifacts"),
+					Artifacts: []types.CatalogOCIArtifact{},
+				},
+			},
+		}
+
+		err := validateStaticCatalog(catalog)
+		if err == nil {
+			t.Error("Expected error for missing artifacts")
+		}
+		if !strings.Contains(err.Error(), "has no artifacts") {
+			t.Errorf("Error should mention missing artifacts: %v", err)
+		}
+	})
+
+	// Test missing artifact URI
+	t.Run("MissingArtifactURI", func(t *testing.T) {
+		catalog := &types.ModelsCatalog{
+			Source: "Test Source",
+			Models: []types.CatalogMetadata{
+				{
+					Name: stringPtr("Model With Invalid Artifact"),
+					Artifacts: []types.CatalogOCIArtifact{
+						{
+							URI: "",
+						},
+					},
+				},
+			},
+		}
+
+		err := validateStaticCatalog(catalog)
+		if err == nil {
+			t.Error("Expected error for missing artifact URI")
+		}
+		if !strings.Contains(err.Error(), "missing required 'uri' field") {
+			t.Errorf("Error should mention missing URI field: %v", err)
+		}
+	})
+}
+
+func TestCreateModelsCatalogWithStatic(t *testing.T) {
+	// Create temporary directory structure for testing
+	tmpDir := t.TempDir()
+	outputDir := filepath.Join(tmpDir, "output")
+	dataDir := filepath.Join(tmpDir, "data")
+
+	// Create test dynamic model metadata files
+	testDynamicModels := []struct {
+		path     string
+		metadata types.ExtractedMetadata
+	}{
+		{
+			path: "dynamic-model1/models/metadata.yaml",
+			metadata: types.ExtractedMetadata{
+				Name:        stringPtr("Dynamic Model 1"),
+				Provider:    stringPtr("Dynamic Provider"),
+				Description: stringPtr("A dynamic test model"),
+				License:     stringPtr("Apache-2.0"),
+				Language:    []string{"en"},
+				Tasks:       []string{"text-generation"},
+				Tags:        []string{"dynamic"},
+			},
+		},
+	}
+
+	// Create dynamic model files
+	for _, model := range testDynamicModels {
+		fullPath := filepath.Join(outputDir, model.path)
+		dir := filepath.Dir(fullPath)
+
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			t.Fatalf("Failed to create test directory %s: %v", dir, err)
+		}
+
+		data, err := yaml.Marshal(model.metadata)
+		if err != nil {
+			t.Fatalf("Failed to marshal test metadata: %v", err)
+		}
+
+		err = os.WriteFile(fullPath, data, 0644)
+		if err != nil {
+			t.Fatalf("Failed to create test metadata file %s: %v", fullPath, err)
+		}
+	}
+
+	// Create data directory for catalog output
+	err := os.MkdirAll(dataDir, 0755)
+	if err != nil {
+		t.Fatalf("Failed to create data directory: %v", err)
+	}
+
+	// Change to temp directory
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get working directory: %v", err)
+	}
+	defer func() {
+		err := os.Chdir(originalDir)
+		if err != nil {
+			t.Errorf("Failed to restore working directory: %v", err)
+		}
+	}()
+
+	err = os.Chdir(tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to change to temp directory: %v", err)
+	}
+
+	// Test with static models
+	t.Run("WithStaticModels", func(t *testing.T) {
+		staticModels := []types.CatalogMetadata{
+			{
+				Name:        stringPtr("Static Model 1"),
+				Provider:    stringPtr("Static Provider"),
+				Description: stringPtr("A static test model"),
+				License:     stringPtr("MIT"),
+				Language:    []string{"en"},
+				Tasks:       []string{"text-classification"},
+				Artifacts: []types.CatalogOCIArtifact{
+					{
+						URI: "oci://example.com/static-model:1.0",
+					},
+				},
+			},
+			{
+				Name:        stringPtr("Static Model 2"),
+				Provider:    stringPtr("Another Static Provider"),
+				Description: stringPtr("Another static model"),
+				Artifacts: []types.CatalogOCIArtifact{
+					{
+						URI: "oci://example.com/static-model2:1.0",
+					},
+				},
+			},
+		}
+
+		testCatalogPath := filepath.Join("data", "test-catalog-with-static.yaml")
+		err := CreateModelsCatalogWithStatic("output", testCatalogPath, staticModels)
+		if err != nil {
+			t.Fatalf("CreateModelsCatalogWithStatic failed: %v", err)
+		}
+
+		// Verify catalog was created
+		catalogPath := filepath.Join(tmpDir, "data", "test-catalog-with-static.yaml")
+		if _, err := os.Stat(catalogPath); os.IsNotExist(err) {
+			t.Fatal("Catalog file was not created")
+		}
+
+		catalogData, err := os.ReadFile(catalogPath)
+		if err != nil {
+			t.Fatalf("Failed to read catalog file: %v", err)
+		}
+
+		var catalog types.ModelsCatalog
+		err = yaml.Unmarshal(catalogData, &catalog)
+		if err != nil {
+			t.Fatalf("Failed to parse catalog YAML: %v", err)
+		}
+
+		// Should have 3 models total (1 dynamic + 2 static)
+		if len(catalog.Models) != 3 {
+			t.Errorf("Expected 3 models in catalog, got %d", len(catalog.Models))
+		}
+
+		// Check that static models are at the end
+		modelNames := make([]string, len(catalog.Models))
+		for i, model := range catalog.Models {
+			if model.Name != nil {
+				modelNames[i] = *model.Name
+			}
+		}
+
+		// The first model should be the dynamic model (after sorting)
+		if modelNames[0] != "Dynamic Model 1" {
+			t.Errorf("Expected first model to be 'Dynamic Model 1', got '%s'", modelNames[0])
+		}
+
+		// Static models should be at the end
+		staticFound := 0
+		for _, name := range modelNames {
+			if name == "Static Model 1" || name == "Static Model 2" {
+				staticFound++
+			}
+		}
+		if staticFound != 2 {
+			t.Errorf("Expected 2 static models in catalog, found %d", staticFound)
+		}
+	})
+
+	// Test with no static models (should work like CreateModelsCatalog)
+	t.Run("WithoutStaticModels", func(t *testing.T) {
+		testCatalogPath := filepath.Join("data", "test-catalog-no-static.yaml")
+		err := CreateModelsCatalogWithStatic("output", testCatalogPath, []types.CatalogMetadata{})
+		if err != nil {
+			t.Fatalf("CreateModelsCatalogWithStatic failed: %v", err)
+		}
+
+		// Verify catalog was created
+		catalogPath := filepath.Join(tmpDir, "data", "test-catalog-no-static.yaml")
+		catalogData, err := os.ReadFile(catalogPath)
+		if err != nil {
+			t.Fatalf("Failed to read catalog file: %v", err)
+		}
+
+		var catalog types.ModelsCatalog
+		err = yaml.Unmarshal(catalogData, &catalog)
+		if err != nil {
+			t.Fatalf("Failed to parse catalog YAML: %v", err)
+		}
+
+		// Should have 1 model (just the dynamic model)
+		if len(catalog.Models) != 1 {
+			t.Errorf("Expected 1 model in catalog, got %d", len(catalog.Models))
+		}
+
+		if catalog.Models[0].Name == nil || *catalog.Models[0].Name != "Dynamic Model 1" {
+			t.Error("Expected single model to be 'Dynamic Model 1'")
+		}
+	})
 }
