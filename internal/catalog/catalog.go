@@ -197,7 +197,7 @@ func convertExtractedToCatalogMetadata(model types.ExtractedMetadata) types.Cata
 			URI:                      artifact.URI,
 			CreateTimeSinceEpoch:     convertTimestampToString(artifact.CreateTimeSinceEpoch),
 			LastUpdateTimeSinceEpoch: convertTimestampToString(artifact.LastUpdateTimeSinceEpoch),
-			CustomProperties:         artifact.CustomProperties,
+			CustomProperties:         convertCustomPropertiesToMetadataValue(artifact.CustomProperties),
 		}
 		catalogArtifacts = append(catalogArtifacts, catalogArtifact)
 	}
@@ -237,14 +237,66 @@ func convertTagsToCustomProperties(tags []string) map[string]types.MetadataValue
 
 	for _, tag := range tags {
 		if tag != "" { // Skip empty tags
-			customProps[tag] = types.MetadataValue{
-				MetadataType: "MetadataStringValue",
-				StringValue:  "",
-			}
+			customProps[tag] = createMetadataValue("")
 		}
 	}
 
 	return customProps
+}
+
+// createMetadataValue creates a MetadataValue with the standard format
+func createMetadataValue(value string) types.MetadataValue {
+	return types.MetadataValue{
+		MetadataType: "MetadataStringValue",
+		StringValue:  value,
+	}
+}
+
+// convertCustomPropertiesToMetadataValue converts CustomProperties from interface{} to MetadataValue format
+func convertCustomPropertiesToMetadataValue(customProps map[string]interface{}) map[string]interface{} {
+	if customProps == nil {
+		return nil
+	}
+
+	result := make(map[string]interface{})
+	for key, value := range customProps {
+		result[key] = ensureMetadataValueFormat(value)
+	}
+
+	return result
+}
+
+// ensureMetadataValueFormat ensures a value is in the proper MetadataValue format with metadataType
+func ensureMetadataValueFormat(value interface{}) map[string]interface{} {
+	// Check if value is already in the correct MetadataValue format
+	if valueMap, ok := value.(map[string]interface{}); ok {
+		// Check if it already has metadataType
+		if _, hasMetadataType := valueMap["metadataType"]; hasMetadataType {
+			return valueMap
+		} else {
+			// Convert to proper MetadataValue format
+			stringValue := ""
+			if strVal, hasStringValue := valueMap["string_value"]; hasStringValue {
+				if str, ok := strVal.(string); ok {
+					stringValue = str
+				}
+			}
+			return map[string]interface{}{
+				"metadataType": "MetadataStringValue",
+				"string_value": stringValue,
+			}
+		}
+	} else {
+		// Convert simple values to MetadataValue format
+		stringValue := ""
+		if str, ok := value.(string); ok {
+			stringValue = str
+		}
+		return map[string]interface{}{
+			"metadataType": "MetadataStringValue",
+			"string_value": stringValue,
+		}
+	}
 }
 
 // determineLogo determines which logo to use based on model tags and returns base64-encoded data URI
