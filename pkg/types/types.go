@@ -200,6 +200,7 @@ type CatalogMetadata struct {
 	LastUpdateTimeSinceEpoch *string                  `yaml:"lastUpdateTimeSinceEpoch"`
 	CustomProperties         map[string]MetadataValue `yaml:"customProperties,omitempty"`
 	Artifacts                []CatalogOCIArtifact     `yaml:"artifacts"`
+	Logo                     *string                  `yaml:"logo,omitempty"`
 }
 
 // ModelsCatalog represents the aggregated catalog of all models
