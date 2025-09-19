@@ -32,6 +32,20 @@ func TestCreateModelsCatalog(t *testing.T) {
 				Language:    []string{"en"},
 				Tasks:       []string{"text-generation"},
 				Tags:        []string{"validated", "featured", "test-tag"},
+				Artifacts: []types.OCIArtifact{
+					{
+						URI: "oci://registry.example.com/test-model:1.0",
+						CustomProperties: map[string]interface{}{
+							"source": map[string]interface{}{
+								"string_value": "registry.example.com",
+							},
+							"type": map[string]interface{}{
+								"string_value": "modelcar",
+							},
+							"simple_prop": "simple_value",
+						},
+					},
+				},
 			},
 		},
 		{
@@ -155,6 +169,42 @@ func TestCreateModelsCatalog(t *testing.T) {
 	}
 	if len(model1.Language) != 1 || model1.Language[0] != "en" {
 		t.Error("First model should have language 'en'")
+	}
+
+	// Verify that artifacts CustomProperties have metadataType
+	if len(model1.Artifacts) > 0 {
+		artifact := model1.Artifacts[0]
+		if artifact.CustomProperties != nil {
+			// Check source property
+			if sourceVal, exists := artifact.CustomProperties["source"]; exists {
+				sourceMap, ok := sourceVal.(map[string]interface{})
+				if !ok {
+					t.Error("Artifact source property should be a map")
+				} else {
+					if metadataType, hasType := sourceMap["metadataType"]; !hasType || metadataType != "MetadataStringValue" {
+						t.Errorf("Artifact source property should have metadataType 'MetadataStringValue', got %v", metadataType)
+					}
+					if stringValue, hasValue := sourceMap["string_value"]; !hasValue || stringValue != "registry.example.com" {
+						t.Errorf("Artifact source property should have string_value 'registry.example.com', got %v", stringValue)
+					}
+				}
+			}
+
+			// Check simple_prop (should be converted from simple string to MetadataValue format)
+			if simplePropVal, exists := artifact.CustomProperties["simple_prop"]; exists {
+				simplePropMap, ok := simplePropVal.(map[string]interface{})
+				if !ok {
+					t.Error("Artifact simple_prop property should be a map")
+				} else {
+					if metadataType, hasType := simplePropMap["metadataType"]; !hasType || metadataType != "MetadataStringValue" {
+						t.Errorf("Artifact simple_prop property should have metadataType 'MetadataStringValue', got %v", metadataType)
+					}
+					if stringValue, hasValue := simplePropMap["string_value"]; !hasValue || stringValue != "simple_value" {
+						t.Errorf("Artifact simple_prop property should have string_value 'simple_value', got %v", stringValue)
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -937,6 +987,163 @@ func TestValidateStaticCatalog(t *testing.T) {
 			t.Errorf("Error should mention missing URI field: %v", err)
 		}
 	})
+}
+
+func TestConvertCustomPropertiesToMetadataValue(t *testing.T) {
+	testCases := []struct {
+		name     string
+		input    map[string]interface{}
+		expected map[string]interface{}
+	}{
+		{
+			name:     "nil input",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name:     "empty input",
+			input:    map[string]interface{}{},
+			expected: map[string]interface{}{},
+		},
+		{
+			name: "properties without metadataType",
+			input: map[string]interface{}{
+				"source": map[string]interface{}{
+					"string_value": "registry.redhat.io",
+				},
+				"type": map[string]interface{}{
+					"string_value": "modelcar",
+				},
+			},
+			expected: map[string]interface{}{
+				"source": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "registry.redhat.io",
+				},
+				"type": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "modelcar",
+				},
+			},
+		},
+		{
+			name: "properties already with metadataType",
+			input: map[string]interface{}{
+				"source": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "registry.redhat.io",
+				},
+			},
+			expected: map[string]interface{}{
+				"source": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "registry.redhat.io",
+				},
+			},
+		},
+		{
+			name: "simple string values",
+			input: map[string]interface{}{
+				"simple_key": "simple_value",
+			},
+			expected: map[string]interface{}{
+				"simple_key": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "simple_value",
+				},
+			},
+		},
+		{
+			name: "mixed format properties",
+			input: map[string]interface{}{
+				"with_metadata": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "existing",
+				},
+				"without_metadata": map[string]interface{}{
+					"string_value": "needs_metadata",
+				},
+				"simple": "raw_string",
+			},
+			expected: map[string]interface{}{
+				"with_metadata": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "existing",
+				},
+				"without_metadata": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "needs_metadata",
+				},
+				"simple": map[string]interface{}{
+					"metadataType": "MetadataStringValue",
+					"string_value": "raw_string",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := convertCustomPropertiesToMetadataValue(tc.input)
+
+			// Deep comparison
+			if tc.expected == nil {
+				if result != nil {
+					t.Errorf("Expected nil result, got %v", result)
+				}
+				return
+			}
+
+			if result == nil {
+				t.Errorf("Expected non-nil result, got nil")
+				return
+			}
+
+			if len(result) != len(tc.expected) {
+				t.Errorf("Expected %d properties, got %d", len(tc.expected), len(result))
+				return
+			}
+
+			for key, expectedValue := range tc.expected {
+				actualValue, exists := result[key]
+				if !exists {
+					t.Errorf("Expected key '%s' not found in result", key)
+					continue
+				}
+
+				// Compare the nested map values
+				expectedMap, expectedIsMap := expectedValue.(map[string]interface{})
+				actualMap, actualIsMap := actualValue.(map[string]interface{})
+
+				if expectedIsMap != actualIsMap {
+					t.Errorf("Key '%s': type mismatch - expected map: %v, actual map: %v", key, expectedIsMap, actualIsMap)
+					continue
+				}
+
+				if expectedIsMap {
+					for nestedKey, nestedExpected := range expectedMap {
+						nestedActual, nestedExists := actualMap[nestedKey]
+						if !nestedExists {
+							t.Errorf("Key '%s.%s': not found in result", key, nestedKey)
+							continue
+						}
+						if nestedActual != nestedExpected {
+							t.Errorf("Key '%s.%s': expected '%v', got '%v'", key, nestedKey, nestedExpected, nestedActual)
+						}
+					}
+					for nestedKey := range actualMap {
+						if _, exists := expectedMap[nestedKey]; !exists {
+							t.Errorf("Key '%s.%s': unexpected key in result", key, nestedKey)
+						}
+					}
+				} else {
+					if actualValue != expectedValue {
+						t.Errorf("Key '%s': expected '%v', got '%v'", key, expectedValue, actualValue)
+					}
+				}
+			}
+		})
+	}
 }
 
 func TestCreateModelsCatalogWithStatic(t *testing.T) {
