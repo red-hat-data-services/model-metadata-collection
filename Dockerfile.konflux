@@ -30,9 +30,14 @@ VOLUME ["/app/data"]
 CMD ["sleep", "infinity"]
 
 # Labels for image metadata
-LABEL name="model-metadata-collection" \
-      version="1.0" \
-      description="Model metadata collection catalog generator" \
-      io.k8s.description="Generates and serves model metadata catalog" \
-      io.k8s.display-name="Model Metadata Collection" \
-      io.openshift.tags="ai,models,metadata,catalog"
+LABEL \
+    com.redhat.component="odh-model-metadata-collection" \
+    name="managed-open-data-hub/odh-model-metadata-collection-rhel9" \
+    description="Container that provides a catalog Red Hat AI validated models." \
+    summary="model-metadata-collection" \
+    maintainer="['managed-open-data-hub@redhat.com']" \
+    io.openshift.expose-services="" \
+    io.k8s.display-name="model-metadata-collection" \
+    io.k8s.description="model-metadata-collection" \
+    io.openshift.tags="ai,models,metadata,catalog" \
+    com.redhat.license_terms="https://www.redhat.com/licenses/Red_Hat_Standard_EULA_20191108.pdf"
