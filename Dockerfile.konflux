@@ -32,7 +32,7 @@ CMD ["sleep", "infinity"]
 # Labels for image metadata
 LABEL \
     com.redhat.component="odh-model-metadata-collection" \
-    name="rhoai/odh-model-metadata-collection" \
+    name="managed-open-data-hub/odh-model-metadata-collection-rhel9" \
     description="Container that provides a catalog Red Hat AI validated models." \
     summary="model-metadata-collection" \
     maintainer="['managed-open-data-hub@redhat.com']" \
