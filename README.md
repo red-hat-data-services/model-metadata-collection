@@ -10,6 +10,7 @@ A Go application for extracting, enriching, and cataloging metadata from Red Hat
 - **Automated Tagging**: Automatically adds labels as tags based on model configuration with intelligent tag merging
 - **Registry Integration**: Fetches OCI artifact metadata from container registries
 - **Metadata Reporting**: Comprehensive analysis of metadata completeness, data source tracking, and quality metrics
+- **Static Catalog Support**: Merge static model catalogs with dynamically extracted metadata
 - **Flexible CLI**: Configurable input/output paths and processing options with skip flags for individual components
 - **Concurrent Processing**: Parallel processing of multiple models with configurable concurrency limits
 - **Comprehensive Testing**: Unit tests for all major components
@@ -111,6 +112,12 @@ Generate comprehensive metadata completeness reports:
 
 # Process only metadata extraction
 ./build/model-extractor --skip-huggingface --skip-enrichment --skip-catalog
+
+# Include custom static catalog files
+./build/model-extractor --static-catalog-files custom1.yaml,custom2.yaml
+
+# Skip default static catalog but include custom ones
+./build/model-extractor --skip-default-static-catalog --static-catalog-files custom.yaml
 ```
 
 ### CLI Options
@@ -124,6 +131,8 @@ Generate comprehensive metadata completeness reports:
 | `--skip-huggingface` | Skip HuggingFace collection processing | `false` |
 | `--skip-enrichment` | Skip metadata enrichment | `false` |
 | `--skip-catalog` | Skip catalog generation | `false` |
+| `--static-catalog-files` | Comma-separated list of static catalog files | `""` |
+| `--skip-default-static-catalog` | Skip processing default input/supplemental-catalog.yaml | `false` |
 | `--help` | Show help message | `false` |
 
 ### Metadata Report CLI Options
@@ -204,6 +213,24 @@ The tool can work with multiple input sources:
 
 ### Automatic HuggingFace Collections (Default)
 Automatically discovers Red Hat AI validated model collections from HuggingFace and generates version-specific index files like `data/hugging-face-redhat-ai-validated-v1-0.yaml`.
+
+### Static Model Catalogs
+You can merge static model catalogs with dynamically extracted metadata. By default, the tool looks for `input/supplemental-catalog.yaml` and includes it automatically:
+
+```yaml
+source: Red Hat
+models:
+  - name: Static Model Example
+    provider: Static Provider
+    description: A model defined in static catalog
+    language:
+      - en
+    license: MIT
+    tasks:
+      - text-generation
+    artifacts:
+      - uri: oci://example.com/static-model:1.0
+```
 
 ### Manual YAML Input
 You can also provide a YAML file with structured model entries supporting both OCI registry and HuggingFace model references:

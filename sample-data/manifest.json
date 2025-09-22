@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-01-15T12:00:00Z",
+  "description": "Sample model benchmark data organized by provider/model structure",
+  "files": {
+    "testcorp/sample-model-1.0/metadata.json": "model_metadata",
+    "testcorp/sample-model-1.0/performance.ndjson": "performance_metrics",
+    "testcorp/sample-model-1.0/evaluations.ndjson": "model_evaluations",
+    "testcorp/sample-model-1.0/validation.ndjson": "model_validations",
+    "acmetech/text-analyzer-2.1/metadata.json": "model_metadata",
+    "acmetech/text-analyzer-2.1/performance.ndjson": "performance_metrics",
+    "acmetech/text-analyzer-2.1/evaluations.ndjson": "model_evaluations",
+    "acmetech/text-analyzer-2.1/validation.ndjson": "model_validations"
+  },
+  "statistics": {
+    "total_files": 8,
+    "total_models": 2,
+    "total_providers": 2
+  }
+}
+
