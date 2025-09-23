@@ -388,3 +388,39 @@ func derefStringPtr(s *string) string {
 	}
 	return *s
 }
+
+func TestExtractMetadataValues_ValidatedOn(t *testing.T) {
+	contentWithValidatedOn := `---
+name: "Test Model"
+provider: "RedHat AI"
+validated_on:
+  - RHOAI 2.24
+  - RHAIIS 3.2.1
+---
+# Test Model
+
+This is a test model validated on multiple platforms.
+`
+
+	result := ExtractMetadataValues([]byte(contentWithValidatedOn))
+
+	// Check that validated_on was extracted correctly
+	if result.ValidatedOn == nil {
+		t.Error("Expected ValidatedOn to be set from YAML frontmatter")
+	} else {
+		expected := []string{"RHOAI 2.24", "RHAIIS 3.2.1"}
+		if !reflect.DeepEqual(result.ValidatedOn, expected) {
+			t.Errorf("ExtractMetadataValues() ValidatedOn = %v, want %v", result.ValidatedOn, expected)
+		}
+	}
+
+	// Check that name was also extracted from frontmatter
+	if result.Name == nil || *result.Name != "Test Model" {
+		t.Error("Expected name to be extracted from YAML frontmatter")
+	}
+
+	// Check that provider was also extracted from frontmatter
+	if result.Provider == nil || *result.Provider != "RedHat AI" {
+		t.Error("Expected provider to be extracted from YAML frontmatter")
+	}
+}
