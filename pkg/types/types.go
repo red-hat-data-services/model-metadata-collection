@@ -78,6 +78,7 @@ type ExtractedMetadata struct {
 	Tasks                    []string      `yaml:"tasks"`
 	CreateTimeSinceEpoch     *int64        `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64        `yaml:"lastUpdateTimeSinceEpoch"`
+	ValidatedOn              []string      `yaml:"validatedOn"`
 	Artifacts                []OCIArtifact `yaml:"artifacts"`
 }
 
@@ -94,6 +95,7 @@ type LegacyExtractedMetadata struct {
 	Tasks                    []string `yaml:"tasks"`
 	CreateTimeSinceEpoch     *int64   `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64   `yaml:"lastUpdateTimeSinceEpoch"`
+	ValidatedOn              []string `yaml:"validatedOn"`
 	Artifacts                []string `yaml:"artifacts"`
 }
 
@@ -110,6 +112,7 @@ type MixedTypeExtractedMetadata struct {
 	Tasks                    []string      `yaml:"tasks"`
 	CreateTimeSinceEpoch     interface{}   `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch interface{}   `yaml:"lastUpdateTimeSinceEpoch"`
+	ValidatedOn              []string      `yaml:"validatedOn"`
 	Artifacts                []OCIArtifact `yaml:"artifacts"`
 }
 
@@ -152,6 +155,7 @@ type EnrichedModelMetadata struct {
 	Downloads            MetadataSource `yaml:"downloads"`
 	Likes                MetadataSource `yaml:"likes"`
 	ModelSize            MetadataSource `yaml:"model_size"`
+	ValidatedOn          MetadataSource `yaml:"validated_on"`
 }
 
 // EnrichmentInfo tracks data sources for metadata fields
@@ -169,6 +173,7 @@ type EnrichmentInfo struct {
 		CreateTimeSinceEpoch     string `json:"createTimeSinceEpoch"`
 		LastUpdateTimeSinceEpoch string `json:"lastUpdateTimeSinceEpoch"`
 		Artifacts                string `json:"artifacts"`
+		ValidatedOn              string `json:"validatedOn"`
 	} `json:"dataSources"`
 }
 

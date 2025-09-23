@@ -24,6 +24,7 @@ type ModelCardYAMLFrontmatter struct {
 	Description string   `yaml:"description"`
 	Tasks       []string `yaml:"tasks"`
 	Provider    string   `yaml:"provider"`
+	ValidatedOn []string `yaml:"validated_on"`
 }
 
 // ExtractYAMLFrontmatterFromModelCard extracts YAML frontmatter from modelcard.md content
@@ -182,6 +183,11 @@ func ExtractMetadataValues(content []byte) types.ExtractedMetadata {
 		// Tags from YAML
 		if len(frontmatter.Tags) > 0 {
 			metadata.Tags = frontmatter.Tags
+		}
+
+		// ValidatedOn from YAML
+		if len(frontmatter.ValidatedOn) > 0 {
+			metadata.ValidatedOn = frontmatter.ValidatedOn
 		}
 	}
 

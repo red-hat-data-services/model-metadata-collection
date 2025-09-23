@@ -48,6 +48,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 			Tasks                string `yaml:"tasks,omitempty"`
 			LastModified         string `yaml:"last_modified,omitempty"`
 			CreateTimeSinceEpoch string `yaml:"create_time_since_epoch,omitempty"`
+			ValidatedOn          string `yaml:"validated_on,omitempty"`
 			Readme               string `yaml:"readme,omitempty"`
 		} `yaml:"data_sources"`
 	}{}
@@ -217,6 +218,19 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 		if len(inferredTasks) > 0 {
 			existingMetadata.Tasks = inferredTasks
 			enrichmentInfo.DataSources.Tasks = "modelcard.inferred"
+		}
+	}
+
+	// Handle enriched ValidatedOn data from HuggingFace YAML
+	if enrichedData.ValidatedOn.Source != "null" && enrichedData.ValidatedOn.Value != nil {
+		if validatedOnList, ok := enrichedData.ValidatedOn.Value.([]string); ok && len(validatedOnList) > 0 {
+			// Always override with HuggingFace YAML validated_on data (highest priority)
+			shouldOverride := len(existingMetadata.ValidatedOn) == 0 || enrichedData.ValidatedOn.Source == "huggingface.yaml"
+			if shouldOverride {
+				log.Printf("  Using validated_on from enrichedData: %v", validatedOnList)
+				existingMetadata.ValidatedOn = validatedOnList
+			}
+			enrichmentInfo.DataSources.ValidatedOn = enrichedData.ValidatedOn.Source
 		}
 	}
 

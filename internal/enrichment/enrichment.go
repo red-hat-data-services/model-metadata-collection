@@ -368,6 +368,11 @@ func EnrichMetadataFromHuggingFace() error {
 						enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.yaml")
 						log.Printf("  Extracted pipeline_tag from YAML frontmatter: %s", frontmatter.PipelineTag)
 					}
+					// Always use validated_on from HuggingFace YAML (highest priority)
+					if len(frontmatter.ValidatedOn) > 0 {
+						enriched.ValidatedOn = metadata.CreateMetadataSource(frontmatter.ValidatedOn, "huggingface.yaml")
+						log.Printf("  Extracted validated_on from YAML frontmatter: %v", frontmatter.ValidatedOn)
+					}
 				} else {
 					log.Printf("  No valid YAML frontmatter found in HF README: %v", err)
 				}

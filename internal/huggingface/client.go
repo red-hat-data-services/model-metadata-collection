@@ -229,6 +229,7 @@ type YAMLFrontmatter struct {
 	Description string   `yaml:"description"`
 	Tasks       []string `yaml:"tasks"`
 	Provider    string   `yaml:"provider"`
+	ValidatedOn []string `yaml:"validated_on"`
 }
 
 // ExtractYAMLFrontmatter extracts YAML frontmatter from README content
