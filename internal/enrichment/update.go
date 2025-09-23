@@ -223,14 +223,29 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 
 	// Handle enriched ValidatedOn data from HuggingFace YAML
 	if enrichedData.ValidatedOn.Source != "null" && enrichedData.ValidatedOn.Value != nil {
-		if validatedOnList, ok := enrichedData.ValidatedOn.Value.([]string); ok && len(validatedOnList) > 0 {
-			// Always override with HuggingFace YAML validated_on data (highest priority)
-			shouldOverride := len(existingMetadata.ValidatedOn) == 0 || enrichedData.ValidatedOn.Source == "huggingface.yaml"
-			if shouldOverride {
-				log.Printf("  Using validated_on from enrichedData: %v", validatedOnList)
-				existingMetadata.ValidatedOn = validatedOnList
+		if raw, ok := enrichedData.ValidatedOn.Value.([]string); ok && len(raw) > 0 {
+			// normalize: trim and dedupe
+			seen := map[string]struct{}{}
+			normalized := make([]string, 0, len(raw))
+			for _, v := range raw {
+				t := strings.TrimSpace(v)
+				if t == "" {
+					continue
+				}
+				if _, exists := seen[t]; exists {
+					continue
+				}
+				seen[t] = struct{}{}
+				normalized = append(normalized, t)
 			}
-			enrichmentInfo.DataSources.ValidatedOn = enrichedData.ValidatedOn.Source
+			if len(normalized) > 0 {
+				shouldOverride := len(existingMetadata.ValidatedOn) == 0 || enrichedData.ValidatedOn.Source == "huggingface.yaml"
+				if shouldOverride {
+					log.Printf("  Using validated_on from enrichedData: %v", normalized)
+					existingMetadata.ValidatedOn = normalized
+				}
+				enrichmentInfo.DataSources.ValidatedOn = enrichedData.ValidatedOn.Source
+			}
 		}
 	}
 

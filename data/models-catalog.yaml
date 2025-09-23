@@ -43,7 +43,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -89,7 +89,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-1-nemotron-70b-instruct-hf:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -135,7 +135,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -194,7 +194,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -259,7 +259,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-3-3-70b-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -330,7 +330,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -985,7 +985,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -1049,7 +1049,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-maverick-17b-128e-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1129,7 +1129,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-maverick-17b-128e-instruct-fp8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1191,7 +1191,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1265,7 +1265,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1347,7 +1347,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -1399,7 +1399,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -1461,7 +1461,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -1746,7 +1746,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -1814,7 +1814,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -1900,7 +1900,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2001,7 +2001,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2105,7 +2105,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2206,7 +2206,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-mistral-small-3-1-24b-instruct-2503-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2256,7 +2256,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -2336,7 +2336,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2422,7 +2422,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-qwen2-5-7b-instruct-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -2505,7 +2505,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -2824,7 +2824,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -2873,7 +2873,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -3122,7 +3122,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -3165,7 +3165,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -3228,7 +3228,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-instruct:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -3282,7 +3282,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -3792,7 +3792,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -3838,7 +3838,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -3887,7 +3887,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
         vllm:
             metadataType: MetadataStringValue
             string_value: ""
@@ -4055,7 +4055,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -4125,7 +4125,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-fp8-dynamic:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -4199,7 +4199,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w4a16:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -4272,7 +4272,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-phi-4-quantized-w8a8:1.5
           createTimeSinceEpoch: "1739776988000"
@@ -4335,7 +4335,7 @@ models:
             string_value: ""
         validated_on:
             metadataType: MetadataStringValue
-            string_value: RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5
+            string_value: "RHOAI 2.20,RHAIIS 3.0,RHELAI 1.5"
       artifacts:
         - uri: oci://registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-starter-v2:1.5
           createTimeSinceEpoch: "1739776988000"

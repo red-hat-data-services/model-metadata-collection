@@ -216,20 +216,63 @@ func ExtractProviderFromReadme(readmeContent string) string {
 	return ""
 }
 
+// stringSlice is a helper type that can unmarshal from either a YAML scalar or sequence
+type stringSlice []string
+
+func (s *stringSlice) UnmarshalYAML(value *yaml.Node) error {
+	switch value.Kind {
+	case yaml.ScalarNode:
+		var str string
+		if err := value.Decode(&str); err != nil {
+			return err
+		}
+		trimmed := strings.TrimSpace(str)
+		if trimmed == "" {
+			*s = nil
+		} else {
+			*s = []string{trimmed}
+		}
+		return nil
+	case yaml.SequenceNode:
+		var arr []string
+		if err := value.Decode(&arr); err != nil {
+			return err
+		}
+		// trim empties and dedupe
+		seen := map[string]struct{}{}
+		out := make([]string, 0, len(arr))
+		for _, v := range arr {
+			t := strings.TrimSpace(v)
+			if t == "" {
+				continue
+			}
+			if _, ok := seen[t]; ok {
+				continue
+			}
+			seen[t] = struct{}{}
+			out = append(out, t)
+		}
+		*s = out
+		return nil
+	default:
+		return fmt.Errorf("validated_on: unsupported YAML node kind %v", value.Kind)
+	}
+}
+
 // YAMLFrontmatter represents the YAML frontmatter in HuggingFace README files
 type YAMLFrontmatter struct {
-	Language    []string `yaml:"language"`
-	BaseModel   []string `yaml:"base_model"`
-	PipelineTag string   `yaml:"pipeline_tag"`
-	License     string   `yaml:"license"`
-	LicenseName string   `yaml:"license_name"`
-	LicenseLink string   `yaml:"license_link"`
-	Tags        []string `yaml:"tags"`
-	Name        string   `yaml:"name"`
-	Description string   `yaml:"description"`
-	Tasks       []string `yaml:"tasks"`
-	Provider    string   `yaml:"provider"`
-	ValidatedOn []string `yaml:"validated_on"`
+	Language    []string    `yaml:"language"`
+	BaseModel   []string    `yaml:"base_model"`
+	PipelineTag string      `yaml:"pipeline_tag"`
+	License     string      `yaml:"license"`
+	LicenseName string      `yaml:"license_name"`
+	LicenseLink string      `yaml:"license_link"`
+	Tags        []string    `yaml:"tags"`
+	Name        string      `yaml:"name"`
+	Description string      `yaml:"description"`
+	Tasks       []string    `yaml:"tasks"`
+	Provider    string      `yaml:"provider"`
+	ValidatedOn stringSlice `yaml:"validated_on"`
 }
 
 // ExtractYAMLFrontmatter extracts YAML frontmatter from README content
