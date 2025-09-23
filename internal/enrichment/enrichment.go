@@ -68,6 +68,7 @@ func EnrichMetadataFromHuggingFace() error {
 		enriched.Downloads = metadata.CreateMetadataSource(nil, "null")
 		enriched.Likes = metadata.CreateMetadataSource(nil, "null")
 		enriched.ModelSize = metadata.CreateMetadataSource(nil, "null")
+		enriched.ValidatedOn = metadata.CreateMetadataSource(nil, "null")
 
 		// Populate from existing modelcard metadata if available (only for non-empty values)
 		// We need to determine if the data came from YAML frontmatter or text parsing
@@ -367,6 +368,11 @@ func EnrichMetadataFromHuggingFace() error {
 						tasks := []string{frontmatter.PipelineTag}
 						enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.yaml")
 						log.Printf("  Extracted pipeline_tag from YAML frontmatter: %s", frontmatter.PipelineTag)
+					}
+					// Always use validated_on from HuggingFace YAML (highest priority)
+					if len(frontmatter.ValidatedOn) > 0 {
+						enriched.ValidatedOn = metadata.CreateMetadataSource([]string(frontmatter.ValidatedOn), "huggingface.yaml")
+						log.Printf("  Extracted validated_on from YAML frontmatter: %v", frontmatter.ValidatedOn)
 					}
 				} else {
 					log.Printf("  No valid YAML frontmatter found in HF README: %v", err)

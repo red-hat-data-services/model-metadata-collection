@@ -48,6 +48,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 			Tasks                string `yaml:"tasks,omitempty"`
 			LastModified         string `yaml:"last_modified,omitempty"`
 			CreateTimeSinceEpoch string `yaml:"create_time_since_epoch,omitempty"`
+			ValidatedOn          string `yaml:"validated_on,omitempty"`
 			Readme               string `yaml:"readme,omitempty"`
 		} `yaml:"data_sources"`
 	}{}
@@ -217,6 +218,34 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 		if len(inferredTasks) > 0 {
 			existingMetadata.Tasks = inferredTasks
 			enrichmentInfo.DataSources.Tasks = "modelcard.inferred"
+		}
+	}
+
+	// Handle enriched ValidatedOn data from HuggingFace YAML
+	if enrichedData.ValidatedOn.Source != "null" && enrichedData.ValidatedOn.Value != nil {
+		if raw, ok := enrichedData.ValidatedOn.Value.([]string); ok && len(raw) > 0 {
+			// normalize: trim and dedupe
+			seen := map[string]struct{}{}
+			normalized := make([]string, 0, len(raw))
+			for _, v := range raw {
+				t := strings.TrimSpace(v)
+				if t == "" {
+					continue
+				}
+				if _, exists := seen[t]; exists {
+					continue
+				}
+				seen[t] = struct{}{}
+				normalized = append(normalized, t)
+			}
+			if len(normalized) > 0 {
+				shouldOverride := len(existingMetadata.ValidatedOn) == 0 || enrichedData.ValidatedOn.Source == "huggingface.yaml"
+				if shouldOverride {
+					log.Printf("  Using validated_on from enrichedData: %v", normalized)
+					existingMetadata.ValidatedOn = normalized
+				}
+				enrichmentInfo.DataSources.ValidatedOn = enrichedData.ValidatedOn.Source
+			}
 		}
 	}
 
