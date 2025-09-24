@@ -84,11 +84,18 @@ func DiscoverValidatedModelCollections() ([]string, error) {
 	}
 
 	var validatedModelCollections []string
-	validatedPattern := regexp.MustCompile(`(?i)red.?hat.?ai.?validated.?models`)
+	// Updated patterns to match both old and new collection naming schemes
+	validatedPatterns := []*regexp.Regexp{
+		regexp.MustCompile(`(?i)red.?hat.?ai.?validated.?models`),
+		regexp.MustCompile(`(?i)red\s+hat\s+ai\s+validated\s+models\s+-\s+(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}`),
+	}
 
 	for _, collection := range collections {
-		if validatedPattern.MatchString(collection.Title) {
-			validatedModelCollections = append(validatedModelCollections, collection.Slug)
+		for _, pattern := range validatedPatterns {
+			if pattern.MatchString(collection.Title) {
+				validatedModelCollections = append(validatedModelCollections, collection.Slug)
+				break // Avoid duplicates if multiple patterns match
+			}
 		}
 	}
 

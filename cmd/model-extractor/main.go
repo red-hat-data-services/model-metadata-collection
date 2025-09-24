@@ -115,13 +115,22 @@ func main() {
 	// This happens AFTER model processing to enrich the extracted metadata
 	if !*skipEnrichment {
 		log.Println("Enriching extracted metadata with HuggingFace data...")
-		err := enrichment.EnrichMetadataFromHuggingFace()
+
+		// Determine HuggingFace index file to use
+		hfIndexFile, err := getLatestVersionIndexFile()
+		if err != nil {
+			log.Printf("Warning: Could not find HuggingFace index file: %v", err)
+			// Use default fallback path
+			hfIndexFile = "data/hugging-face-redhat-ai-validated-v1-0.yaml"
+		}
+
+		err = enrichment.EnrichMetadataFromHuggingFace(hfIndexFile, *modelsIndexPath, *outputDir)
 		if err != nil {
 			log.Printf("Warning: Failed to enrich metadata: %v", err)
 		}
 
 		// Update all existing models with OCI artifact metadata
-		err = enrichment.UpdateAllModelsWithOCIArtifacts()
+		err = enrichment.UpdateAllModelsWithOCIArtifacts(*modelsIndexPath, *outputDir)
 		if err != nil {
 			log.Printf("Warning: Failed to update OCI artifacts: %v", err)
 		}
@@ -280,7 +289,10 @@ func processModelsInParallelWithMetadata(modelEntries []types.ModelEntry, maxCon
 
 // processModelsInParallelWithEntryMap processes multiple models concurrently with entry metadata
 func processModelsInParallelWithEntryMap(manifestRefs []string, uriToEntry map[string]types.ModelEntry, maxConcurrent int) []ModelResult {
-	sys := &containertypes.SystemContext{}
+	sys := &containertypes.SystemContext{
+		ArchitectureChoice: "amd64",
+		OSChoice:           "linux",
+	}
 
 	// Create a WaitGroup to wait for all goroutines to complete
 	var wg sync.WaitGroup
