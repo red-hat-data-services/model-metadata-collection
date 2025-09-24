@@ -15,14 +15,14 @@ import (
 )
 
 // UpdateModelMetadataFile updates an existing metadata.yaml file with enriched data and creates separate enrichment.yaml
-func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedModelMetadata) error {
+func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedModelMetadata, outputDir string) error {
 	// Create sanitized directory name for the model
 	sanitizedName := utils.SanitizeManifestRef(registryModel)
-	metadataPath := fmt.Sprintf("output/%s/models/metadata.yaml", sanitizedName)
-	enrichmentPath := fmt.Sprintf("output/%s/models/enrichment.yaml", sanitizedName)
+	metadataPath := fmt.Sprintf("%s/%s/models/metadata.yaml", outputDir, sanitizedName)
+	enrichmentPath := fmt.Sprintf("%s/%s/models/enrichment.yaml", outputDir, sanitizedName)
 
 	// Try to load existing metadata using migration logic
-	existingMetadataPtr, err := metadata.LoadExistingMetadata(registryModel)
+	existingMetadataPtr, err := metadata.LoadExistingMetadata(registryModel, outputDir)
 	var existingMetadata types.ExtractedMetadata
 	if err == nil && existingMetadataPtr != nil {
 		existingMetadata = *existingMetadataPtr
@@ -282,7 +282,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 
 	// IMPORTANT: Preserve readme content if it's missing but modelcard file exists
 	if existingMetadata.Readme == nil {
-		modelcardPath := fmt.Sprintf("output/%s/models/modelcard.md", sanitizedName)
+		modelcardPath := fmt.Sprintf("%s/%s/models/modelcard.md", outputDir, sanitizedName)
 		if modelcardContent, err := os.ReadFile(modelcardPath); err == nil && len(modelcardContent) > 0 {
 			readme := string(modelcardContent)
 			existingMetadata.Readme = &readme
