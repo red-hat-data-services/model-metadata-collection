@@ -38,7 +38,7 @@ func TestGetLicenseURL(t *testing.T) {
 		{
 			name:      "llama license",
 			licenseID: "llama3.1",
-			expected:  "https://github.com/meta-llvm/llama-models/blob/main/models/llama3_1/LICENSE",
+			expected:  "https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/LICENSE",
 		},
 		{
 			name:      "empty string",
