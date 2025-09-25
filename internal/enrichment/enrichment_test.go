@@ -29,7 +29,7 @@ func TestEnrichMetadataFromHuggingFace_FilesNotExist(t *testing.T) {
 	}
 
 	// Test with missing HuggingFace index file
-	err = EnrichMetadataFromHuggingFace()
+	err = EnrichMetadataFromHuggingFace("nonexistent-hf.yaml", "nonexistent-models.yaml", "output")
 	if err == nil {
 		t.Error("Expected error when HuggingFace index file doesn't exist")
 	}
@@ -68,7 +68,7 @@ func TestEnrichMetadataFromHuggingFace_InvalidHFFile(t *testing.T) {
 	}
 
 	// Test with invalid HuggingFace file
-	err = EnrichMetadataFromHuggingFace()
+	err = EnrichMetadataFromHuggingFace("nonexistent-hf.yaml", "nonexistent-models.yaml", "output")
 	if err == nil {
 		t.Error("Expected error when HuggingFace index file is invalid")
 	}
@@ -122,7 +122,7 @@ func TestEnrichMetadataFromHuggingFace_MissingModelsIndex(t *testing.T) {
 	}
 
 	// Test with missing models-index.yaml
-	err = EnrichMetadataFromHuggingFace()
+	err = EnrichMetadataFromHuggingFace("nonexistent-hf.yaml", "nonexistent-models.yaml", "output")
 	if err == nil {
 		t.Error("Expected error when models-index.yaml doesn't exist")
 	}
@@ -185,7 +185,7 @@ func TestEnrichMetadataFromHuggingFace_EmptyFiles(t *testing.T) {
 	}
 
 	// Test with empty files - should succeed
-	err = EnrichMetadataFromHuggingFace()
+	err = EnrichMetadataFromHuggingFace("data/hugging-face-redhat-ai-validated-v1-0.yaml", "data/models-index.yaml", "output")
 	if err != nil {
 		t.Errorf("Unexpected error with empty files: %v", err)
 	}
@@ -229,7 +229,7 @@ func TestUpdateModelMetadataFile_NoExistingFile(t *testing.T) {
 	}
 
 	// Call UpdateModelMetadataFile
-	err = UpdateModelMetadataFile(registryModel, enrichedData)
+	err = UpdateModelMetadataFile(registryModel, enrichedData, "output")
 	if err != nil {
 		t.Errorf("UpdateModelMetadataFile failed: %v", err)
 	}
@@ -299,7 +299,7 @@ func TestUpdateModelMetadataFile_WithExistingFile(t *testing.T) {
 	}
 
 	// Call UpdateModelMetadataFile
-	err = UpdateModelMetadataFile(registryModel, enrichedData)
+	err = UpdateModelMetadataFile(registryModel, enrichedData, "output")
 	if err != nil {
 		t.Errorf("UpdateModelMetadataFile failed: %v", err)
 	}
@@ -360,7 +360,7 @@ func TestUpdateAllModelsWithOCIArtifacts(t *testing.T) {
 	}
 
 	// Call UpdateAllModelsWithOCIArtifacts
-	err = UpdateAllModelsWithOCIArtifacts()
+	err = UpdateAllModelsWithOCIArtifacts("data/models-index.yaml", "output")
 	// This will likely fail due to network calls to registries, but we test that it doesn't panic
 	// and that it attempts to process the models
 	if err != nil {
@@ -370,7 +370,7 @@ func TestUpdateAllModelsWithOCIArtifacts(t *testing.T) {
 
 func TestUpdateOCIArtifacts_InvalidModel(t *testing.T) {
 	// Test UpdateOCIArtifacts with invalid model reference
-	err := UpdateOCIArtifacts("invalid-model-reference")
+	err := UpdateOCIArtifacts("invalid-model-reference", "output")
 	if err == nil {
 		t.Error("Expected error for invalid model reference")
 	}
