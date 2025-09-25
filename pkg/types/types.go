@@ -1,6 +1,10 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	"gopkg.in/yaml.v3"
+)
 
 // ModelEntry represents a single model entry in the models index
 type ModelEntry struct {
@@ -78,6 +82,7 @@ type ExtractedMetadata struct {
 	Tasks                    []string      `yaml:"tasks"`
 	CreateTimeSinceEpoch     *int64        `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64        `yaml:"lastUpdateTimeSinceEpoch"`
+	ValidatedOn              []string      `yaml:"validatedOn"`
 	Artifacts                []OCIArtifact `yaml:"artifacts"`
 }
 
@@ -94,6 +99,7 @@ type LegacyExtractedMetadata struct {
 	Tasks                    []string `yaml:"tasks"`
 	CreateTimeSinceEpoch     *int64   `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64   `yaml:"lastUpdateTimeSinceEpoch"`
+	ValidatedOn              []string `yaml:"validatedOn"`
 	Artifacts                []string `yaml:"artifacts"`
 }
 
@@ -110,6 +116,7 @@ type MixedTypeExtractedMetadata struct {
 	Tasks                    []string      `yaml:"tasks"`
 	CreateTimeSinceEpoch     interface{}   `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch interface{}   `yaml:"lastUpdateTimeSinceEpoch"`
+	ValidatedOn              []string      `yaml:"validatedOn"`
 	Artifacts                []OCIArtifact `yaml:"artifacts"`
 }
 
@@ -152,6 +159,7 @@ type EnrichedModelMetadata struct {
 	Downloads            MetadataSource `yaml:"downloads"`
 	Likes                MetadataSource `yaml:"likes"`
 	ModelSize            MetadataSource `yaml:"model_size"`
+	ValidatedOn          MetadataSource `yaml:"validated_on"`
 }
 
 // EnrichmentInfo tracks data sources for metadata fields
@@ -169,6 +177,7 @@ type EnrichmentInfo struct {
 		CreateTimeSinceEpoch     string `json:"createTimeSinceEpoch"`
 		LastUpdateTimeSinceEpoch string `json:"lastUpdateTimeSinceEpoch"`
 		Artifacts                string `json:"artifacts"`
+		ValidatedOn              string `json:"validatedOn"`
 	} `json:"dataSources"`
 }
 
@@ -176,6 +185,28 @@ type EnrichmentInfo struct {
 type MetadataValue struct {
 	MetadataType string `yaml:"metadataType"`
 	StringValue  string `yaml:"string_value"`
+}
+
+// MarshalYAML implements yaml.Marshaler to force string values to be quoted
+func (mv MetadataValue) MarshalYAML() (interface{}, error) {
+	// Create a map that will be marshaled with explicit string quoting for string_value
+	result := map[string]interface{}{
+		"metadataType": mv.MetadataType,
+	}
+
+	// Force string_value to be quoted by using a yaml.Node with style set to DoubleQuotedStyle
+	if mv.StringValue != "" {
+		stringNode := &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: mv.StringValue,
+			Style: yaml.DoubleQuotedStyle,
+		}
+		result["string_value"] = stringNode
+	} else {
+		result["string_value"] = mv.StringValue
+	}
+
+	return result, nil
 }
 
 // CatalogOCIArtifact represents an OCI artifact for catalog output with string timestamps

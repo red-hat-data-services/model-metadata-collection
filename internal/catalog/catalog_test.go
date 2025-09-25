@@ -1327,3 +1327,70 @@ func TestCreateModelsCatalogWithStatic(t *testing.T) {
 		}
 	})
 }
+
+func TestConvertExtractedToCatalogMetadata_ValidatedOn(t *testing.T) {
+	// Test that ValidatedOn field is properly converted to customProperties
+	metadata := types.ExtractedMetadata{
+		Name:        stringPtr("Test Model"),
+		Provider:    stringPtr("Red Hat"),
+		Description: stringPtr("A test model"),
+		ValidatedOn: []string{"RHOAI 2.24", "RHAIIS 3.2.1"},
+		Tags:        []string{"validated", "featured"},
+		Artifacts:   []types.OCIArtifact{},
+	}
+
+	result := convertExtractedToCatalogMetadata(metadata)
+
+	// Check that validated_on is in customProperties
+	if result.CustomProperties == nil {
+		t.Error("Expected CustomProperties to be set")
+	} else {
+		validatedOnProp, exists := result.CustomProperties["validated_on"]
+		if !exists {
+			t.Error("Expected validated_on to be in CustomProperties")
+		} else {
+			expectedValue := types.MetadataValue{
+				MetadataType: "MetadataStringValue",
+				StringValue:  "RHOAI 2.24,RHAIIS 3.2.1",
+			}
+			if validatedOnProp != expectedValue {
+				t.Errorf("Expected validated_on customProperty to be %+v, got %+v", expectedValue, validatedOnProp)
+			}
+		}
+
+		// Check that tags are also converted
+		validatedTagProp, exists := result.CustomProperties["validated"]
+		if !exists {
+			t.Error("Expected validated tag to be in CustomProperties")
+		} else {
+			expectedTagValue := types.MetadataValue{
+				MetadataType: "MetadataStringValue",
+				StringValue:  "",
+			}
+			if validatedTagProp != expectedTagValue {
+				t.Errorf("Expected validated tag customProperty to be %+v, got %+v", expectedTagValue, validatedTagProp)
+			}
+		}
+	}
+}
+
+func TestConvertExtractedToCatalogMetadata_NoValidatedOn(t *testing.T) {
+	// Test that models without ValidatedOn don't have the customProperty
+	metadata := types.ExtractedMetadata{
+		Name:        stringPtr("Test Model"),
+		Provider:    stringPtr("Red Hat"),
+		Description: stringPtr("A test model"),
+		ValidatedOn: []string{}, // Empty validated_on
+		Tags:        []string{"featured"},
+		Artifacts:   []types.OCIArtifact{},
+	}
+
+	result := convertExtractedToCatalogMetadata(metadata)
+
+	// Check that validated_on is NOT in customProperties
+	if result.CustomProperties != nil {
+		if _, exists := result.CustomProperties["validated_on"]; exists {
+			t.Error("Expected validated_on to NOT be in CustomProperties when ValidatedOn is empty")
+		}
+	}
+}
