@@ -13,10 +13,10 @@ import (
 )
 
 // LoadExistingMetadata attempts to load existing metadata from processed models
-func LoadExistingMetadata(registryModel string) (*types.ExtractedMetadata, error) {
+func LoadExistingMetadata(registryModel, outputDir string) (*types.ExtractedMetadata, error) {
 	// Create sanitized directory name for the model
 	sanitizedName := utils.SanitizeManifestRef(registryModel)
-	metadataPath := fmt.Sprintf("output/%s/models/metadata.yaml", sanitizedName)
+	metadataPath := fmt.Sprintf("%s/%s/models/metadata.yaml", outputDir, sanitizedName)
 
 	data, err := os.ReadFile(metadataPath)
 	if err != nil {

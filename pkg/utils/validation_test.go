@@ -143,12 +143,12 @@ func TestParseDateToEpoch(t *testing.T) {
 		{
 			name:     "MM/DD/YYYY format",
 			input:    "01/15/2024",
-			expected: int64Ptr(time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC).Unix()),
+			expected: int64Ptr(time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC).Unix() * 1000),
 		},
 		{
 			name:     "YYYY-MM-DD format",
 			input:    "2024-01-15",
-			expected: int64Ptr(time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC).Unix()),
+			expected: int64Ptr(time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC).Unix() * 1000),
 		},
 		{
 			name:     "invalid date format",

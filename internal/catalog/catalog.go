@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -204,6 +205,12 @@ func convertExtractedToCatalogMetadata(model types.ExtractedMetadata) types.Cata
 
 	// Convert tags to customProperties
 	customProps := convertTagsToCustomProperties(model.Tags)
+
+	// Add validated_on as customProperty if present
+	if len(model.ValidatedOn) > 0 {
+		validatedOnValue := strings.Join(model.ValidatedOn, ",")
+		customProps["validated_on"] = createMetadataValue(validatedOnValue)
+	}
 
 	return types.CatalogMetadata{
 		Name:                     model.Name,

@@ -16,11 +16,11 @@ import (
 )
 
 // EnrichMetadataFromHuggingFace enriches registry model metadata using HuggingFace data
-func EnrichMetadataFromHuggingFace() error {
+func EnrichMetadataFromHuggingFace(hfIndexPath, modelsIndexPath, outputDir string) error {
 	log.Println("Enriching registry model metadata with HuggingFace data...")
 
 	// Load HuggingFace models
-	hfFilePath := "data/hugging-face-redhat-ai-validated-v1-0.yaml"
+	hfFilePath := hfIndexPath
 	hfData, err := os.ReadFile(hfFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read HuggingFace index: %v", err)
@@ -33,7 +33,7 @@ func EnrichMetadataFromHuggingFace() error {
 	}
 
 	// Load registry models
-	regModels, err := config.LoadModelsFromYAML("data/models-index.yaml")
+	regModels, err := config.LoadModelsFromYAML(modelsIndexPath)
 	if err != nil {
 		return fmt.Errorf("failed to load registry models: %v", err)
 	}
@@ -50,7 +50,7 @@ func EnrichMetadataFromHuggingFace() error {
 		}
 
 		// Try to load existing modelcard metadata
-		existingMetadata, err := metadata.LoadExistingMetadata(regModel)
+		existingMetadata, err := metadata.LoadExistingMetadata(regModel, outputDir)
 		if err != nil {
 			log.Printf("  No existing metadata found for %s", regModel)
 		}
@@ -68,13 +68,14 @@ func EnrichMetadataFromHuggingFace() error {
 		enriched.Downloads = metadata.CreateMetadataSource(nil, "null")
 		enriched.Likes = metadata.CreateMetadataSource(nil, "null")
 		enriched.ModelSize = metadata.CreateMetadataSource(nil, "null")
+		enriched.ValidatedOn = metadata.CreateMetadataSource(nil, "null")
 
 		// Populate from existing modelcard metadata if available (only for non-empty values)
 		// We need to determine if the data came from YAML frontmatter or text parsing
 		if existingMetadata != nil {
 			// Try to load the modelcard.md file to analyze the source
 			sanitizedName := utils.SanitizeManifestRef(regModel)
-			modelcardPath := fmt.Sprintf("output/%s/models/modelcard.md", sanitizedName)
+			modelcardPath := fmt.Sprintf("%s/%s/models/modelcard.md", outputDir, sanitizedName)
 
 			var modelcardContent string
 			var hasYAMLFrontmatter bool
@@ -368,6 +369,11 @@ func EnrichMetadataFromHuggingFace() error {
 						enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.yaml")
 						log.Printf("  Extracted pipeline_tag from YAML frontmatter: %s", frontmatter.PipelineTag)
 					}
+					// Always use validated_on from HuggingFace YAML (highest priority)
+					if len(frontmatter.ValidatedOn) > 0 {
+						enriched.ValidatedOn = metadata.CreateMetadataSource([]string(frontmatter.ValidatedOn), "huggingface.yaml")
+						log.Printf("  Extracted validated_on from YAML frontmatter: %v", frontmatter.ValidatedOn)
+					}
 				} else {
 					log.Printf("  No valid YAML frontmatter found in HF README: %v", err)
 				}
@@ -441,7 +447,7 @@ func EnrichMetadataFromHuggingFace() error {
 			}
 
 			// Update the model's metadata.yaml file with enriched data
-			err = UpdateModelMetadataFile(regModel, &enriched)
+			err = UpdateModelMetadataFile(regModel, &enriched, outputDir)
 			if err != nil {
 				log.Printf("  Warning: Failed to update metadata file for %s: %v", regModel, err)
 			} else {
@@ -449,7 +455,7 @@ func EnrichMetadataFromHuggingFace() error {
 
 				// Also update artifacts with OCI metadata
 				log.Printf("  Updating OCI artifacts for: %s", regModel)
-				err = UpdateOCIArtifacts(regModel)
+				err = UpdateOCIArtifacts(regModel, outputDir)
 				if err != nil {
 					log.Printf("  Warning: Failed to update OCI artifacts for %s: %v", regModel, err)
 				} else {
@@ -476,11 +482,11 @@ func EnrichMetadataFromHuggingFace() error {
 }
 
 // UpdateAllModelsWithOCIArtifacts updates all existing models with OCI artifact metadata
-func UpdateAllModelsWithOCIArtifacts() error {
+func UpdateAllModelsWithOCIArtifacts(modelsIndexPath, outputDir string) error {
 	log.Println("Updating all existing models with OCI artifact metadata...")
 
 	// Load all models from the index
-	regModels, err := config.LoadModelsFromYAML("data/models-index.yaml")
+	regModels, err := config.LoadModelsFromYAML(modelsIndexPath)
 	if err != nil {
 		return fmt.Errorf("failed to load registry models: %v", err)
 	}
@@ -491,11 +497,11 @@ func UpdateAllModelsWithOCIArtifacts() error {
 	for _, regModel := range regModels {
 		// Check if metadata file exists
 		sanitizedName := utils.SanitizeManifestRef(regModel)
-		metadataPath := fmt.Sprintf("output/%s/models/metadata.yaml", sanitizedName)
+		metadataPath := fmt.Sprintf("%s/%s/models/metadata.yaml", outputDir, sanitizedName)
 
 		if _, err := os.Stat(metadataPath); err == nil {
 			log.Printf("  Updating OCI artifacts for: %s", regModel)
-			err = UpdateOCIArtifacts(regModel)
+			err = UpdateOCIArtifacts(regModel, outputDir)
 			if err != nil {
 				log.Printf("  Warning: Failed to update OCI artifacts for %s: %v", regModel, err)
 			} else {
@@ -515,9 +521,9 @@ func UpdateAllModelsWithOCIArtifacts() error {
 }
 
 // UpdateOCIArtifacts updates the artifacts field with proper OCI metadata for existing models
-func UpdateOCIArtifacts(registryModel string) error {
+func UpdateOCIArtifacts(registryModel, outputDir string) error {
 	// Load existing metadata
-	existingMetadata, err := metadata.LoadExistingMetadata(registryModel)
+	existingMetadata, err := metadata.LoadExistingMetadata(registryModel, outputDir)
 	if err != nil {
 		return fmt.Errorf("failed to load existing metadata: %v", err)
 	}
@@ -542,7 +548,7 @@ func UpdateOCIArtifacts(registryModel string) error {
 
 	// Write updated metadata back to file
 	sanitizedName := utils.SanitizeManifestRef(registryModel)
-	metadataPath := fmt.Sprintf("output/%s/models/metadata.yaml", sanitizedName)
+	metadataPath := fmt.Sprintf("%s/%s/models/metadata.yaml", outputDir, sanitizedName)
 
 	updatedData, err := yaml.Marshal(existingMetadata)
 	if err != nil {
