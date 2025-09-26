@@ -71,7 +71,7 @@ func SanitizeManifestRef(manifestRef string) string {
 	return sanitized
 }
 
-// parseDateToEpoch converts a date string to Unix epoch timestamp
+// parseDateToEpoch converts a date string to Unix epoch timestamp in milliseconds
 func ParseDateToEpoch(dateStr string) *int64 {
 	dateStr = CleanExtractedValue(dateStr)
 
@@ -90,7 +90,7 @@ func ParseDateToEpoch(dateStr string) *int64 {
 
 	for _, format := range formats {
 		if t, err := time.Parse(format, dateStr); err == nil {
-			epoch := t.Unix()
+			epoch := t.Unix() * 1000
 			return &epoch
 		}
 	}
