@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -14,6 +15,36 @@ import (
 	"github.com/opendatahub-io/model-metadata-collection/pkg/types"
 	"github.com/opendatahub-io/model-metadata-collection/pkg/utils"
 )
+
+// isCompatibleModelFamily checks if a container registry model can be matched with a HuggingFace model
+// This prevents cross-family matching (e.g., llama containers matching granite HF entries)
+func isCompatibleModelFamily(regModel, hfModelName string) bool {
+	regNorm := utils.NormalizeModelName(regModel)
+	hfNorm := utils.NormalizeModelName(hfModelName)
+	
+	// Extract model family identifiers
+	regFamily := extractModelFamily(regNorm)
+	hfFamily := extractModelFamily(hfNorm)
+	
+	// Allow matching within the same family or when families are unknown
+	return regFamily == "" || hfFamily == "" || regFamily == hfFamily
+}
+
+// extractModelFamily extracts the model family from a normalized model name
+func extractModelFamily(normalizedName string) string {
+	tokens := strings.FieldsFunc(normalizedName, func(r rune) bool {
+		return r == '-' || r == '_' || r == '/' || r == '.'
+	})
+
+	for _, token := range tokens {
+		switch token {
+		case "llama", "granite", "mistral", "gemma", "qwen", "phi", "mixtral", "deepseek", "kimi":
+			return token
+		}
+	}
+
+	return ""
+}
 
 // EnrichMetadataFromHuggingFace enriches registry model metadata using HuggingFace data
 func EnrichMetadataFromHuggingFace(hfIndexPath, modelsIndexPath, outputDir string) error {
@@ -223,6 +254,11 @@ func EnrichMetadataFromHuggingFace(hfIndexPath, modelsIndexPath, outputDir strin
 		bestScore := 0.0
 
 		for _, hfModel := range hfIndex.Models {
+			// Skip cross-family matches to prevent llama containers from matching granite HF entries
+			if !isCompatibleModelFamily(regModel, hfModel.Name) {
+				continue
+			}
+			
 			score := utils.CalculateSimilarity(regModel, hfModel.Name)
 			if score > bestScore {
 				bestScore = score
