@@ -32,36 +32,17 @@ func isCompatibleModelFamily(regModel, hfModelName string) bool {
 
 // extractModelFamily extracts the model family from a normalized model name
 func extractModelFamily(normalizedName string) string {
-	// Check for known model families
-	if strings.Contains(normalizedName, "llama") {
-		return "llama"
+	tokens := strings.FieldsFunc(normalizedName, func(r rune) bool {
+		return r == '-' || r == '_' || r == '/' || r == '.'
+	})
+
+	for _, token := range tokens {
+		switch token {
+		case "llama", "granite", "mistral", "gemma", "qwen", "phi", "mixtral", "deepseek", "kimi":
+			return token
+		}
 	}
-	if strings.Contains(normalizedName, "granite") {
-		return "granite"
-	}
-	if strings.Contains(normalizedName, "mistral") {
-		return "mistral"
-	}
-	if strings.Contains(normalizedName, "gemma") {
-		return "gemma"
-	}
-	if strings.Contains(normalizedName, "qwen") {
-		return "qwen"
-	}
-	if strings.Contains(normalizedName, "phi") {
-		return "phi"
-	}
-	if strings.Contains(normalizedName, "mixtral") {
-		return "mixtral"
-	}
-	if strings.Contains(normalizedName, "deepseek") {
-		return "deepseek"
-	}
-	if strings.Contains(normalizedName, "kimi") {
-		return "kimi"
-	}
-	
-	// Return empty string for unknown families (allows matching)
+
 	return ""
 }
 

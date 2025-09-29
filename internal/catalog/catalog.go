@@ -356,11 +356,13 @@ func deduplicateAndMergeModels(models []types.CatalogMetadata) []types.CatalogMe
 		return models
 	}
 
+	var unnamed []types.CatalogMetadata
+
 	// Group models by name (case-insensitive)
 	modelGroups := make(map[string][]types.CatalogMetadata)
 	for _, model := range models {
 		if model.Name == nil {
-			// Skip models without names
+			unnamed = append(unnamed, model)
 			continue
 		}
 		normalizedName := strings.ToLower(*model.Name)
@@ -401,7 +403,7 @@ func deduplicateAndMergeModels(models []types.CatalogMetadata) []types.CatalogMe
 		return nameI < nameJ
 	})
 
-	return result
+	return append(result, unnamed...)
 }
 
 // mergeModelGroup merges a group of duplicate models into a single consolidated model
