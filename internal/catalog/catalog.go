@@ -143,6 +143,9 @@ func CreateModelsCatalogWithStatic(outputDir, catalogPath string, staticModels [
 		catalogModels = append(catalogModels, catalogModel)
 	}
 
+	// Deduplicate models by consolidating artifacts and merging metadata
+	catalogModels = deduplicateAndMergeModels(catalogModels)
+
 	// Merge static models with dynamic models (static models are appended at the end)
 	catalogModels = append(catalogModels, staticModels...)
 
@@ -345,4 +348,210 @@ func encodeSVGToDataURI(svgPath string) *string {
 	// Create data URI
 	dataUri := "data:image/svg+xml;base64," + base64Content
 	return &dataUri
+}
+
+// deduplicateAndMergeModels consolidates duplicate models by merging their artifacts and metadata
+func deduplicateAndMergeModels(models []types.CatalogMetadata) []types.CatalogMetadata {
+	if len(models) <= 1 {
+		return models
+	}
+
+	// Group models by name (case-insensitive)
+	modelGroups := make(map[string][]types.CatalogMetadata)
+	for _, model := range models {
+		if model.Name == nil {
+			// Skip models without names
+			continue
+		}
+		normalizedName := strings.ToLower(*model.Name)
+		modelGroups[normalizedName] = append(modelGroups[normalizedName], model)
+	}
+
+	var result []types.CatalogMetadata
+	duplicatesFound := 0
+
+	for groupName, group := range modelGroups {
+		if len(group) == 1 {
+			// No duplicates, add as-is
+			result = append(result, group[0])
+		} else {
+			// Merge duplicates
+			log.Printf("Found %d duplicate models for '%s', consolidating...", len(group), groupName)
+			duplicatesFound += len(group) - 1
+			
+			merged := mergeModelGroup(group)
+			result = append(result, merged)
+		}
+	}
+
+	if duplicatesFound > 0 {
+		log.Printf("Successfully deduplicated %d models, consolidated %d duplicate entries", duplicatesFound, duplicatesFound)
+	}
+
+	// Sort result by name for consistent output
+	sort.Slice(result, func(i, j int) bool {
+		nameI := ""
+		nameJ := ""
+		if result[i].Name != nil {
+			nameI = *result[i].Name
+		}
+		if result[j].Name != nil {
+			nameJ = *result[j].Name
+		}
+		return nameI < nameJ
+	})
+
+	return result
+}
+
+// mergeModelGroup merges a group of duplicate models into a single consolidated model
+func mergeModelGroup(group []types.CatalogMetadata) types.CatalogMetadata {
+	if len(group) == 0 {
+		return types.CatalogMetadata{}
+	}
+
+	// Start with the first model as base
+	merged := group[0]
+
+	// Consolidate all artifacts from all models
+	var allArtifacts []types.CatalogOCIArtifact
+	artifactURIs := make(map[string]bool) // Track unique URIs
+
+	for _, model := range group {
+		for _, artifact := range model.Artifacts {
+			// Only add if URI is unique
+			if !artifactURIs[artifact.URI] {
+				allArtifacts = append(allArtifacts, artifact)
+				artifactURIs[artifact.URI] = true
+			}
+		}
+	}
+	merged.Artifacts = allArtifacts
+
+	// Find earliest createTime and latest updateTime
+	var earliestCreate *string
+	var latestUpdate *string
+
+	for _, model := range group {
+		// Check model-level timestamps
+		if model.CreateTimeSinceEpoch != nil {
+			if earliestCreate == nil || compareTimestamps(*model.CreateTimeSinceEpoch, *earliestCreate) < 0 {
+				earliestCreate = model.CreateTimeSinceEpoch
+			}
+		}
+		if model.LastUpdateTimeSinceEpoch != nil {
+			if latestUpdate == nil || compareTimestamps(*model.LastUpdateTimeSinceEpoch, *latestUpdate) > 0 {
+				latestUpdate = model.LastUpdateTimeSinceEpoch
+			}
+		}
+
+		// Check artifact-level timestamps
+		for _, artifact := range model.Artifacts {
+			if artifact.CreateTimeSinceEpoch != nil {
+				if earliestCreate == nil || compareTimestamps(*artifact.CreateTimeSinceEpoch, *earliestCreate) < 0 {
+					earliestCreate = artifact.CreateTimeSinceEpoch
+				}
+			}
+			if artifact.LastUpdateTimeSinceEpoch != nil {
+				if latestUpdate == nil || compareTimestamps(*artifact.LastUpdateTimeSinceEpoch, *latestUpdate) > 0 {
+					latestUpdate = artifact.LastUpdateTimeSinceEpoch
+				}
+			}
+		}
+	}
+
+	merged.CreateTimeSinceEpoch = earliestCreate
+	merged.LastUpdateTimeSinceEpoch = latestUpdate
+
+	// Merge metadata fields - prefer non-empty values, with priority to first model
+	for i := 1; i < len(group); i++ {
+		model := group[i]
+
+		// Only override if current field is empty and new field has value
+		if merged.Provider == nil && model.Provider != nil {
+			merged.Provider = model.Provider
+		}
+		if merged.Description == nil && model.Description != nil {
+			merged.Description = model.Description
+		}
+		if merged.Readme == nil && model.Readme != nil {
+			merged.Readme = model.Readme
+		}
+		if merged.License == nil && model.License != nil {
+			merged.License = model.License
+		}
+		if merged.LicenseLink == nil && model.LicenseLink != nil {
+			merged.LicenseLink = model.LicenseLink
+		}
+
+		// Merge arrays by combining unique values
+		if len(model.Language) > 0 {
+			merged.Language = mergeUniqueStrings(merged.Language, model.Language)
+		}
+		if len(model.Tasks) > 0 {
+			merged.Tasks = mergeUniqueStrings(merged.Tasks, model.Tasks)
+		}
+
+		// Merge custom properties
+		if model.CustomProperties != nil {
+			if merged.CustomProperties == nil {
+				merged.CustomProperties = make(map[string]types.MetadataValue)
+			}
+			for key, value := range model.CustomProperties {
+				if _, exists := merged.CustomProperties[key]; !exists {
+					merged.CustomProperties[key] = value
+				}
+			}
+		}
+	}
+
+	// Log the consolidation details
+	log.Printf("  Consolidated %d models into '%s' with %d artifacts", len(group), *merged.Name, len(merged.Artifacts))
+	for _, artifact := range merged.Artifacts {
+		log.Printf("    - %s", artifact.URI)
+	}
+
+	return merged
+}
+
+// compareTimestamps compares two timestamp strings, returns -1 if a < b, 1 if a > b, 0 if equal
+func compareTimestamps(a, b string) int {
+	timestampA, errA := strconv.ParseInt(a, 10, 64)
+	timestampB, errB := strconv.ParseInt(b, 10, 64)
+
+	if errA != nil || errB != nil {
+		// Fallback to string comparison if parsing fails
+		return strings.Compare(a, b)
+	}
+
+	if timestampA < timestampB {
+		return -1
+	} else if timestampA > timestampB {
+		return 1
+	}
+	return 0
+}
+
+// mergeUniqueStrings combines two string slices and removes duplicates
+func mergeUniqueStrings(slice1, slice2 []string) []string {
+	seen := make(map[string]bool)
+	var result []string
+
+	// Add from first slice
+	for _, item := range slice1 {
+		if !seen[item] && item != "" {
+			result = append(result, item)
+			seen[item] = true
+		}
+	}
+
+	// Add from second slice
+	for _, item := range slice2 {
+		if !seen[item] && item != "" {
+			result = append(result, item)
+			seen[item] = true
+		}
+	}
+
+	return result
 }
