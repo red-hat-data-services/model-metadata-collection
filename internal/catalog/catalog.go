@@ -361,11 +361,11 @@ func deduplicateAndMergeModels(models []types.CatalogMetadata) []types.CatalogMe
 	// Group models by name (case-insensitive)
 	modelGroups := make(map[string][]types.CatalogMetadata)
 	for _, model := range models {
-		if model.Name == nil {
+		if model.Name == nil || strings.TrimSpace(*model.Name) == "" {
 			unnamed = append(unnamed, model)
 			continue
 		}
-		normalizedName := strings.ToLower(*model.Name)
+		normalizedName := strings.ToLower(strings.TrimSpace(*model.Name))
 		modelGroups[normalizedName] = append(modelGroups[normalizedName], model)
 	}
 
