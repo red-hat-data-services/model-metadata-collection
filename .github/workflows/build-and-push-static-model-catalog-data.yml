@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths:
-      - 'data/**'
-      - 'Dockerfile'
-      - '.github/workflows/build-and-push-static-model-catalog-data.yml'
+      - "data/**"
+      - "Dockerfile"
+      - ".github/workflows/build-and-push-static-model-catalog-data.yml"
   pull_request:
     branches:
       - main
     paths:
-      - 'data/**'
-      - 'Dockerfile'
-      - '.github/workflows/build-and-push-static-model-catalog-data.yml'
+      - "data/**"
+      - "Dockerfile"
+      - ".github/workflows/build-and-push-static-model-catalog-data.yml"
   workflow_dispatch:
 
 env:
@@ -78,3 +78,6 @@ jobs:
           echo "Static model catalog data image pushed to: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
           echo "Tags:"
           echo "${{ steps.meta.outputs.tags }}" | sed 's/^/  - /'
+
+      - name: Run tests
+        run: make test
