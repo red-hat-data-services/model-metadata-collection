@@ -29,6 +29,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Run tests
+        run: make test
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -78,6 +81,3 @@ jobs:
           echo "Static model catalog data image pushed to: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
           echo "Tags:"
           echo "${{ steps.meta.outputs.tags }}" | sed 's/^/  - /'
-
-      - name: Run tests
-        run: make test
