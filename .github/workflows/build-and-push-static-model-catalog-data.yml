@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths:
-      - "data/**"
-      - "Dockerfile"
-      - ".github/workflows/build-and-push-static-model-catalog-data.yml"
+      - 'data/**'
+      - 'Dockerfile'
+      - '.github/workflows/build-and-push-static-model-catalog-data.yml'
   pull_request:
     branches:
       - main
     paths:
-      - "data/**"
-      - "Dockerfile"
-      - ".github/workflows/build-and-push-static-model-catalog-data.yml"
+      - 'data/**'
+      - 'Dockerfile'
+      - '.github/workflows/build-and-push-static-model-catalog-data.yml'
   workflow_dispatch:
 
 env:
