@@ -153,23 +153,23 @@ func CalculateSimilarity(s1, s2 string) float64 {
 		return 1.0
 	}
 
-	// Check if one contains the other
-	if strings.Contains(s1Norm, s2Norm) || strings.Contains(s2Norm, s1Norm) {
-		return 0.8
-	}
-
 	// Count common words/tokens
+	// This provides better specificity than simple substring matching
 	s1Tokens := strings.Split(s1Norm, "-")
 	s2Tokens := strings.Split(s2Norm, "-")
 
+	// Track which s2 tokens have been matched to ensure symmetric results
+	// Each token in s2 can only be matched once
+	usedS2 := make(map[int]bool)
 	commonTokens := 0
 	for _, token1 := range s1Tokens {
 		if token1 == "" {
 			continue
 		}
-		for _, token2 := range s2Tokens {
-			if token1 == token2 {
+		for j, token2 := range s2Tokens {
+			if token1 == token2 && !usedS2[j] {
 				commonTokens++
+				usedS2[j] = true
 				break
 			}
 		}
@@ -184,7 +184,17 @@ func CalculateSimilarity(s1, s2 string) float64 {
 		return 0.0
 	}
 
-	return float64(commonTokens) / float64(maxTokens)
+	tokenScore := float64(commonTokens) / float64(maxTokens)
+
+	// Boost score if one string contains the other (indicates close relationship)
+	// but don't override token-based matching which provides better specificity
+	if strings.Contains(s1Norm, s2Norm) || strings.Contains(s2Norm, s1Norm) {
+		// Give a small boost to substring matches, but token score takes precedence
+		// This ensures more specific matches (e.g., with quantization suffix) score higher
+		return tokenScore + (1.0-tokenScore)*0.1
+	}
+
+	return tokenScore
 }
 
 // GenerateReadableDescription creates a human-readable description from a model name

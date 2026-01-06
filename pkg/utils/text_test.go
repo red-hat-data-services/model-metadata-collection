@@ -129,39 +129,118 @@ func TestCalculateSimilarity(t *testing.T) {
 		name     string
 		s1       string
 		s2       string
-		expected float64
+		minScore float64
+		maxScore float64
 	}{
 		{
 			name:     "exact match",
 			s1:       "test-model",
 			s2:       "test-model",
-			expected: 1.0,
-		},
-		{
-			name:     "one contains other",
-			s1:       "test-model-v1",
-			s2:       "test-model",
-			expected: 0.8,
+			minScore: 1.0,
+			maxScore: 1.0,
 		},
 		{
 			name:     "no similarity",
 			s1:       "completely-different",
 			s2:       "model-name",
-			expected: 0.0,
+			minScore: 0.0,
+			maxScore: 0.0,
 		},
 		{
 			name:     "partial similarity",
 			s1:       "granite-3-1-8b",
 			s2:       "granite-8b-model",
-			expected: 0.5, // 2 common tokens out of 4 max tokens
+			minScore: 0.5,
+			maxScore: 0.5,
+		},
+		{
+			name:     "quantized model should match specific HF model better than generic",
+			s1:       "registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5",
+			s2:       "RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
+			minScore: 0.85,
+			maxScore: 1.0,
+		},
+		{
+			name:     "quantized model vs generic model (should score lower)",
+			s1:       "registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5",
+			s2:       "RedHatAI/Llama-3.1-8B-Instruct",
+			minScore: 0.5,
+			maxScore: 0.8,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := CalculateSimilarity(tt.s1, tt.s2)
-			if result != tt.expected {
-				t.Errorf("CalculateSimilarity() = %v, expected %v", result, tt.expected)
+			score := CalculateSimilarity(tt.s1, tt.s2)
+			if score < tt.minScore || score > tt.maxScore {
+				t.Errorf("CalculateSimilarity(%q, %q) = %f, expected between %f and %f",
+					tt.s1, tt.s2, score, tt.minScore, tt.maxScore)
+			}
+		})
+	}
+}
+
+func TestCalculateSimilarity_SpecificMatchesBetter(t *testing.T) {
+	// This test ensures that RHOAIENG-38645 bug is fixed:
+	// When matching "modelcar-llama-3-1-8b-instruct-quantized-w4a16",
+	// it should prefer "Meta-Llama-3.1-8B-Instruct-quantized.w4a16"
+	// over "Llama-3.1-8B-Instruct"
+
+	container := "registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5"
+	correctMatch := "RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w4a16"
+	wrongMatch := "RedHatAI/Llama-3.1-8B-Instruct"
+
+	correctScore := CalculateSimilarity(container, correctMatch)
+	wrongScore := CalculateSimilarity(container, wrongMatch)
+
+	if wrongScore >= correctScore {
+		t.Errorf("Wrong match scored higher! correct=%f, wrong=%f. "+
+			"Expected correct match to score higher for quantized model matching.",
+			correctScore, wrongScore)
+	}
+
+	// The correct match should be significantly better (at least 10% higher)
+	minDifference := 0.1
+	if (correctScore - wrongScore) < minDifference {
+		t.Errorf("Score difference too small: correct=%f, wrong=%f, diff=%f. "+
+			"Expected at least %f difference.",
+			correctScore, wrongScore, correctScore-wrongScore, minDifference)
+	}
+}
+
+func TestCalculateSimilarity_Symmetry(t *testing.T) {
+	// Test that similarity is symmetric (swapping s1 and s2 gives same result)
+	// This ensures duplicate tokens are handled correctly
+	testCases := []struct {
+		name string
+		s1   string
+		s2   string
+	}{
+		{
+			name: "duplicate tokens in first string",
+			s1:   "llama-3-3-70b-instruct",
+			s2:   "llama-3-70b-instruct",
+		},
+		{
+			name: "duplicate tokens in second string",
+			s1:   "granite-8b-model",
+			s2:   "granite-3-1-3-8b",
+		},
+		{
+			name: "complex model names",
+			s1:   "registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5",
+			s2:   "RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w4a16",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			score1 := CalculateSimilarity(tc.s1, tc.s2)
+			score2 := CalculateSimilarity(tc.s2, tc.s1)
+
+			if score1 != score2 {
+				t.Errorf("Similarity is not symmetric: CalculateSimilarity(%q, %q) = %f, but CalculateSimilarity(%q, %q) = %f",
+					tc.s1, tc.s2, score1, tc.s2, tc.s1, score2)
 			}
 		})
 	}
