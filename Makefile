@@ -18,8 +18,10 @@ MAIN_PATH=./cmd/model-extractor
 # Default data paths
 REDHAT_MODELS_INDEX_PATH=data/models-index.yaml
 VALIDATED_MODELS_INDEX_PATH=data/validated-models-index.yaml
+OTHER_MODELS_INDEX_PATH=data/other-models-index.yaml
 REDHAT_CATALOG_OUTPUT_PATH=data/models-catalog.yaml
 VALIDATED_CATALOG_OUTPUT_PATH=data/validated-models-catalog.yaml
+OTHER_CATALOG_OUTPUT_PATH=data/other-models-catalog.yaml
 
 # Container parameters
 CONTAINER_RUNTIME?=$(shell command -v podman 2>/dev/null || command -v docker 2>/dev/null || echo docker)
@@ -130,6 +132,11 @@ process: build
 		--output-dir output/validated \
 		--catalog-output $(VALIDATED_CATALOG_OUTPUT_PATH) \
 		--skip-default-static-catalog
+	./$(BUILD_DIR)/$(BINARY_NAME) \
+		--input $(OTHER_MODELS_INDEX_PATH) \
+		--output-dir output/other \
+		--catalog-output $(OTHER_CATALOG_OUTPUT_PATH) \
+		--skip-default-static-catalog
 
 # Generate metadata completeness report
 report: build-report
@@ -212,7 +219,7 @@ help:
 	@echo "  deps         - Download dependencies"
 	@echo "  check        - Run all checks (fmt-check, vet, lint)"
 	@echo "  run          - Run with default settings"
-	@echo "  process      - Run with custom input/output paths"
+	@echo "  process      - Process all model indexes (redhat, validated, other)"
 	@echo "  report       - Generate metadata completeness report"
 	@echo "  run-with-report - Run extraction then generate report"
 	@echo "  dev          - Quick development iteration"
