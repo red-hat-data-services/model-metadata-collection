@@ -56,6 +56,21 @@ func TestParseVersionFromTitle(t *testing.T) {
 			expected: "v1.0-granite-quantized",
 		},
 		{
+			name:     "embedding models collection",
+			title:    "Embedding Models",
+			expected: "v1.0-embedding-models",
+		},
+		{
+			name:     "embedding models with different casing",
+			title:    "EMBEDDING MODELS",
+			expected: "v1.0-embedding-models",
+		},
+		{
+			name:     "embedding models with extra words",
+			title:    "Red Hat AI Embedding Models Collection",
+			expected: "v1.0-embedding-models",
+		},
+		{
 			name:     "no matching pattern",
 			title:    "Some other collection",
 			expected: "",
