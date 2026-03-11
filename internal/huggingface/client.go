@@ -95,6 +95,7 @@ func DiscoverValidatedModelCollections() ([]string, error) {
 		regexp.MustCompile(`(?i)red.?hat.?ai.?validated.?models`),
 		regexp.MustCompile(`(?i)red\s+hat\s+ai\s+validated\s+models\s+-\s+(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}`),
 		regexp.MustCompile(`(?i)granite.?quantized`),
+		regexp.MustCompile(`(?i)embedding.?models`),
 	}
 
 	for _, collection := range collections {
