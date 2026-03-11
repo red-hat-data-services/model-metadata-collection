@@ -103,6 +103,109 @@ models:
     readme_path: /RedHatAI/Llama-4-Scout-17B-16E-Instruct/README.md
 ```
 
+## HuggingFace Collection Index File Naming Convention
+
+**CRITICAL**: All HuggingFace collection index files MUST follow a specific naming pattern to be discoverable by the system.
+
+### Naming Requirements
+
+The `GetLatestVersionIndexFile()` function uses the glob pattern:
+```go
+filepath.Glob("data/hugging-face-redhat-ai-validated-v*.yaml")
+```
+
+This requires ALL index files to:
+1. Start with prefix: `data/hugging-face-redhat-ai-validated-`
+2. **MUST** include a `v` immediately after the prefix (e.g., `v2026-02`, `v1-0-granite-quantized`)
+3. End with `.yaml` extension
+
+### File Naming Examples
+
+**Date-based Collections:**
+- ✅ `data/hugging-face-redhat-ai-validated-v2026-02.yaml` (February 2026)
+- ✅ `data/hugging-face-redhat-ai-validated-v2025-09.yaml` (September 2025)
+- ❌ `data/hugging-face-redhat-ai-validated-2026-02.yaml` (missing 'v' prefix)
+
+**Special Collections (non-dated):**
+- ✅ `data/hugging-face-redhat-ai-validated-v1-0-granite-quantized.yaml`
+- ✅ `data/hugging-face-redhat-ai-validated-v1-0-embedding-models.yaml`
+- ❌ `data/hugging-face-redhat-ai-validated-granite-quantized.yaml` (missing 'v' prefix)
+- ❌ `data/hugging-face-redhat-ai-validated-embedding-models.yaml` (missing 'v' prefix)
+
+### Version String Format in Code
+
+When adding a new special collection type in `parseVersionFromTitle()` (internal/huggingface/collections.go):
+
+```go
+// CORRECT - includes v prefix for compatibility with GetLatestVersionIndexFile
+if strings.Contains(lowerTitle, "embedding") {
+    return "v1.0-embedding-models"  // Will generate: v1-0-embedding-models.yaml
+}
+
+// INCORRECT - missing v prefix, file won't be discovered
+if strings.Contains(lowerTitle, "embedding") {
+    return "embedding-models"  // Would generate: embedding-models.yaml (not found!)
+}
+```
+
+### Version Field Inside Files
+
+The `version` field inside the YAML file should match the version string returned by `parseVersionFromTitle()`:
+
+```yaml
+# File: data/hugging-face-redhat-ai-validated-v1-0-embedding-models.yaml
+version: v1.0-embedding-models  # Matches the parseVersionFromTitle() return value
+models:
+  - name: RedHatAI/embeddinggemma-300m
+    # ...
+```
+
+### Adding New Special Collections
+
+When adding a new special collection (like granite-quantized or embedding-models):
+
+1. **Update `parseVersionFromTitle()`** in `internal/huggingface/collections.go`:
+   ```go
+   if strings.Contains(lowerTitle, "your-collection-keyword") {
+       return "v1.0-your-collection-name"  // MUST start with 'v'
+   }
+   ```
+
+2. **Update discovery patterns** in `DiscoverValidatedModelCollections()` in `internal/huggingface/client.go`:
+   ```go
+   validatedPatterns := []*regexp.Regexp{
+       // ... existing patterns ...
+       regexp.MustCompile(`(?i)your.?collection.?keyword`),
+   }
+   ```
+
+3. **Add to fallback list** in `ProcessCollections()` in `internal/huggingface/collections.go`:
+   ```go
+   collectionSlugs = []string{
+       // ... existing collections ...
+       "RedHatAI/your-collection-slug",
+   }
+   ```
+
+4. **Update tests** in `internal/huggingface/collections_test.go`:
+   ```go
+   {
+       name:     "your collection test",
+       title:    "Your Collection Title",
+       expected: "v1.0-your-collection-name",  // Must match parseVersionFromTitle()
+   },
+   ```
+
+### Why the 'v' Prefix is Required
+
+Without the 'v' prefix, the files will:
+- ❌ Not be found by `GetLatestVersionIndexFile()`
+- ❌ Not be included in automatic version detection
+- ✅ Still be included in `generateMergedIndex()` (uses broader `*` pattern)
+- ⚠️  Result in inconsistent behavior depending on code path
+
+**Always use the 'v' prefix to ensure files are discoverable across all code paths.**
+
 ## Docker Build and Deployment
 
 ### Prerequisites
