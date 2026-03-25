@@ -28,3 +28,4 @@ What actually happened, including any error messages or logs.
 
 **Additional context**
 Add any other context about the problem here (logs, screenshots, config files, etc.).
+Please redact secrets and sensitive data (tokens, passwords, keys, personal data) before attaching files.
