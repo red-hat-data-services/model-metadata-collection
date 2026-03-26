@@ -12,11 +12,14 @@ COPY data/validated-models-catalog.yaml /app/data/
 COPY data/validated-models-index.yaml /app/data/
 COPY data/other-models-catalog.yaml /app/data/
 COPY data/other-models-index.yaml /app/data/
+COPY data/redhat-mcp-servers-catalog.yaml /app/data/
+COPY data/redhat-mcp-servers-index.yaml /app/data/
 
 # Set proper permissions
 RUN chmod 644 /app/data/models-catalog.yaml /app/data/models-index.yaml && \
     chmod 644 /app/data/validated-models-catalog.yaml /app/data/validated-models-index.yaml && \
-    chmod 644 /app/data/other-models-catalog.yaml /app/data/other-models-index.yaml
+    chmod 644 /app/data/other-models-catalog.yaml /app/data/other-models-index.yaml && \
+    chmod 644 /app/data/redhat-mcp-servers-catalog.yaml /app/data/redhat-mcp-servers-index.yaml
 
 # Create a non-root user for security
 RUN echo "catalog:x:1001:1001:Catalog User:/app:/sbin/nologin" >> /etc/passwd && \
@@ -39,7 +42,7 @@ CMD ["sleep", "infinity"]
 LABEL \
     com.redhat.component="odh-model-metadata-collection" \
     name="managed-open-data-hub/odh-model-metadata-collection-rhel9" \
-    description="Container that provides a catalog Red Hat AI validated models." \
+    description="Container that provides a catalog of Red Hat AI models and mcp servers." \
     summary="model-metadata-collection" \
     maintainer="['managed-open-data-hub@redhat.com']" \
     io.openshift.expose-services="" \
