@@ -126,14 +126,14 @@ tools:
       parameters: []
 artifacts:
     - uri: oci://quay.io/redhat-user-workloads/crt-nshift-lightspeed-tenant/openshift-mcp-server:latest
-      createTimeSinceEpoch: "1753292581000"
-      lastUpdateTimeSinceEpoch: "1774534350000"
+      createTimeSinceEpoch: "1774886907000"
+      lastUpdateTimeSinceEpoch: "1774886908000"
 runtimeMetadata:
-    defaultPort: 8080
-    mcpPath: /mcp
-    arguments:
+    defaultArgs:
         - --config
         - /etc/mcp-config/config.toml
+    defaultPort: 8080
+    mcpPath: /mcp
     prerequisites:
         configMaps:
             - description: Optional configuration for MCP server settings
@@ -175,4 +175,4 @@ customProperties:
         metadataType: MetadataStringValue
         string_value: ""
 createTimeSinceEpoch: "1753228800000"
-lastUpdateTimeSinceEpoch: "1774534350000"
+lastUpdateTimeSinceEpoch: "1774886908000"
