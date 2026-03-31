@@ -130,7 +130,7 @@ artifacts:
 runtimeMetadata:
   defaultPort: 8080
   mcpPath: /mcp
-  arguments:
+  defaultArgs:
     - --foreman-url
     - https://satellite.example.com
     - --ca-bundle
