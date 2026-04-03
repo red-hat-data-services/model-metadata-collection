@@ -2,7 +2,7 @@ module github.com/opendatahub-io/model-metadata-collection
 
 go 1.24
 
-toolchain go1.25.7
+toolchain go1.26.1
 
 require (
 	github.com/containers/image/v5 v5.36.1
