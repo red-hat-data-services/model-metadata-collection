@@ -200,6 +200,7 @@ type EnrichmentInfo struct {
 		LastUpdateTimeSinceEpoch string `json:"lastUpdateTimeSinceEpoch"`
 		Artifacts                string `json:"artifacts"`
 		ValidatedOn              string `json:"validatedOn"`
+		HardwareTag              string `json:"hardwareTag"`
 	} `json:"dataSources"`
 }
 

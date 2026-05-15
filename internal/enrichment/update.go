@@ -86,6 +86,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 			LastModified         string `yaml:"last_modified,omitempty"`
 			CreateTimeSinceEpoch string `yaml:"create_time_since_epoch,omitempty"`
 			ValidatedOn          string `yaml:"validated_on,omitempty"`
+			HardwareTag          string `yaml:"hardware_tag,omitempty"`
 			Readme               string `yaml:"readme,omitempty"`
 		} `yaml:"data_sources"`
 	}{}
@@ -323,6 +324,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 					log.Printf("  Using hardware_tag from enrichedData: %v", normalized)
 					existingMetadata.HardwareTag = normalized
 				}
+				enrichmentInfo.DataSources.HardwareTag = enrichedData.HardwareTag.Source
 			}
 		}
 	}
