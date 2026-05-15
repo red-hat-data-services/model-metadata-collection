@@ -301,6 +301,32 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 		}
 	}
 
+	// Handle enriched HardwareTag data from HuggingFace YAML
+	if enrichedData.HardwareTag.Source != "null" && enrichedData.HardwareTag.Value != nil {
+		if raw, ok := enrichedData.HardwareTag.Value.([]string); ok && len(raw) > 0 {
+			seen := map[string]struct{}{}
+			normalized := make([]string, 0, len(raw))
+			for _, v := range raw {
+				t := strings.TrimSpace(v)
+				if t == "" {
+					continue
+				}
+				if _, exists := seen[t]; exists {
+					continue
+				}
+				seen[t] = struct{}{}
+				normalized = append(normalized, t)
+			}
+			if len(normalized) > 0 {
+				shouldOverride := len(existingMetadata.HardwareTag) == 0 || enrichedData.HardwareTag.Source == "huggingface.yaml"
+				if shouldOverride {
+					log.Printf("  Using hardware_tag from enrichedData: %v", normalized)
+					existingMetadata.HardwareTag = normalized
+				}
+			}
+		}
+	}
+
 	// Handle enriched createTimeSinceEpoch data
 	if enrichedData.CreateTimeSinceEpoch.Source != "null" && enrichedData.CreateTimeSinceEpoch.Value != nil {
 		if createEpoch, ok := enrichedData.CreateTimeSinceEpoch.Value.(int64); ok {

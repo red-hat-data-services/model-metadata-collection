@@ -114,6 +114,7 @@ func EnrichMetadataFromHuggingFace(hfIndexPath, modelsIndexPath, outputDir, vllm
 		enriched.Likes = metadata.CreateMetadataSource(nil, "null")
 		enriched.ModelSize = metadata.CreateMetadataSource(nil, "null")
 		enriched.ValidatedOn = metadata.CreateMetadataSource(nil, "null")
+		enriched.HardwareTag = metadata.CreateMetadataSource(nil, "null")
 
 		// Populate from existing modelcard metadata if available (only for non-empty values)
 		// We need to determine if the data came from YAML frontmatter or text parsing
@@ -440,13 +441,18 @@ func EnrichMetadataFromHuggingFace(hfIndexPath, modelsIndexPath, outputDir, vllm
 						enriched.Tasks = metadata.CreateMetadataSource(tasks, "huggingface.yaml")
 						log.Printf("  Extracted pipeline_tag from YAML frontmatter: %s", frontmatter.PipelineTag)
 					}
-					// Always use validated_on from HuggingFace YAML (highest priority)
-					if len(frontmatter.ValidatedOn) > 0 {
-						enriched.ValidatedOn = metadata.CreateMetadataSource([]string(frontmatter.ValidatedOn), "huggingface.yaml")
-						log.Printf("  Extracted validated_on from YAML frontmatter: %v", frontmatter.ValidatedOn)
-					}
+				// Always use validated_on from HuggingFace YAML (highest priority)
+				if len(frontmatter.ValidatedOn) > 0 {
+					enriched.ValidatedOn = metadata.CreateMetadataSource([]string(frontmatter.ValidatedOn), "huggingface.yaml")
+					log.Printf("  Extracted validated_on from YAML frontmatter: %v", frontmatter.ValidatedOn)
+				}
+				// Always use hardware_tag from HuggingFace YAML (highest priority)
+				if len(frontmatter.HardwareTag) > 0 {
+					enriched.HardwareTag = metadata.CreateMetadataSource([]string(frontmatter.HardwareTag), "huggingface.yaml")
+					log.Printf("  Extracted hardware_tag from YAML frontmatter: %v", frontmatter.HardwareTag)
+				}
 
-					// Extract tool-calling configuration from HuggingFace YAML frontmatter ONLY
+				// Extract tool-calling configuration from HuggingFace YAML frontmatter ONLY
 					// NOTE: We do NOT extract this from container modelcard YAML - only from HuggingFace
 					var toolCallingConfig *types.ToolCallingConfig
 					if frontmatter.ToolCallingSupported || len(frontmatter.RequiredCLIArgs) > 0 || frontmatter.ToolCallParser != "" {
