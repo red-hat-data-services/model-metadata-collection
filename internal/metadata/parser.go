@@ -108,6 +108,7 @@ type ModelCardYAMLFrontmatter struct {
 	Tasks       []string    `yaml:"tasks"`
 	Provider    string      `yaml:"provider"`
 	ValidatedOn stringSlice `yaml:"validated_on"`
+	HardwareTag stringSlice `yaml:"hardware_tag"`
 }
 
 // ExtractYAMLFrontmatterFromModelCard extracts YAML frontmatter from modelcard.md content
@@ -271,6 +272,11 @@ func ExtractMetadataValues(content []byte) types.ExtractedMetadata {
 		// ValidatedOn from YAML
 		if len(frontmatter.ValidatedOn) > 0 {
 			metadata.ValidatedOn = []string(frontmatter.ValidatedOn)
+		}
+
+		// HardwareTag from YAML
+		if len(frontmatter.HardwareTag) > 0 {
+			metadata.HardwareTag = []string(frontmatter.HardwareTag)
 		}
 	}
 

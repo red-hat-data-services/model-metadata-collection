@@ -86,6 +86,7 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 			LastModified         string `yaml:"last_modified,omitempty"`
 			CreateTimeSinceEpoch string `yaml:"create_time_since_epoch,omitempty"`
 			ValidatedOn          string `yaml:"validated_on,omitempty"`
+			HardwareTag          string `yaml:"hardware_tag,omitempty"`
 			Readme               string `yaml:"readme,omitempty"`
 		} `yaml:"data_sources"`
 	}{}
@@ -297,6 +298,33 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 					existingMetadata.ValidatedOn = normalized
 				}
 				enrichmentInfo.DataSources.ValidatedOn = enrichedData.ValidatedOn.Source
+			}
+		}
+	}
+
+	// Handle enriched HardwareTag data from HuggingFace YAML
+	if enrichedData.HardwareTag.Source != "null" && enrichedData.HardwareTag.Value != nil {
+		if raw, ok := enrichedData.HardwareTag.Value.([]string); ok && len(raw) > 0 {
+			seen := map[string]struct{}{}
+			normalized := make([]string, 0, len(raw))
+			for _, v := range raw {
+				t := strings.TrimSpace(v)
+				if t == "" {
+					continue
+				}
+				if _, exists := seen[t]; exists {
+					continue
+				}
+				seen[t] = struct{}{}
+				normalized = append(normalized, t)
+			}
+			if len(normalized) > 0 {
+				shouldOverride := len(existingMetadata.HardwareTag) == 0 || enrichedData.HardwareTag.Source == "huggingface.yaml"
+				if shouldOverride {
+					log.Printf("  Using hardware_tag from enrichedData: %v", normalized)
+					existingMetadata.HardwareTag = normalized
+				}
+				enrichmentInfo.DataSources.HardwareTag = enrichedData.HardwareTag.Source
 			}
 		}
 	}
