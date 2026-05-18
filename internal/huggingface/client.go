@@ -347,6 +347,7 @@ type YAMLFrontmatter struct {
 	Tasks       []string    `yaml:"tasks"`
 	Provider    string      `yaml:"provider"`
 	ValidatedOn stringSlice `yaml:"validated_on"`
+	HardwareTag stringSlice `yaml:"hardware_tag"`
 
 	// Tool-calling configuration fields (HuggingFace only)
 	ToolCallingSupported bool         `yaml:"tool_calling_supported"`

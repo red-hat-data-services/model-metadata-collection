@@ -264,6 +264,11 @@ func convertExtractedToCatalogMetadata(model types.ExtractedMetadata) types.Cata
 		}
 	}
 
+	// Add hardware_tag as comma-separated customProperty if present
+	if len(model.HardwareTag) > 0 {
+		customProps["hardware_tag"] = createMetadataValue(strings.Join(model.HardwareTag, ","))
+	}
+
 	// Add model_type as customProperty (defaults to "generative")
 	// Note: In future, this could be extracted from modelcard metadata
 	customProps["model_type"] = createMetadataValue(types.GetDefaultModelType())

@@ -1374,6 +1374,79 @@ func TestConvertExtractedToCatalogMetadata_ValidatedOn(t *testing.T) {
 	}
 }
 
+func TestConvertExtractedToCatalogMetadata_HardwareTag(t *testing.T) {
+	tests := []struct {
+		name          string
+		hardwareTag   []string
+		expectPresent bool
+		expectedValue string
+	}{
+		{
+			name:          "single hardware tag",
+			hardwareTag:   []string{"Intel Xeon"},
+			expectPresent: true,
+			expectedValue: "Intel Xeon",
+		},
+		{
+			name:          "multiple hardware tags comma-separated",
+			hardwareTag:   []string{"Intel Xeon", "AMD Zen"},
+			expectPresent: true,
+			expectedValue: "Intel Xeon,AMD Zen",
+		},
+		{
+			name:          "empty hardware tag",
+			hardwareTag:   []string{},
+			expectPresent: false,
+		},
+		{
+			name:          "nil hardware tag",
+			hardwareTag:   nil,
+			expectPresent: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			metadata := types.ExtractedMetadata{
+				Name:        stringPtr("Test Model"),
+				Provider:    stringPtr("Red Hat"),
+				Description: stringPtr("A test model"),
+				HardwareTag: tc.hardwareTag,
+				Tags:        []string{"validated"},
+				Artifacts:   []types.OCIArtifact{},
+			}
+
+			result := convertExtractedToCatalogMetadata(metadata)
+
+			if result.CustomProperties == nil {
+				if tc.expectPresent {
+					t.Error("Expected CustomProperties to be set")
+				}
+				return
+			}
+
+			hwProp, exists := result.CustomProperties["hardware_tag"]
+			if tc.expectPresent {
+				if !exists {
+					t.Error("Expected hardware_tag to be in CustomProperties")
+				} else {
+					expected := types.MetadataValue{
+						MetadataType: "MetadataStringValue",
+						StringValue:  tc.expectedValue,
+					}
+					if hwProp != expected {
+						t.Errorf("Expected hardware_tag customProperty to be %+v, got %+v", expected, hwProp)
+					}
+				}
+			} else {
+				if exists {
+					t.Error("Expected hardware_tag to NOT be in CustomProperties")
+				}
+			}
+		})
+	}
+}
+
 func TestConvertExtractedToCatalogMetadata_NoValidatedOn(t *testing.T) {
 	// Test that models without ValidatedOn don't have the customProperty
 	metadata := types.ExtractedMetadata{

@@ -15,6 +15,9 @@ models:
         feature-extraction:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         model_type:
             metadataType: MetadataStringValue
             string_value: "generative"
@@ -61,6 +64,9 @@ models:
         feature-extraction:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         model_type:
             metadataType: MetadataStringValue
             string_value: "generative"
@@ -103,6 +109,9 @@ models:
         feature-extraction:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         model_type:
             metadataType: MetadataStringValue
             string_value: "generative"
@@ -149,6 +158,9 @@ models:
         granite:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         model_type:
             metadataType: MetadataStringValue
             string_value: "generative"
@@ -189,6 +201,9 @@ models:
         feature-extraction:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         model_type:
             metadataType: MetadataStringValue
             string_value: "generative"
