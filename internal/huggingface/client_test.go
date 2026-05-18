@@ -590,6 +590,83 @@ tasks:
 	}
 }
 
+func TestExtractYAMLFrontmatter_HardwareTag(t *testing.T) {
+	tests := []struct {
+		name        string
+		content     string
+		expectError bool
+		expected    []string
+	}{
+		{
+			name: "single hardware tag",
+			content: `---
+license: apache-2.0
+hardware_tag:
+  - Intel Xeon
+---
+# Model content`,
+			expectError: false,
+			expected:    []string{"Intel Xeon"},
+		},
+		{
+			name: "multiple hardware tags",
+			content: `---
+license: apache-2.0
+hardware_tag:
+  - Intel Xeon
+  - AMD Zen
+---
+# Model content`,
+			expectError: false,
+			expected:    []string{"Intel Xeon", "AMD Zen"},
+		},
+		{
+			name: "no hardware tag",
+			content: `---
+license: apache-2.0
+---
+# Model content`,
+			expectError: false,
+			expected:    nil,
+		},
+		{
+			name: "scalar hardware tag",
+			content: `---
+license: apache-2.0
+hardware_tag: Intel Xeon
+---
+# Model content`,
+			expectError: false,
+			expected:    []string{"Intel Xeon"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fm, err := ExtractYAMLFrontmatter(tt.content)
+			if tt.expectError {
+				if err == nil {
+					t.Errorf("Expected error but got none")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("Unexpected error: %v", err)
+			}
+
+			if len(fm.HardwareTag) != len(tt.expected) {
+				t.Errorf("Expected %d hardware tags, got %d: %v", len(tt.expected), len(fm.HardwareTag), fm.HardwareTag)
+				return
+			}
+			for i, val := range tt.expected {
+				if fm.HardwareTag[i] != val {
+					t.Errorf("Expected HardwareTag[%d] = %q, got %q", i, val, fm.HardwareTag[i])
+				}
+			}
+		})
+	}
+}
+
 func TestExtractProviderFromReadme(t *testing.T) {
 	tests := []struct {
 		name     string

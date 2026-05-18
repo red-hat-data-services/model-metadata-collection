@@ -2328,6 +2328,9 @@ models:
         gptq:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         int4:
             metadataType: MetadataStringValue
             string_value: ""
@@ -2408,6 +2411,9 @@ models:
         facebook:
             metadataType: MetadataStringValue
             string_value: ""
+        hardware_tag:
+            metadataType: MetadataStringValue
+            string_value: "Intel Xeon"
         int8:
             metadataType: MetadataStringValue
             string_value: ""
