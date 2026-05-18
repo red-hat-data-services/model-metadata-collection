@@ -389,6 +389,63 @@ func derefStringPtr(s *string) string {
 	return *s
 }
 
+func TestExtractMetadataValues_HardwareTag(t *testing.T) {
+	t.Run("single hardware tag", func(t *testing.T) {
+		content := `---
+name: "Test Model"
+provider: "Intel"
+hardware_tag:
+  - Intel Xeon
+---
+# Test Model
+
+Intel-validated model.
+`
+		result := ExtractMetadataValues([]byte(content))
+
+		if result.HardwareTag == nil {
+			t.Fatal("Expected HardwareTag to be set from YAML frontmatter")
+		}
+		expected := []string{"Intel Xeon"}
+		if !reflect.DeepEqual(result.HardwareTag, expected) {
+			t.Errorf("HardwareTag = %v, want %v", result.HardwareTag, expected)
+		}
+	})
+
+	t.Run("multiple hardware tags", func(t *testing.T) {
+		content := `---
+name: "Multi-Platform Model"
+hardware_tag:
+  - Intel Xeon
+  - AMD Zen
+---
+# Multi-Platform Model
+`
+		result := ExtractMetadataValues([]byte(content))
+
+		if result.HardwareTag == nil {
+			t.Fatal("Expected HardwareTag to be set from YAML frontmatter")
+		}
+		expected := []string{"Intel Xeon", "AMD Zen"}
+		if !reflect.DeepEqual(result.HardwareTag, expected) {
+			t.Errorf("HardwareTag = %v, want %v", result.HardwareTag, expected)
+		}
+	})
+
+	t.Run("no hardware tag", func(t *testing.T) {
+		content := `---
+name: "Test Model"
+---
+# Test Model
+`
+		result := ExtractMetadataValues([]byte(content))
+
+		if len(result.HardwareTag) != 0 {
+			t.Errorf("Expected empty HardwareTag, got %v", result.HardwareTag)
+		}
+	})
+}
+
 func TestExtractMetadataValues_ValidatedOn(t *testing.T) {
 	contentWithValidatedOn := `---
 name: "Test Model"

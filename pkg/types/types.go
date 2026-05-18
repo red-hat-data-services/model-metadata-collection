@@ -92,6 +92,7 @@ type ExtractedMetadata struct {
 	CreateTimeSinceEpoch     *int64        `yaml:"createTimeSinceEpoch"`
 	LastUpdateTimeSinceEpoch *int64        `yaml:"lastUpdateTimeSinceEpoch"`
 	ValidatedOn              []string      `yaml:"validatedOn"`
+	HardwareTag              []string      `yaml:"hardwareTag"`
 	Artifacts                []OCIArtifact `yaml:"artifacts"`
 }
 
@@ -180,6 +181,7 @@ type EnrichedModelMetadata struct {
 	Likes                MetadataSource `yaml:"likes"`
 	ModelSize            MetadataSource `yaml:"model_size"`
 	ValidatedOn          MetadataSource `yaml:"validated_on"`
+	HardwareTag          MetadataSource `yaml:"hardware_tag"`
 }
 
 // EnrichmentInfo tracks data sources for metadata fields
@@ -198,6 +200,7 @@ type EnrichmentInfo struct {
 		LastUpdateTimeSinceEpoch string `json:"lastUpdateTimeSinceEpoch"`
 		Artifacts                string `json:"artifacts"`
 		ValidatedOn              string `json:"validatedOn"`
+		HardwareTag              string `json:"hardwareTag"`
 	} `json:"dataSources"`
 }
 
