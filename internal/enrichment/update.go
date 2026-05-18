@@ -336,6 +336,9 @@ func UpdateModelMetadataFile(registryModel string, enrichedData *types.EnrichedM
 	if enrichedData.ToolCallingConfig != nil && enrichedData.ToolCallingConfig.HasToolCalling() {
 		existingMetadata.ToolCallingConfig = enrichedData.ToolCallingConfig
 		log.Printf("  Stored tool-calling config in metadata for: %s", registryModel)
+	} else if existingMetadata.ToolCallingConfig != nil {
+		existingMetadata.ToolCallingConfig = nil
+		log.Printf("  Cleared stale tool-calling config for: %s", registryModel)
 	}
 
 	// Handle enriched createTimeSinceEpoch data
