@@ -93,6 +93,16 @@ func TestCreateMCPServersCatalog(t *testing.T) {
 		if len(catalog.MCPServers[0].Artifacts) != 1 {
 			t.Errorf("expected 1 artifact for server 1, got %d", len(catalog.MCPServers[0].Artifacts))
 		}
+
+		// supportTier should be injected from the index source
+		for _, s := range catalog.MCPServers {
+			tier, ok := s.CustomProperties["supportTier"]
+			if !ok {
+				t.Errorf("server %q: expected supportTier custom property", s.Name)
+			} else if tier.StringValue != "redHatSupported" {
+				t.Errorf("server %q: expected supportTier 'redHatSupported', got %q", s.Name, tier.StringValue)
+			}
+		}
 	})
 
 	t.Run("missing input file is skipped", func(t *testing.T) {
@@ -327,6 +337,72 @@ func TestCreateMCPServersCatalog(t *testing.T) {
 
 		if len(catalog.MCPServers) != 0 {
 			t.Errorf("expected 0 servers (missing required fields rejected), got %d", len(catalog.MCPServers))
+		}
+	})
+}
+
+func TestSupportTierFromSource(t *testing.T) {
+	tests := []struct {
+		source   string
+		expected string
+	}{
+		{"Red Hat MCP", "redHatSupported"},
+		{"Partner MCP", "partnerSupported"},
+		{"Community MCP", "communitySupported"},
+		{"red hat mcp", "redHatSupported"},
+		{"  Red Hat MCP  ", "redHatSupported"},
+		{"Partner MCP\n", "partnerSupported"},
+		{"Unknown", ""},
+		{"", ""},
+	}
+	for _, tc := range tests {
+		got := supportTierFromSource(tc.source)
+		if got != tc.expected {
+			t.Errorf("supportTierFromSource(%q) = %q, want %q", tc.source, got, tc.expected)
+		}
+	}
+}
+
+func TestInjectSupportTier(t *testing.T) {
+	t.Run("injects into nil CustomProperties", func(t *testing.T) {
+		server := &types.MCPServerMetadata{Name: "test"}
+		injectSupportTier(server, "partnerSupported")
+
+		tier, ok := server.CustomProperties["supportTier"]
+		if !ok {
+			t.Fatal("expected supportTier to be set")
+		}
+		if tier.StringValue != "partnerSupported" {
+			t.Errorf("expected 'partnerSupported', got %q", tier.StringValue)
+		}
+	})
+
+	t.Run("preserves existing custom properties", func(t *testing.T) {
+		server := &types.MCPServerMetadata{
+			Name: "test",
+			CustomProperties: map[string]types.MetadataValue{
+				"architecture": {MetadataType: "MetadataStringValue", StringValue: "[\"amd64\"]"},
+			},
+		}
+		injectSupportTier(server, "communitySupported")
+
+		if len(server.CustomProperties) != 2 {
+			t.Fatalf("expected 2 custom properties, got %d", len(server.CustomProperties))
+		}
+		if server.CustomProperties["architecture"].StringValue != "[\"amd64\"]" {
+			t.Error("existing architecture property was overwritten")
+		}
+		if server.CustomProperties["supportTier"].StringValue != "communitySupported" {
+			t.Errorf("expected 'communitySupported', got %q", server.CustomProperties["supportTier"].StringValue)
+		}
+	})
+
+	t.Run("no-op when tier is empty", func(t *testing.T) {
+		server := &types.MCPServerMetadata{Name: "test"}
+		injectSupportTier(server, "")
+
+		if server.CustomProperties != nil {
+			t.Error("expected CustomProperties to remain nil for empty tier")
 		}
 	})
 }
