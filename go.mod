@@ -6,7 +6,7 @@ toolchain go1.24.5
 
 require (
 	github.com/containers/image/v5 v5.36.1
-	golang.org/x/text v0.28.0
+	golang.org/x/text v0.38.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
