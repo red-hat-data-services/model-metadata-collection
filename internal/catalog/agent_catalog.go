@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -112,11 +114,16 @@ func buildAgentMetadata(repo, branch, rawRef string, entry types.AgentIndexEntry
 			agent.Templates = buildTemplateArtifacts(upstream.RawContent)
 		}
 
-		readme, err := github.FetchReadme(repo, rawRef, entry.Path)
+		readmePath := entry.Path
+		if entry.ReadmePath != "" {
+			readmePath = entry.ReadmePath
+		}
+		readme, err := github.FetchReadme(repo, rawRef, readmePath)
 		if err != nil {
-			log.Printf("  Warning: failed to fetch README for %s: %v", entry.Path, err)
+			log.Printf("  Warning: failed to fetch README for %s: %v", readmePath, err)
 		} else if readme != "" {
-			agent.Readme = readme
+			baseURL := fmt.Sprintf("https://github.com/%s/tree/%s/%s/", repo, branch, readmePath)
+			agent.Readme = resolveReadmeLinks(readme, baseURL)
 		}
 	}
 
@@ -195,6 +202,32 @@ func forwardExtraAsCustomProperties(agent *types.AgentMetadata, extra map[string
 			StringValue:  strVal,
 		}
 	}
+}
+
+var mdLinkRe = regexp.MustCompile(`(!?)\[([^\]]+)\]\(([^)]+)\)`)
+
+// resolveReadmeLinks rewrites relative markdown links to absolute GitHub URLs
+// and removes relative images. Absolute URLs are left unchanged.
+func resolveReadmeLinks(s, baseURL string) string {
+	base, _ := url.Parse(baseURL)
+	return mdLinkRe.ReplaceAllStringFunc(s, func(match string) string {
+		parts := mdLinkRe.FindStringSubmatch(match)
+		isImage, text, href := parts[1] == "!", parts[2], strings.TrimSpace(parts[3])
+		lower := strings.ToLower(href)
+		if strings.HasPrefix(lower, "http://") || strings.HasPrefix(lower, "https://") ||
+			strings.HasPrefix(lower, "ftp://") || strings.HasPrefix(lower, "mailto:") ||
+			strings.HasPrefix(href, "//") {
+			return match
+		}
+		if isImage {
+			return text
+		}
+		ref, err := url.Parse(href)
+		if err != nil {
+			return text
+		}
+		return fmt.Sprintf("[%s](%s)", text, base.ResolveReference(ref).String())
+	})
 }
 
 // buildTemplateArtifacts serializes the full upstream agent.yaml content as a
