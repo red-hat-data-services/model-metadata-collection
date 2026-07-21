@@ -56,14 +56,6 @@ models:
   labels:
   - validated
 - type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w4a16:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-quantized-w8a8:1.5
-  labels:
-  - validated
-- type: oci
   uri: registry.redhat.io/rhelai1/modelcar-llama-3-1-8b-instruct-fp8-dynamic:1.5
   labels:
   - validated
@@ -105,18 +97,6 @@ models:
   labels:
   - validated
 - type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-quantized-w4a16:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-quantized-w8a8:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-mistral-small-24b-instruct-2501-fp8-dynamic:1.5
-  labels:
-  - validated
-- type: oci
   uri: registry.redhat.io/rhelai1/modelcar-mixtral-8x7b-instruct-v0-1:1.4
   labels:
   - validated
@@ -127,14 +107,6 @@ models:
   - validated
 - type: oci
   uri: registry.redhat.io/rhelai1/modelcar-llama-3-1-nemotron-70b-instruct-hf:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it-fp8:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-gemma-2-9b-it:1.5
   labels:
   - validated
 - type: oci
@@ -151,10 +123,6 @@ models:
   - validated
 - type: oci
   uri: registry.redhat.io/rhelai1/modelcar-gemma-3n-e4b-it-fp8-dynamic:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-granite-3-1-8b-base-quantized-w4a16:1.5
   labels:
   - validated
 - type: oci
@@ -183,14 +151,6 @@ models:
   - validated
 - type: oci
   uri: registry.redhat.io/rhelai1/modelcar-qwen3-coder-480b-a35b-instruct-fp8:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-whisper-large-v3-turbo-quantized-w4a16:1.5
-  labels:
-  - validated
-- type: oci
-  uri: registry.redhat.io/rhelai1/modelcar-voxtral-mini-3b-2507-fp8-dynamic:1.5
   labels:
   - validated
 - type: oci
