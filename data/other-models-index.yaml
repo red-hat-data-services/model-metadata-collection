@@ -45,5 +45,3 @@ models:
   uri: registry.redhat.io/rhai/modelcar-redhatai-laguna-xs-2-nvfp4:3.0
 - type: oci
   uri: registry.redhat.io/rhai/modelcar-redhatai-snowflake-arctic-embed-l-v2-0:3.0
-- type: oci
-  uri: registry.redhat.io/rhai/modelcar-redhatai-tinyllama-1-1b-chat-v1-0:3.0

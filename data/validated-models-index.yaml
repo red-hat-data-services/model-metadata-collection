@@ -265,3 +265,7 @@ models:
   uri: registry.redhat.io/rhai/modelcar-gpt-oss-120b-essential:3.0
   labels:
   - validated
+- type: oci
+  uri: registry.redhat.io/rhai/modelcar-redhatai-tinyllama-1-1b-chat-v1-0:3.0
+  labels:
+  - validated
