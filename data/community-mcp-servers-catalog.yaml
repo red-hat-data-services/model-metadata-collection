@@ -212,6 +212,63 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "communitySupported"
       lastUpdateTimeSinceEpoch: "1784302696000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: org.mariadb/mariadb-mcp
+        description: A standard interface for managing and querying MariaDB databases. Supports SQL operations and schema inspection.
+        version: 1.0.0
+        title: MariaDB MCP Server
+        websiteUrl: https://github.com/mariadb/mcp
+        repository:
+            url: https://github.com/mariadb/mcp
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-mariadb-mcp:f94b043241c702c607e88274da83f8482e3e7d56
+              transport:
+                type: streamable-http
+                url: http://localhost:9001/mcp
+              runtimeHint: docker
+              packageArguments:
+                - type: positional
+                  value: python
+                - type: positional
+                  value: src/server.py
+                - type: named
+                  value: 0.0.0.0
+                  name: --host
+                - type: named
+                  value: http
+                  name: --transport
+                - type: named
+                  value: "9001"
+                  name: --port
+              environmentVariables:
+                - name: DB_USER
+                  description: MariaDB username (from secret mariadb-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: DB_PASSWORD
+                  description: MariaDB password (from secret mariadb-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: DB_HOST
+                  description: MariaDB server hostname
+                  isRequired: true
+                - name: DB_NAME
+                  description: MariaDB database name (optional; can be set per query)
+                  isRequired: false
+                - name: DB_PORT
+                  description: MariaDB server port (default 3306)
+                  isRequired: false
+                  default: "3306"
+                - name: MCP_READ_ONLY
+                  description: Enforce read-only mode for SQL queries (default true)
+                  isRequired: false
+                  default: "true"
+                - name: ALLOWED_HOSTS
+                  description: Comma-separated list of allowed Host header values
+                  isRequired: true
     - name: com.mongodb/mongodb-mcp-server
       display_name: MongoDB MCP Server
       provider: MongoDB
@@ -422,3 +479,45 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "communitySupported"
       lastUpdateTimeSinceEpoch: "1784301778000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.mongodb/mongodb-mcp-server
+        description: Interact with MongoDB databases and MongoDB Atlas. Provides database operations, Atlas cluster management, performance analysis, and query execution capabilities.
+        version: 1.0.0
+        title: MongoDB MCP Server
+        websiteUrl: https://www.mongodb.com/docs/mcp-server/get-started/
+        repository:
+            url: https://github.com/mongodb-js/mongodb-mcp-server
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-mongodb-mcp-server:450a14399cc7bd6c7d633e7a44d32b80a7694b73
+              transport:
+                type: streamable-http
+                url: http://localhost:9002/mcp
+              runtimeHint: docker
+              packageArguments:
+                - type: named
+                  value: http
+                  name: --transport
+                - type: named
+                  value: 0.0.0.0
+                  name: --httpHost
+                - type: named
+                  value: "9002"
+                  name: --httpPort
+                - type: named
+                  name: --readOnly
+              environmentVariables:
+                - name: MDB_MCP_CONNECTION_STRING
+                  description: MongoDB connection URI (from secret mongodb-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: MDB_MCP_API_CLIENT_ID
+                  description: MongoDB Atlas Service Account client ID (from secret mongodb-atlas-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: MDB_MCP_API_CLIENT_SECRET
+                  description: MongoDB Atlas Service Account client secret (from secret mongodb-atlas-credentials)
+                  isRequired: false
+                  isSecret: true

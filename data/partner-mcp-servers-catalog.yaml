@@ -90,6 +90,7 @@ mcp_servers:
           createTimeSinceEpoch: "1784301797000"
           lastUpdateTimeSinceEpoch: "1784301797000"
       runtimeMetadata:
+        defaultPort: 8080
         prerequisites:
             environmentVariables:
                 - description: Master API key for Confluent Cloud (from secret confluent-cloud-credentials)
@@ -172,6 +173,45 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "partnerSupported"
       lastUpdateTimeSinceEpoch: "1784301797000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: io.confluent/mcp-confluent
+        description: Manage Confluent Cloud resources through the Confluent Cloud REST API. Provides cluster management, environment management, connector operations, and billing cost visibility.
+        version: 1.0.0
+        title: Confluent MCP Server
+        websiteUrl: https://github.com/confluentinc/mcp-confluent
+        repository:
+            url: https://github.com/confluentinc/mcp-confluent
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-confluentinc-mcp-confluent:79e94f5f27a982f7baf84de11ac0ea5b279f07fa
+              transport:
+                type: streamable-http
+                url: http://localhost:8080/mcp
+              runtimeHint: docker
+              environmentVariables:
+                - name: CONFLUENT_CLOUD_API_KEY
+                  description: Master API key for Confluent Cloud (from secret confluent-cloud-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: CONFLUENT_CLOUD_API_SECRET
+                  description: Master API secret for Confluent Cloud (from secret confluent-cloud-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: MCP_API_KEY
+                  description: API key for HTTP/SSE authentication (generate using --generate-key)
+                  isRequired: false
+                  isSecret: true
+                - name: MCP_ALLOWED_HOSTS
+                  description: Comma-separated list of allowed Host header values for DNS rebinding protection
+                  isRequired: true
+                - name: HTTP_HOST
+                  description: Host to bind for HTTP transport (defaults to localhost for security)
+                  isRequired: true
+                - name: HTTP_PORT
+                  description: HTTP port for the server
+                  isRequired: false
     - name: com.dynatrace/dynatrace-mcp
       display_name: Dynatrace MCP Server
       provider: Dynatrace
@@ -346,6 +386,7 @@ mcp_servers:
             - "3000"
             - --host
             - 0.0.0.0
+        defaultPort: 3000
         prerequisites:
             environmentVariables:
                 - description: Dynatrace Platform URL (e.g., https://abc12345.apps.dynatrace.com)
@@ -429,6 +470,56 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "partnerSupported"
       lastUpdateTimeSinceEpoch: "1784301820000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.dynatrace/dynatrace-mcp
+        description: AI Assistants can interact with the Dynatrace observability platform, bringing real-time observability data directly into your development workflow. Query logs, events, spans, metrics via DQL.
+        version: 1.4.0
+        title: Dynatrace MCP Server
+        websiteUrl: https://www.dynatrace.com/hub/detail/dynatrace-mcp-server/
+        repository:
+            url: https://github.com/dynatrace-oss/dynatrace-mcp
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-dynatrace-oss-mcp:06005916c27923f410f2165ca0045435dc38bd97
+              transport:
+                type: streamable-http
+                url: http://localhost:3000/mcp
+              runtimeHint: docker
+              packageArguments:
+                - type: positional
+                  value: node
+                - type: positional
+                  value: dist/index.js
+                - type: named
+                  name: --http
+                - type: named
+                  value: "3000"
+                  name: --port
+                - type: named
+                  value: 0.0.0.0
+                  name: --host
+              environmentVariables:
+                - name: DT_ENVIRONMENT
+                  description: Dynatrace Platform URL (e.g., https://abc12345.apps.dynatrace.com)
+                  isRequired: true
+                - name: DT_PLATFORM_TOKEN
+                  description: Dynatrace Platform API token (from secret dynatrace-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: OAUTH_CLIENT_ID
+                  description: OAuth client ID for Dynatrace authentication (from secret dynatrace-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: OAUTH_CLIENT_SECRET
+                  description: OAuth client secret for Dynatrace authentication (from secret dynatrace-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: MCP_BEARER_TOKEN
+                  description: MCP Bearer token is required when running in HTTP mode. The server will refuse to start if this variable is not set.
+                  isRequired: true
+                  isSecret: true
     - name: com.hashicorp/terraform-mcp-server
       display_name: Terraform MCP Server
       provider: IBM Terraform
@@ -653,6 +744,51 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "partnerSupported"
       lastUpdateTimeSinceEpoch: "1784301817000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.hashicorp/terraform-mcp-server
+        description: 'Gain real-time access to current Terraform provider documentation, modules, and policies from the Terraform registry. Supports HCP Terraform and Terraform Enterprise workspace management. NOTE: Beta software - do not use in production environments.'
+        version: 0.4.0
+        title: Terraform MCP Server
+        websiteUrl: https://developer.hashicorp.com/terraform/docs/tools/mcp-server
+        repository:
+            url: https://github.com/hashicorp/terraform-mcp-server
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-hashicorp-terraform-mcp-server:75735827e3086ccadef7f88ee99ecae9887bb916
+              transport:
+                type: streamable-http
+                url: http://localhost:8080/mcp
+              runtimeHint: docker
+              packageArguments:
+                - type: positional
+                  value: ./terraform-mcp-server
+                - type: positional
+                  value: streamable-http
+                - type: named
+                  value: 0.0.0.0
+                  name: --transport-host
+                - type: named
+                  value: "8080"
+                  name: --transport-port
+                - type: named
+                  value: /mcp
+                  name: --mcp-endpoint
+              environmentVariables:
+                - name: TFE_TOKEN
+                  description: HCP Terraform/TFE API authentication token (from secret terraform-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: TFE_ADDRESS
+                  description: HCP Terraform or TFE address
+                  isRequired: false
+                - name: TRANSPORT_MODE
+                  description: Transport protocol mode (stdio or streamable-http)
+                  isRequired: true
+                - name: TRANSPORT_HOST
+                  description: HTTP server bind address
+                  isRequired: true
     - name: com.microsoft/azure-mcp-server
       display_name: Azure MCP Server
       provider: Microsoft
@@ -943,6 +1079,7 @@ mcp_servers:
         defaultArgs:
             - --transport
             - http
+        defaultPort: 8080
         prerequisites:
             environmentVariables:
                 - description: Azure Entra ID tenant identifier (from secret azure-sp-credentials)
@@ -1077,6 +1214,71 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "partnerSupported"
       lastUpdateTimeSinceEpoch: "1784302076000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.microsoft/azure-mcp-server
+        description: Enables AI agents and MCP clients to interact with Azure resources through natural language commands. Provides tools for Azure Storage, Cosmos DB, Key Vault, Azure Monitor, AKS, SQL, and 30+ other Azure services.
+        version: 2.0.0-beta
+        title: Azure MCP Server
+        websiteUrl: https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/
+        repository:
+            url: https://github.com/microsoft/mcp/tree/main/servers/Azure.Mcp.Server
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-ms-azure-mcp-server:179bf673b67187aba0ba230e7c3bd96028e27b48
+              transport:
+                type: streamable-http
+                url: http://localhost:8080/mcp
+              runtimeHint: docker
+              packageArguments:
+                - type: named
+                  value: http
+                  name: --transport
+              environmentVariables:
+                - name: AZURE_TENANT_ID
+                  description: Azure Entra ID tenant identifier (from secret azure-sp-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: AZURE_CLIENT_ID
+                  description: Azure Service Principal client ID (from secret azure-sp-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: AZURE_CLIENT_SECRET
+                  description: Azure Service Principal client secret (from secret azure-sp-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: AZURE_SUBSCRIPTION_ID
+                  description: Azure subscription ID
+                  isRequired: true
+                - name: ASPNETCORE_URLS
+                  description: ASP.NET Core URLs configuration
+                  isRequired: true
+                - name: AzureAd_Instance
+                  description: Azure AD instance URL
+                  isRequired: true
+                - name: AzureAd_TenantId
+                  description: Azure AD tenant ID
+                  isRequired: true
+                - name: AzureAd_ClientId
+                  description: Azure AD client ID (from secret azure-ad-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: AzureAd_Audience
+                  description: Azure AD audience
+                  isRequired: true
+                - name: DOTNET_BUNDLE_EXTRACT_BASE_DIR
+                  description: A writable extraction directory
+                  isRequired: true
+                  default: /tmp/.net
+                - name: HOME
+                  description: Used for ASP.NET DataProtection key storage
+                  isRequired: true
+                  default: /tmp
+                - name: ALLOW_INSECURE_EXTERNAL_BINDING
+                  description: .NET defaults to binding on localhost only, making it unreachable from the Service.
+                  isRequired: true
+                  default: "true"
     - name: com.enterprisedb/pg-airman-mcp
       display_name: EDB PG Airman MCP
       provider: EnterpriseDB
@@ -1373,3 +1575,66 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "partnerSupported"
       lastUpdateTimeSinceEpoch: "1784301764000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.enterprisedb/pg-airman-mcp
+        description: Open-source Model Context Protocol server supporting AI agents throughout the complete PostgreSQL database development lifecycle—from initial coding through testing, deployment, and production tuning and maintenance
+        version: 1.0.0
+        title: EDB PG Airman MCP
+        websiteUrl: https://github.com/EnterpriseDB/pg-airman-mcp
+        repository:
+            url: https://github.com/EnterpriseDB/pg-airman-mcp
+            source: github
+        packages:
+            - registryType: oci
+              identifier: quay.io/rhoai-partner-mcp/ubi10-enterprisedb-pg-airman-mcp:efbae1e31682d204857d7e93814e4c2547663560
+              transport:
+                type: streamable-http
+                url: http://localhost:8001/mcp
+              runtimeHint: docker
+              environmentVariables:
+                - name: AIRMAN_MCP_DATABASE_URL
+                  description: PostgreSQL connection string (from secret pg-airman-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: AIRMAN_MCP_ACCESS_MODE
+                  description: SQL access mode (unrestricted or restricted)
+                  isRequired: true
+                  default: restricted
+                - name: AIRMAN_MCP_TRANSPORT
+                  description: MCP transport (stdio, sse, or streamable-http)
+                  isRequired: true
+                  default: streamable-http
+                - name: AIRMAN_MCP_AUTH_ENABLED
+                  description: Enable OAuth 2.0 authentication (true/false)
+                  isRequired: false
+                - name: AIRMAN_MCP_AUTH_SERVER_URL
+                  description: OAuth authorization server endpoint
+                  isRequired: false
+                - name: AIRMAN_MCP_AUTH_INTROSPECTION_CLIENT_ID
+                  description: OAuth client ID for token introspection (from secret pg-airman-auth-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: AIRMAN_MCP_AUTH_INTROSPECTION_CLIENT_SECRET
+                  description: OAuth client secret for token introspection (from secret pg-airman-auth-credentials)
+                  isRequired: false
+                  isSecret: true
+                - name: AIRMAN_MCP_ALLOWED_HOSTS
+                  description: Comma-separated list of allowed Host header values
+                  isRequired: true
+                  default: 0.0.0.0
+                - name: ALLOW_COMMENT_IN_RESTRICTED
+                  description: Allow COMMENT ON statements in restricted mode
+                  isRequired: false
+                - name: AIRMAN_MCP_AUTH_REQUIRED_SCOPES
+                  description: Required OAuth scopes for access
+                  isRequired: false
+                - name: AIRMAN_MCP_AUTH_VALIDATE_RESOURCE
+                  description: Enable RFC 8707 resource validation
+                  isRequired: false
+                - name: AIRMAN_MCP_DNS_REBINDING_PROTECTION
+                  description: Enable DNS rebinding protection for reverse proxy deployments
+                  isRequired: false
+                - name: AIRMAN_MCP_ALLOWED_ORIGINS
+                  description: Comma-separated list of allowed Origin header values
+                  isRequired: false

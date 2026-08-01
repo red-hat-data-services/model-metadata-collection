@@ -88,6 +88,7 @@ artifacts:
       createTimeSinceEpoch: "1784301797000"
       lastUpdateTimeSinceEpoch: "1784301797000"
 runtimeMetadata:
+    defaultPort: 8080
     prerequisites:
         environmentVariables:
             - description: Master API key for Confluent Cloud (from secret confluent-cloud-credentials)
