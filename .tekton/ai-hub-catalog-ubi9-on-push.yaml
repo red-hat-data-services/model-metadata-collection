@@ -1,0 +1,69 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    build.appstudio.openshift.io/repo: https://github.com/red-hat-data-services/model-metadata-collection/-/tree/{{revision}}
+    build.appstudio.redhat.com/commit_sha: "{{revision}}"
+    build.appstudio.redhat.com/target_branch: "{{target_branch}}"
+    pipelinesascode.tekton.dev/cancel-in-progress: "false"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-cel-expression: |
+      event == "push" && target_branch == "main" && (
+          ".tekton/ai-hub-catalog-ubi9-on-push.yaml".pathChanged() ||
+          "Dockerfile.konflux".pathChanged() ||
+          "data/***".pathChanged()
+      )
+  labels:
+    appstudio.openshift.io/application: ai-hub
+    appstudio.openshift.io/component: ai-hub-catalog-ubi9
+    pipelines.appstudio.openshift.io/type: build
+  name: ai-hub-catalog-ubi9-on-push
+  namespace: ai-tenant
+spec:
+  params:
+  - name: git-url
+    value: "{{source_url}}"
+  - name: revision
+    value: "{{revision}}"
+  - name: output-image
+    value: quay.io/redhat-user-workloads/ai-tenant/ai-hub/ai-hub-catalog-ubi9:{{revision}}
+  - name: dockerfile
+    value: Dockerfile.konflux
+  - name: path-context
+    value: .
+  - name: build-platforms
+    value:
+    - linux/x86_64
+    - linux/ppc64le
+    - linux/s390x
+    - linux-m2xlarge/arm64
+  - name: labels
+    value:
+    - name=ai-hub/catalog-ubi9
+    - com.redhat.component=ai-hub/catalog-ubi9-container
+    - cpe=cpe:/a:redhat:openshift_ai:3.6::el9
+  pipelineRef:
+    params:
+    - name: org
+      value: redhat
+    - name: repo
+      value: rhel-ai/konflux-data
+    - name: scmType
+      value: gitlab
+    - name: serverURL
+      value: https://gitlab.com
+    - name: revision
+      value: main
+    - name: pathInRepo
+      value: pipelines/full-container.yaml
+    - name: token
+      value: pipelines-as-code-secret
+    - name: tokenKey
+      value: password
+    resolver: git
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-ai-hub-catalog-ubi9
+  workspaces:
+  - name: git-auth
+    secret:
+      secretName: "{{ git_auth_secret }}"
