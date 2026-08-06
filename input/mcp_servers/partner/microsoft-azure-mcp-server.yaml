@@ -288,6 +288,7 @@ runtimeMetadata:
     defaultArgs:
         - --transport
         - http
+    defaultPort: 8080
     prerequisites:
         environmentVariables:
             - description: Azure Entra ID tenant identifier (from secret azure-sp-credentials)
