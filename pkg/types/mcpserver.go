@@ -50,6 +50,7 @@ type MCPServerMetadata struct {
 	CustomProperties         map[string]MetadataValue `yaml:"customProperties,omitempty"`
 	CreateTimeSinceEpoch     string                   `yaml:"createTimeSinceEpoch,omitempty"`
 	LastUpdateTimeSinceEpoch string                   `yaml:"lastUpdateTimeSinceEpoch,omitempty"`
+	ServerJSON               *ServerJSON              `yaml:"server_json,omitempty" json:"server_json,omitempty"`
 }
 
 // Validate checks that Name follows the canonical <reverse-dns-namespace>/<slug>

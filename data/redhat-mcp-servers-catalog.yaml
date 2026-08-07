@@ -296,6 +296,27 @@ mcp_servers:
             string_value: "redHatSupported"
       createTimeSinceEpoch: "1753228800000"
       lastUpdateTimeSinceEpoch: "1785344616000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.redhat/openshift-mcp-server
+        description: MCP server for Red Hat OpenShift and Kubernetes cluster management. Allows agents to inspect pods, workloads, nodes, and cluster resources, view logs and events, and browse configuration using direct Kubernetes API access. Tools listed below reflect the default read-only configuration with core and config toolsets enabled.
+        version: 0.4.0
+        title: OpenShift MCP Server
+        websiteUrl: https://docs.redhat.com/en/documentation/openshift_container_platform
+        repository:
+            url: https://github.com/openshift/openshift-mcp-server
+            source: github
+        packages:
+            - registryType: oci
+              identifier: registry.redhat.io/openshift-mcp-tech-preview/openshift-mcp-server-rhel9:0.4
+              transport:
+                type: streamable-http
+                url: http://localhost:8080/mcp
+              runtimeHint: docker
+              packageArguments:
+                - type: named
+                  value: /etc/mcp-config/config.toml
+                  name: --config
     - name: com.redhat/aap-mcp-server
       display_name: Ansible Automation Platform MCP Server
       provider: Red Hat
@@ -384,8 +405,8 @@ mcp_servers:
           parameters: []
       artifacts:
         - uri: oci://registry.redhat.io/ansible-automation-platform-tech-preview/mcp-server-rhel9:latest
-          createTimeSinceEpoch: "1783953394000"
-          lastUpdateTimeSinceEpoch: "1783953395000"
+          createTimeSinceEpoch: "1785773380000"
+          lastUpdateTimeSinceEpoch: "1785773382000"
       runtimeMetadata:
         defaultPort: 3000
         mcpPath: /mcp
@@ -454,7 +475,48 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "redHatSupported"
       createTimeSinceEpoch: "1769990400000"
-      lastUpdateTimeSinceEpoch: "1783953395000"
+      lastUpdateTimeSinceEpoch: "1785773382000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.redhat/aap-mcp-server
+        description: Ansible Automation Platform MCP server providing AI agent access to AAP APIs through OpenAPI specifications. Supports controller, galaxy, gateway, and EDA services with role-based toolsets, session management with token validation, and optional Prometheus metrics. Write operations disabled by default. Tools listed below are a representative subset; the server exposes 62+ tools in read-only mode and 101+ with write operations enabled.
+        version: 1.0.0
+        title: Ansible Automation Platform MCP Server
+        websiteUrl: https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.6/html/containerized_installation/deploying-ansible-mcp-server
+        repository:
+            url: https://github.com/ansible/aap-mcp-server
+            source: github
+        packages:
+            - registryType: oci
+              identifier: registry.redhat.io/ansible-automation-platform-tech-preview/mcp-server-rhel9:latest
+              transport:
+                type: streamable-http
+                url: http://localhost:3000/mcp
+              runtimeHint: docker
+              environmentVariables:
+                - name: BASE_URL
+                  description: AAP instance URL (from secret aap-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: BEARER_TOKEN_OAUTH2_AUTHENTICATION
+                  description: OAuth2 bearer token for Kubernetes/OpenShift deployment orchestration (injected from secret aap-credentials; not consumed directly by the server runtime — authentication is per-session via HTTP Authorization header)
+                  isRequired: false
+                  isSecret: true
+                - name: MCP_PORT
+                  description: Server port override (default 3000)
+                  isRequired: false
+                - name: ENABLE_METRICS
+                  description: Enable Prometheus metrics export at /metrics
+                  isRequired: false
+                - name: ALLOW_WRITE_OPERATIONS
+                  description: Enable write operations (disabled by default)
+                  isRequired: false
+                - name: IGNORE_CERTIFICATE_ERRORS
+                  description: Bypass TLS certificate validation for self-signed certificates
+                  isRequired: false
+                - name: SESSION_TIMEOUT
+                  description: Session timeout in seconds (default 1200)
+                  isRequired: false
     - name: com.redhat/insights-mcp-server
       display_name: Red Hat Lightspeed MCP Server
       provider: Red Hat
@@ -719,3 +781,38 @@ mcp_servers:
             string_value: "redHatSupported"
       createTimeSinceEpoch: "1741996800000"
       lastUpdateTimeSinceEpoch: "1785334732000"
+      server_json:
+        $schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+        name: com.redhat/insights-mcp-server
+        description: Red Hat Lightspeed MCP server connecting AI agents to Red Hat Insights services. Provides toolsets for advisor recommendations, system inventory, vulnerability assessment, remediations, image building, RHEL lifecycle planning, content sources, RBAC, and subscription management. Read-only by default with optional write tools via --all-tools flag.
+        version: 0.1.0
+        title: Red Hat Lightspeed MCP Server
+        websiteUrl: https://docs.redhat.com/en/documentation/red_hat_insights
+        repository:
+            url: https://github.com/RedHatInsights/insights-mcp
+            source: github
+        packages:
+            - registryType: oci
+              identifier: ghcr.io/redhatinsights/red-hat-lightspeed-mcp:latest
+              transport:
+                type: streamable-http
+                url: http://localhost:8000/mcp
+              runtimeHint: docker
+              environmentVariables:
+                - name: LIGHTSPEED_CLIENT_ID
+                  description: Service account client ID (from secret insights-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: LIGHTSPEED_CLIENT_SECRET
+                  description: Service account client secret (from secret insights-credentials)
+                  isRequired: true
+                  isSecret: true
+                - name: LIGHTSPEED_BASE_URL
+                  description: Override the default Lightspeed API endpoint
+                  isRequired: false
+                - name: LIGHTSPEED_SSO_BASE_URL
+                  description: Override the default SSO endpoint
+                  isRequired: false
+                - name: LIGHTSPEED_PROXY_URL
+                  description: Override the default proxy endpoint
+                  isRequired: false

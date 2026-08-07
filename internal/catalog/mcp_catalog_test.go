@@ -28,19 +28,23 @@ func TestCreateMCPServersCatalog(t *testing.T) {
 			License:     "apache-2.0",
 			Description: "Test server 1",
 			Version:     "1.0.0",
+			Transports:  []string{"http"},
 			Tools: []types.MCPTool{
 				{Name: "list_items", Description: "List items", AccessType: "read_only", Parameters: []types.MCPParameter{}},
 			},
 			Artifacts: []types.MCPArtifact{
 				{URI: "oci://registry.example.com/test-server-1:latest"},
 			},
+			RuntimeMetadata: map[string]any{"defaultPort": 8080},
 		}
 		server2 := types.MCPServerMetadata{
-			Name:        "com.example/test-server-2",
-			Provider:    "Red Hat",
-			License:     "apache-2.0",
-			Description: "Test server 2",
-			Version:     "1.0.0",
+			Name:            "com.example/test-server-2",
+			Provider:        "Red Hat",
+			License:         "apache-2.0",
+			Description:     "Test server 2",
+			Version:         "1.0.0",
+			Transports:      []string{"sse"},
+			RuntimeMetadata: map[string]any{"defaultPort": 8080},
 		}
 
 		writeYAML(t, filepath.Join(inputDir, "test-server-1.yaml"), server1)
@@ -101,6 +105,20 @@ func TestCreateMCPServersCatalog(t *testing.T) {
 				t.Errorf("server %q: expected supportTier custom property", s.Name)
 			} else if tier.StringValue != "redHatSupported" {
 				t.Errorf("server %q: expected supportTier 'redHatSupported', got %q", s.Name, tier.StringValue)
+			}
+		}
+
+		// server_json should be populated for each server
+		for _, s := range catalog.MCPServers {
+			if s.ServerJSON == nil {
+				t.Errorf("server %q: expected server_json to be populated", s.Name)
+				continue
+			}
+			if s.ServerJSON.Name != s.Name {
+				t.Errorf("server %q: server_json.name = %q", s.Name, s.ServerJSON.Name)
+			}
+			if s.ServerJSON.Version != s.Version {
+				t.Errorf("server %q: server_json.version = %q", s.Name, s.ServerJSON.Version)
 			}
 		}
 	})
