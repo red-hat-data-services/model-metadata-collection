@@ -46,6 +46,11 @@ func CreateMCPServersCatalog(indexPath, catalogPath string) error {
 			return fmt.Errorf("MCP server name mismatch: index has %q but %s declares %q", entry.Name, cleaned, server.Name)
 		}
 		injectSupportTier(server, supportTier)
+		sj, err := buildServerJSON(server)
+		if err != nil {
+			return fmt.Errorf("MCP server %q: %v", entry.Name, err)
+		}
+		server.ServerJSON = sj
 		servers = append(servers, *server)
 		log.Printf("  Loaded MCP server: %s", entry.Name)
 	}
