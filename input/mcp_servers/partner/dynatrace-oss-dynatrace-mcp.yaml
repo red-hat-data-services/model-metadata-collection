@@ -172,6 +172,7 @@ runtimeMetadata:
         - "3000"
         - --host
         - 0.0.0.0
+    defaultPort: 3000
     prerequisites:
         environmentVariables:
             - description: Dynatrace Platform URL (e.g., https://abc12345.apps.dynatrace.com)
