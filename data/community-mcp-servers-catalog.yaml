@@ -192,6 +192,12 @@ mcp_servers:
               name: ALLOWED_HOSTS
               required: true
               type: config
+        storage:
+            - path: /app/logs
+              permissions: ReadWrite
+              source:
+                emptyDir: {}
+                type: EmptyDir
       securityIndicators:
         readOnlyTools: false
         secureEndpoint: true

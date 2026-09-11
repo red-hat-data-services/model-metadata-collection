@@ -190,6 +190,13 @@ runtimeMetadata:
           name: ALLOWED_HOSTS
           required: true
           type: config
+    storage:
+        # The server writes logs here even with a read-only root filesystem.
+        - path: /app/logs
+          permissions: ReadWrite
+          source:
+            type: EmptyDir
+            emptyDir: {}
 securityIndicators:
     readOnlyTools: false
     secureEndpoint: true
