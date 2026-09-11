@@ -178,14 +178,6 @@ runtimeMetadata:
             cpu: 500m
             memory: 1Gi
     requiredEnvironmentVariables:
-        - description: MariaDB username
-          name: DB_USER
-          required: true
-          type: secret
-        - description: MariaDB password
-          name: DB_PASSWORD
-          required: true
-          type: secret
         - description: MariaDB server hostname
           name: DB_HOST
           required: true
