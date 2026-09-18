@@ -6,7 +6,7 @@ toolchain go1.25.7
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
-	github.com/containers/image/v5 v5.36.1
+	github.com/containers/image/v5 v5.36.2
 	golang.org/x/text v0.28.0
 	gopkg.in/yaml.v3 v3.0.1
 )
