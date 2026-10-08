@@ -35,7 +35,7 @@ readme: |-
     available tools depends on configuration — toolsets can be enabled or disabled,
     and individual tools within a toolset can be filtered using allow/deny lists.
     See [Tool Filtering](https://github.com/openshift/openshift-mcp-server/blob/release-0.4/docs/configuration.md#tool-filtering) for details.
-version: 0.4
+version: "0.4"
 transports:
     - http
     - sse
@@ -240,8 +240,8 @@ tools:
       parameters: []
 artifacts:
     - uri: oci://registry.redhat.io/openshift-mcp-tech-preview/openshift-mcp-server-rhel9:0.4
-      createTimeSinceEpoch: "1785344615000"
-      lastUpdateTimeSinceEpoch: "1785344616000"
+      createTimeSinceEpoch: "1790385001000"
+      lastUpdateTimeSinceEpoch: "1790385002000"
 runtimeMetadata:
     defaultArgs:
         - --config
@@ -289,4 +289,4 @@ customProperties:
         metadataType: MetadataStringValue
         string_value: ""
 createTimeSinceEpoch: "1753228800000"
-lastUpdateTimeSinceEpoch: "1785344616000"
+lastUpdateTimeSinceEpoch: "1790385002000"

@@ -242,8 +242,8 @@ mcp_servers:
           parameters: []
       artifacts:
         - uri: oci://registry.redhat.io/openshift-mcp-tech-preview/openshift-mcp-server-rhel9:0.4
-          createTimeSinceEpoch: "1785344615000"
-          lastUpdateTimeSinceEpoch: "1785344616000"
+          createTimeSinceEpoch: "1790385001000"
+          lastUpdateTimeSinceEpoch: "1790385002000"
       runtimeMetadata:
         defaultArgs:
             - --config
@@ -294,7 +294,7 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "redHatSupported"
       createTimeSinceEpoch: "1753228800000"
-      lastUpdateTimeSinceEpoch: "1785344616000"
+      lastUpdateTimeSinceEpoch: "1790385002000"
     - name: aap-mcp-server
       provider: Red Hat
       license: apache-2.0
@@ -382,8 +382,8 @@ mcp_servers:
           parameters: []
       artifacts:
         - uri: oci://registry.redhat.io/ansible-automation-platform-tech-preview/mcp-server-rhel9:latest
-          createTimeSinceEpoch: "1783953394000"
-          lastUpdateTimeSinceEpoch: "1783953395000"
+          createTimeSinceEpoch: "1789668918000"
+          lastUpdateTimeSinceEpoch: "1789668919000"
       runtimeMetadata:
         defaultPort: 3000
         mcpPath: /mcp
@@ -452,7 +452,7 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "redHatSupported"
       createTimeSinceEpoch: "1769990400000"
-      lastUpdateTimeSinceEpoch: "1783953395000"
+      lastUpdateTimeSinceEpoch: "1789668919000"
     - name: insights-mcp-server
       provider: Red Hat
       license: apache-2.0
@@ -653,8 +653,8 @@ mcp_servers:
           parameters: []
       artifacts:
         - uri: oci://ghcr.io/redhatinsights/red-hat-lightspeed-mcp:latest
-          createTimeSinceEpoch: "1785334732000"
-          lastUpdateTimeSinceEpoch: "1785334732000"
+          createTimeSinceEpoch: "1791465066000"
+          lastUpdateTimeSinceEpoch: "1791465066000"
       runtimeMetadata:
         defaultPort: 8000
         mcpPath: /mcp
@@ -715,4 +715,4 @@ mcp_servers:
             metadataType: MetadataStringValue
             string_value: "redHatSupported"
       createTimeSinceEpoch: "1741996800000"
-      lastUpdateTimeSinceEpoch: "1785334732000"
+      lastUpdateTimeSinceEpoch: "1791465066000"
