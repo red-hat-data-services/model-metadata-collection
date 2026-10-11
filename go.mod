@@ -2,11 +2,12 @@ module github.com/opendatahub-io/model-metadata-collection
 
 go 1.24
 
-toolchain go1.25.7
+toolchain go1.27.2
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/containers/image/v5 v5.36.1
+	github.com/distribution/reference v0.6.0
 	golang.org/x/text v0.28.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -16,7 +17,6 @@ require (
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.2.1 // indirect
 	github.com/containers/storage v1.59.1 // indirect
-	github.com/distribution/reference v0.6.0 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker v28.3.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
