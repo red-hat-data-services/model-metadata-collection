@@ -6,7 +6,7 @@ toolchain go1.25.7
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
-	github.com/containers/image/v5 v5.36.1
+	github.com/containers/image/v5 v5.36.2
 	github.com/distribution/reference v0.6.0
 	github.com/getkin/kin-openapi v0.134.0
 	github.com/ulikunitz/xz v0.5.14
