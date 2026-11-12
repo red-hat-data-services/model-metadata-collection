@@ -2,7 +2,7 @@ module github.com/opendatahub-io/model-metadata-collection
 
 go 1.25
 
-toolchain go1.25.7
+toolchain go1.26.11
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
