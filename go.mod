@@ -1,6 +1,6 @@
 module github.com/opendatahub-io/model-metadata-collection
 
-go 1.24
+go 1.25.0
 
 toolchain go1.25.7
 
@@ -10,7 +10,7 @@ require (
 	github.com/distribution/reference v0.6.0
 	github.com/getkin/kin-openapi v0.134.0
 	github.com/ulikunitz/xz v0.5.14
-	golang.org/x/text v0.28.0
+	golang.org/x/text v0.41.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
