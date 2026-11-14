@@ -1,6 +1,6 @@
 # Simplified Dockerfile for model metadata collection
 # Since models-catalog.yaml is now checked in by CI/CD, we only need to copy the files
-FROM registry.redhat.io/ubi9/ubi-minimal-pqc@sha256:8a842ac769de709143e4edeace516f2008dfdc431b64670ad3353fa323b44736
+FROM registry.redhat.io/ubi9/ubi-minimal-pqc@sha256:eb807555968d40a35c815329eec6ef52b56a8bb3e6f06c25f7440ead905f8c74
 
 # Create directory for mounting by other applications
 RUN mkdir -p /app/data
